@@ -1,21 +1,21 @@
 [Scene: (TRANSITION TO) scene_name] -> scene bg scene_name (with TRANSITION)
-[Enter: char(, action(, ...tagN)) (TRANSITION IN) (FROM side (time)) TO position] -> show char (action( ...tagN) | neutral) at (position | side-to-position (time) (with TRANSITION)
+[Enter: char(, action(, ...tagN)) (TRANSITION IN) (FROM side (FOR (time) SECONDS)) TO position] -> show char (action( ...tagN) | neutral) at (position | side-to-position (time) (with TRANSITION)
 [Char: action(, ...tagN)] -> show char action (...tagN)
 [Exit: char] -> hide char
-(Section: name( with params p1(=def1)(, ...pN(=defN))) -> label name(\(p1(=def1)(, ...pN(=defN))\)):
+(Section: name( WITH PARAMS p1(=def1)(, ...pN(=defN))) -> label name(\(p1(=def1)(, ...pN(=defN))\)):
 Char: "text" -> "char" "text" | (char var) "text"
 : "text" -> "text"
 [Music: "file"(, fadeout old in Seconds] -> play music "file" (fadeout seconds)
-[Music: Stop] -> stop music
+[Music: Stop( WITH fadeout in seconds)] -> stop music
 [SFX: "file"] -> play sound "file"
 [FMV: "file"] -> $ renpy.movie_cutscene("file")
-[Flag: flag] -> $ flag = True
-[Var: var val] -> $ var = val
+[Flag: flag (OFF | ON)] -> $ flag = True
+[Var: var <expr | INC (BY amt) | DEC (BY amt)] -> $ var = val
 [Dialog(: hide | show)] -> window (hide | show | auto)
 (Go to label) -> jump label
-(Execute label( with params (name1=)p1(, ...(nameN=)pN))) -> call label(\((name1=)p1(, ...(nameN=)pN)\))
+(Execute label( with params (name1 )p1(, ...(nameN=)pN))) -> call label(\((name1=)p1(, ...(nameN=)pN)\))
 (End( with retval)) -> return( retval)
-
+[Camera: SNAP TO <loc | CENTER> | (QUICKLY (time)) (PAN TO loc | ZOOM <IN | OUT | NORMAL | WIDE | CLOSE))(... AND other_stuff))]
 
 (also else, else if, while)
 [If: expr]
@@ -46,8 +46,8 @@ if expr:
 
 [Choice(: menulabel)]
 ("title-text")
-* "text1": (show if expr1, )( set var1=val1|flag1 and) go to label1
-* "text2": (show if expr2, )( set var2=val2|flag2 and) go to label2
+* "text1": (show if expr1, )( set <var1 <expr | INC (BY amt) | DEC (BY amt)>|flag1 (ON | OFF)> and) go to label1
+* "text2": (show if expr2, )( set <var2 val2|flag2 (ON | OFF)>) go to label2
 ...
 * "textN": (show if exprN, )( set varN=valN|flagN and) go to labelN
 
