@@ -1,5 +1,6 @@
-(scene: bob)
-(SCENE: DISSOLVE TO ares)
+[scene: bob]
+[SCENE: DISSOLVE TO ares]
+[SCENE: FADE TO BLACK]
 [Enter: mom]
 [ENTER: c (pissed)]
 [enter: john (pissed, far) PLOT IN]
@@ -9,6 +10,8 @@
 [enter: john FADE IN FROM left TO center FOR 8 SECONDS]
 [john: smile]
 [mom: hooray]
+[mom: GO TO bed]
+[mom: stupid, GO TO left]
 [EXIT: john]
 [EXIT: john TO north]
 [EXIT: john FADE OUT TO north FOR 5 SECONDS]
@@ -49,8 +52,72 @@ the wind: "gamma"
 (var: a DEC)
 (var: a INC BY 4.3)
 (var: a DEC BY -8)
-(var: a (:(x-3)?3:4:))
-(var: a (DEC:45:DEC))
+(var: a '(x-3)?3:4')
+(var: a '45')
 [DIALOG: SHOW]
 [dialog: HIDE]
 [dialog: AUTO]
+(goto: manos)
+(GO TO: bob)
+(GOTO: john)
+(go to: jack)
+(execute: jack)
+(EXECUTE: john WITH PARAMS 5)
+(execute: james WITH PARAMS x = 3)
+(execute: june WITH PARAMS 6, 2)
+(execute: hm WITH PARAMS x = 9, y = 2, 7)
+(end)
+(END)
+(end: RETURN 6)
+[camera: SNAP TO middle]
+[CAMERA: PAN TO center QUICKLY]
+[camera: ZOOM IN]
+[camera: ZOOM OUT]
+[camera: ZOOM WIDE FOR 3 SECONDS]
+[camera: SNAP TO middle FOR 3 SECONDS AND ZOOM OUT QUICKLY]
+[Choice]
+[Choice: next]
+"joack"
+* "choice1": GO TO manos
+* "choice3": SHOW IF bobbers, GO TO manos
+* "choice7": SET a INC BY 2 AND GO TO manos
+* "yay": SHOW IF 22, SET bored OFF AND GO TO manos
+
+(if: flag1)
+(if: '28 + 2 == 1')
+[scene: FADE TO BLACK]
+(If: 'test+22 == 7')
+{
+	Miyuki: "Hello"
+	: "What?"
+}
+(IF: no)
+{
+	(execute: james)
+	(execute: john)
+}
+(else)
+{
+
+}
+(ELSE)
+(while: stuff)
+(WHILE: no)
+(else if: 7)
+(ELSE IF: 2)
+(elif: why)
+(ELIF: 20)
+
+(python)
+{
+	42+1
+	for i in ziebel:
+		print i
+}
+
+(PYTHON)
+{
+	42+1
+	for i in ziebel:
+		print "\}"
+}

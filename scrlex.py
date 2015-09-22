@@ -1,4 +1,5 @@
 import ply.lex as lex
+import re
 
 reserved = [
 	'TO',
@@ -20,7 +21,11 @@ reserved = [
 	'LOOP',
 	'STOP',
 	'ALL',
-	'SECONDS'
+	'SECONDS',
+	'RETURN',
+	'QUICKLY',
+	'GO',
+	'AND'
 ]
 
 tokens = [
@@ -47,7 +52,7 @@ tokens = [
 	'ANNOTATIONOPEN_ELIF',
 	'ANNOTATIONOPEN_WHILE',
 	'ANNOTATIONCLOSE',
-	'ID_PREDEF',
+	'ID_UPPER',
 	'ID',
 	'PARAMSOPEN',
 	'STRING',
@@ -56,12 +61,12 @@ tokens = [
 	'PYTHON_BLOCK',
 	'SNAP_TO',
 	'PAN_TO',
-	'EXPRESSION',
+	'BARE_EXPRESSION',
 	'SHOW_IF',
 	'COMMENT'
 ] + reserved
 
-literals = [',', '=', ':', '*', '}', '{', '(', ')']
+literals = [',', '=', ':', '*', '}', '{', '(', ')', ']']
 
 t_DIRECTIVEOPEN_SCENE = r"\[[Ss][Cc][Ee][Nn][Ee]"
 t_DIRECTIVEOPEN_ENTER = r"\[[Ee][Nn][Tt][Ee][Rr]"
@@ -71,10 +76,9 @@ t_DIRECTIVEOPEN_MUSIC = r"\[[Mm][Uu][Ss][Ii][Cc]"
 t_DIRECTIVEOPEN_SFX = r"\[[Ss][Ff][Xx]"
 t_DIRECTIVEOPEN_GFX = r"\[[Gg][Ff][Xx]"
 t_DIRECTIVEOPEN_FMV = r"\[[Ff][Mm][Vv]"
-t_DIRECTIVEOPEN_DIALOG = r"\[[Di][Aa][Ll][Oo][Gg]"
+t_DIRECTIVEOPEN_DIALOG = r"\[[Dd][Ii][Aa][Ll][Oo][Gg]"
 t_DIRECTIVEOPEN_CAMERA = r"\[[Cc][Aa][Mm][Ee][Rr][Aa]"
 t_DIRECTIVEOPEN_CHOICE = r"\[[Cc][Hh][Oo][Ii][Cc][Ee]"
-t_DIRECTIVECLOSE = r"\]"
 t_ANNOTATIONOPEN_SECTION = r"\([Ss][Ee][Cc][Tt][Ii][Oo][Nn]"
 t_ANNOTATIONOPEN_FLAGSET = r"\([Ff][Ll][Aa][Gg]"
 t_ANNOTATIONOPEN_VARSET = r"\([Vv][Aa][Rr]"
@@ -85,29 +89,49 @@ t_ANNOTATIONOPEN_IF = r"\([Ii][Ff]"
 t_ANNOTATIONOPEN_ELSE = r"\([Ee][Ll][Ss][Ee]"
 t_ANNOTATIONOPEN_ELIF = r"\([Ee][Ll](?:[Ss][Ee]\s?)?[Ii][Ff]"
 t_ANNOTATIONOPEN_WHILE = r"\([Ww][Hh][Ii][Ll][Ee]"
-t_ANNOTATIONCLOSE = r"\)"
-t_PARAMSOPEN = r"WITH\sPARAMS"
 t_STRING = r"\"[^\"\\]*(?:\\.[^\"\\]*)*\""
-t_FADEOUT_OLD = "FADEOUT\sOLD"
 t_NUMBER = r"(?:(?:\+|-)\s*)?\d+(\.\d*)?"
 t_PYTHON_BLOCK = r"\([Pp][Yy][Tt][Hh][Oo][Nn]\)\s*\{[^}\\]*(?:\\.[^}\\]*)*\}"
-t_SNAP_TO = r"SNAP\sTO"
-t_PAN_TO = r"PAN\sTO"
 # master regex uses a capturing group, so group in this regex is really #2:
-t_EXPRESSION = r"\(([^:]*):(?:[^:]|:(?!\2\))*):\2\)"
-t_SHOW_IF = "SHOW\sIF"
+t_BARE_EXPRESSION = r"'[^'\\]*(?:\\.[^'\\]*)*'"
 t_COMMENT = r"\#.*"
 
-def t_ID_PREDEF(t):
+t_ignore = ' \t'
+
+def t_FADEOUT_OLD(t):
+	r"FADEOUT\sOLD"
+	return t
+	
+def t_SNAP_TO(t):
+	r"SNAP\sTO"
+	return t
+
+def t_PAN_TO(t):
+	r"PAN\sTO"
+	return t
+	
+def t_SHOW_IF(t):
+	r"SHOW\sIF"
+	return t
+
+def t_PARAMSOPEN(t):
+	r"WITH\sPARAMS"
+	return t
+	
+def t_ID_WITH_UPPER(t):
+	r"(?:_[_0-9]*)?[A-Z]+[_0-9]*[a-z]+[_A-Za-z0-9]*"
+	return t_ID(t)
+
+def t_ID_UPPER(t):
 	r"[_A-Z][_A-Z0-9]*"
 	if t.value in reserved:
 		t.type = t.value
 	else:
-		t.type = 'ID_PREDEF'
+		t.type = 'ID_UPPER'
 	return t
 
 def t_ID(t):
-	r"[_a-zA-Z][_a-zA-Z0-9]*"
+	r"[_A-Za-z][_A-Za-z0-9]*"
 	if t.value in reserved:
 		t.type = t.value
 	else:
@@ -120,7 +144,7 @@ def t_newline(t):
 	
 def t_error(t):
 	print("Warning:")
-	print("Line %d: Illegal character '%s'; skipping" % t.lexer.lineno, t.value[0])
+	print("Line %d: Illegal character '%s'; skipping" % (t.lexer.lineno, t.value[0]))
 	t.lexer.skip(1)
 
 lexer = lex.lex()

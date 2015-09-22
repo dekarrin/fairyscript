@@ -1,6 +1,6 @@
 [Scene: (TRANSITION TO) scene_name] -> scene bg scene_name (with TRANSITION)
 [Enter: char ( action(, ...tagN)) (TRANSITION IN) (FROM side (FOR (time) SECONDS)) TO position] -> show char (action( ...tagN) | neutral) at (position | side-to-position (time) (with TRANSITION)
-[Char: action(, ...tagN)] -> show char action (...tagN)
+[Char: (action(, ...tagN)), | (GO TO pos)] -> show char action (...tagN)
 [Exit: char] -> hide char
 (Section: name( WITH PARAMS p1(=def1)(, ...pN(=defN))) -> label name(\(p1(=def1)(, ...pN(=defN))\)):
 Char: "text" -> "char" "text" | (char var) "text"
