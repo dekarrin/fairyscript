@@ -16,7 +16,6 @@ reserved = [
 	'HIDE',
 	'SHOW',
 	'AUTO',
-	'FADEOUT',
 	'ZOOM',
 	'LOOP',
 	'STOP',
@@ -24,6 +23,7 @@ reserved = [
 	'SECONDS',
 	'RETURN',
 	'QUICKLY',
+	'SLOWLY',
 	'GO',
 	'AND'
 ]
