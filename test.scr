@@ -1,0 +1,41 @@
+(scene: bob)
+(SCENE: DISSOLVE TO ares)
+[Enter: mom]
+[ENTER: c (pissed)]
+[enter: john (pissed, far) PLOT IN]
+[enter: john FADE IN FROM left]
+[enter: john FROM back FOR 2 SECONDS]
+[enter: john TO right]
+[enter: john FADE IN FROM left TO center FOR 8 SECONDS]
+[john: smile]
+[mom: hooray]
+[EXIT: john]
+[EXIT: john TO north]
+[EXIT: john FADE OUT TO north FOR 5 SECONDS]
+[exit: john]
+(section: stupid)
+(SECTION: me WITH PARAMS p2 = 4)
+(section: go WITH PARAMS x)
+(section: check WITH PARAMS x2, x =6, e)
+john: "Hello!"
+JACK: "No"
+the wind: "gamma"
+: "Are you serious?!"
+: "but is this an \"escaped\" string?"
+[music: "bob.ogg"]
+[MUSIC: "bob.ogg", FADEOUT OLD]
+[MUSIC: "bob.ogg", FADEOUT OLD FOR 3 SECONDS]
+[music: STOP]
+[music: STOP, FADEOUT]
+[music: STOP, FADEOUT FOR -2.3 SECONDS]
+[SFX: "boom.ogg"]
+[sfx: LOOP "boom.ogg"]
+[sfx: STOP]
+[sfx: STOP "boom.ogg"]
+[gfx: type]
+[GFX: "explosion"]
+[GFX: LOOP "me"]
+[gfx: STOP]
+[gfx: STOP ALL]
+[gfx: STOP "me"]
+[fmv: "filename.mp4"]
