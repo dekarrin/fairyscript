@@ -52,7 +52,6 @@ tokens = [
 	'ANNOTATIONOPEN_ELIF',
 	'ANNOTATIONOPEN_WHILE',
 	'ANNOTATIONCLOSE',
-	'ID_UPPER',
 	'ID',
 	'PARAMSOPEN',
 	'STRING',
@@ -116,18 +115,6 @@ def t_SHOW_IF(t):
 
 def t_PARAMSOPEN(t):
 	r"WITH\sPARAMS"
-	return t
-	
-def t_ID_WITH_UPPER(t):
-	r"(?:_[_0-9]*)?[A-Z]+[_0-9]*[a-z]+[_A-Za-z0-9]*"
-	return t_ID(t)
-
-def t_ID_UPPER(t):
-	r"[_A-Z][_A-Z0-9]*"
-	if t.value in reserved:
-		t.type = t.value
-	else:
-		t.type = 'ID_UPPER'
 	return t
 
 def t_ID(t):

@@ -54,9 +54,9 @@ the wind: "gamma"
 (var: a DEC BY -8)
 (var: a '(x-3)?3:4')
 (var: a '45')
-[DIALOG: SHOW]
-[dialog: HIDE]
-[dialog: AUTO]
+(DIALOG: SHOW)
+(dialog: HIDE)
+(dialog: AUTO)
 (goto: manos)
 (GO TO: bob)
 (GOTO: john)
