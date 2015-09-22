@@ -121,6 +121,8 @@ def t_ID(t):
 	r"[_A-Za-z][_A-Za-z0-9]*"
 	if t.value in reserved:
 		t.type = t.value
+	elif t.value = 'OVER':
+		t.type = 'FOR'
 	else:
 		t.type = 'ID'
 	return t
