@@ -56,7 +56,9 @@ exit_directive		: DIRECTIVEOPEN_EXIT : ID ]
 					| DIRECTIVEOPEN_EXIT : ID motion_geometry ]
 					| DIRECTIVEOPEN_EXIT : ID transition_out motion_geometry ]
 
-music_directive		: DIRECTIVEOPEN_MUSIC : STOP any_element_id ]
+music_directive		: DIRECTIVEOPEN_MUSIC : STOP ]
+					| DIRECTIVEOPEN_MUSIC : STOP duration ]
+					| DIRECTIVEOPEN_MUSIC : STOP any_element_id ]
 					| DIRECTIVEOPEN_MUSIC : STOP any_element_id duration ]
 					| DIRECTIVEOPEN_MUSIC : element_id ]
 					| DIRECTIVEOPEN_MUSIC : element_id , FADEOUT_OLD ]
@@ -66,11 +68,15 @@ gfx_directive		: DIRECTIVEOPEN_GFX : element_id ]
 					| DIRECTIVEOPEN_GFX : LOOP element_id ]
 					| DIRECTIVEOPEN_GFX : STOP any_element_id ]
 					| DIRECTIVEOPEN_GFX : STOP any_element_id duration ]
+					| DIRECTIVEOPEN_GFX : STOP ]
+					| DIRECTIVEOPEN_GFX : STOP duration ]
 					
 sfx_directive		: DIRECTIVEOPEN_SFX : element_id ]
 					| DIRECTIVEOPEN_SFX : LOOP element_id ]
 					| DIRECTIVEOPEN_SFX : STOP any_element_id ]
 					| DIRECTIVEOPEN_SFX : STOP any_element_id duration ]
+					| DIRECTIVEOPEN_SFX : STOP ]
+					| DIRECTIVEOPEN_SFX : STOP duration ]
 					
 fmv_directive		: DIRECTIVEOPEN_FMV : element_id ]
 
@@ -126,7 +132,6 @@ transition_out		: ID OUT
 
 any_element_id		: element_id
 					| ALL
-					| (null)
 					
 duration			: FOR NUMBER
 					| FOR NUMBER SECONDS
