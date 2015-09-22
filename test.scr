@@ -39,3 +39,18 @@ the wind: "gamma"
 [gfx: STOP ALL]
 [gfx: STOP "me"]
 [fmv: "filename.mp4"]
+[FMV:" working"]
+(flag: bob)
+(FLAG: back OFF)
+(FLAG: j ON)
+(VAR: j 3)
+(var:cgh "set")
+(var: a INC)
+(var: a DEC)
+(var: a INC BY 4.3)
+(var: a DEC BY -8)
+(var: a (:(x-3)?3:4:))
+(var: a (DEC:45:DEC))
+[DIALOG: SHOW]
+[dialog: HIDE]
+[dialog: AUTO]
