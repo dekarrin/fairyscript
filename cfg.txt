@@ -2,7 +2,7 @@ Context-Free Grammar for .scr Format:
 
 script				: block
 
-block				: statement statement
+block				: statement block
 					| statement
 			
 statement			: directive
@@ -38,7 +38,7 @@ line				: ID : STRING
 scene_directive		: DIRECTIVEOPEN_SCENE : ID ]
 					| DIRECTIVEOPEN_SCENE : transition_to ID ]
 					
-enter_directive		: DIRECTIVEOPEN_ENTER : ID ]
+-enter_directive		: DIRECTIVEOPEN_ENTER : ID ]
 					| DIRECTIVEOPEN_ENTER : ID ( actor_states ) ]
 					| DIRECTIVEOPEN_ENTER : ID transition_in ]
 					| DIRECTIVEOPEN_ENTER : ID ( actor_states ) transition_in ]
@@ -47,16 +47,16 @@ enter_directive		: DIRECTIVEOPEN_ENTER : ID ]
 					| DIRECTIVEOPEN_ENTER : ID transition_in motion_geometry ]
 					| DIRECTIVEOPEN_ENTER : ID ( actor_states ) transition_in motion_geometry ]
 
-action_directive	: DIRECTIVEOPEN_ACTION ID : actor_states ]
+-action_directive	: DIRECTIVEOPEN_ACTION ID : actor_states ]
 					| DIRECTIVEOPEN_ACTION ID : GO destination ]
 					| DIRECTIVEOPEN_ACTION ID : actor_states , GO destination ]
 					
-exit_directive		: DIRECTIVEOPEN_EXIT : ID ]
+-exit_directive		: DIRECTIVEOPEN_EXIT : ID ]
 					| DIRECTIVEOPEN_EXIT : ID transition_out ]
 					| DIRECTIVEOPEN_EXIT : ID motion_geometry ]
 					| DIRECTIVEOPEN_EXIT : ID transition_out motion_geometry ]
 
-music_directive		: DIRECTIVEOPEN_MUSIC : STOP ]
+-music_directive		: DIRECTIVEOPEN_MUSIC : STOP ]
 					| DIRECTIVEOPEN_MUSIC : STOP duration ]
 					| DIRECTIVEOPEN_MUSIC : STOP any_element_id ]
 					| DIRECTIVEOPEN_MUSIC : STOP any_element_id duration ]
@@ -64,21 +64,21 @@ music_directive		: DIRECTIVEOPEN_MUSIC : STOP ]
 					| DIRECTIVEOPEN_MUSIC : element_id , FADEOUT_OLD ]
 					| DIRECTIVEOPEN_MUSIC : element_id , FADEOUT_OLD duration ]
 					
-gfx_directive		: DIRECTIVEOPEN_GFX : element_id ]
+-gfx_directive		: DIRECTIVEOPEN_GFX : element_id ]
 					| DIRECTIVEOPEN_GFX : LOOP element_id ]
 					| DIRECTIVEOPEN_GFX : STOP any_element_id ]
 					| DIRECTIVEOPEN_GFX : STOP any_element_id duration ]
 					| DIRECTIVEOPEN_GFX : STOP ]
 					| DIRECTIVEOPEN_GFX : STOP duration ]
 					
-sfx_directive		: DIRECTIVEOPEN_SFX : element_id ]
+-sfx_directive		: DIRECTIVEOPEN_SFX : element_id ]
 					| DIRECTIVEOPEN_SFX : LOOP element_id ]
 					| DIRECTIVEOPEN_SFX : STOP any_element_id ]
 					| DIRECTIVEOPEN_SFX : STOP any_element_id duration ]
 					| DIRECTIVEOPEN_SFX : STOP ]
 					| DIRECTIVEOPEN_SFX : STOP duration ]
 					
-fmv_directive		: DIRECTIVEOPEN_FMV : element_id ]
+-fmv_directive		: DIRECTIVEOPEN_FMV : element_id ]
 
 camera_directive	: DIRECTIVEOPEN_CAMERA : camera_actions ]
 
@@ -88,18 +88,18 @@ choice_directive	: DIRECTIVEOPEN_CHOICE ] STRING choices
 section_annotation	: ANNOTATIONOPEN_SECTION : ID )
 					| ANNOTATIONOPEN_SECTION : ID PARAMSOPEN params_declaration )
 
-flagset_annotation	: ANNOTATIONOPEN_FLAGSET : ID )
+-flagset_annotation	: ANNOTATIONOPEN_FLAGSET : ID )
 					| ANNOTATIONOPEN_FLAGSET : ID bool_expression )
 					
 varset_annotation	: ANNOTATIONOPEN_VARSET : ID )
 					| ANNOTATIONOPEN_VARSET : ID inc_dec )
 					| ANNOTATIONOPEN_VARSET : ID expression )
 					
-dialog_annotation	: ANNOTATIONOPEN_DIALOG : HIDE )
+-dialog_annotation	: ANNOTATIONOPEN_DIALOG : HIDE )
 					| ANNOTATIONOPEN_DIALOG : SHOW )
 					| ANNOTATIONOPEN_DIALOG : AUTO )
 					
-goto_annotation		: ANNOTATIONOPEN_GOTO : ID )
+-goto_annotation		: ANNOTATIONOPEN_GOTO : ID )
 
 execute_annotation	: ANNOTATIONOPEN_EXECUTE : ID )
 					| ANNOTATIONOPEN_EXECUTE : ID PARAMSOPEN params_set )
@@ -114,31 +114,31 @@ if_annotation		: ANNOTATIONOPEN_IF : bool_expression ) { block }
 					| ANNOTATIONOPEN_IF : bool_expression ) { block } else_ifs
 					| ANNOTATIONOPEN_IF : bool_expression ) { block } else_ifs ANNOTATIONOPEN_ELSE ) { block }
 					
-transition_to		: ID TO
+-transition_to		: ID TO
 
-actor_states		: ID
+-actor_states		: ID
 					| ID , actor_states
 					
-transition_in		: ID IN
+-transition_in		: ID IN
 
-motion_geometry		: destination
+-motion_geometry		: destination
 					| origin destination
 					| destination duration
 					| origin destination duration
 					
-destination			: TO ID
+-destination			: TO ID
 
-transition_out		: ID OUT
+-transition_out		: ID OUT
 
-any_element_id		: element_id
+-any_element_id		: element_id
 					| ALL
 					
-duration			: FOR NUMBER
+-duration			: FOR NUMBER
 					| FOR NUMBER SECONDS
 					| QUICKLY
 					| SLOWLY
 					
-element_id			: STRING
+-element_id			: STRING
 					| ID
 
 camera_actions		: camera_action
@@ -152,11 +152,11 @@ params_declaration	: ID
 					| ID , params_declaration
 					| ID = expression , params_declaration
 
-bool_expression		: OFF
+-bool_expression		: OFF
 					| ON
 					| BARE_EXPRESSION
 					
-by_amount			: BY NUMBER
+-by_amount			: BY NUMBER
 
 expression			: bool_expression
 					| STRING
@@ -176,7 +176,7 @@ params_set			: expression
 else_ifs			: ANNOTATIONOPEN_ELIF : bool_expression ) { block }
 					| ANNOTATIONOPEN_ELIF : bool_expression ) { block } else_ifs
 
-origin				: FROM ID
+-origin				: FROM ID
 					
 camera_action		: SNAP_TO ID
 					| PAN_TO ID
