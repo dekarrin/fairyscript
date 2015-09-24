@@ -22,7 +22,7 @@
 (section: check WITH PARAMS x2, x =6, e)
 john: "Hello!"
 JACK: "No"
-the wind: "gamma"
+the_wind: "gamma"
 : "Are you serious?!"
 : "but is this an \"escaped\" string?"
 [music: "bob.ogg"]
@@ -73,9 +73,8 @@ the wind: "gamma"
 [CAMERA: PAN TO center QUICKLY]
 [camera: ZOOM IN]
 [camera: ZOOM OUT]
-[camera: ZOOM WIDE FOR 3 SECONDS]
-[camera: SNAP TO middle FOR 3 SECONDS AND ZOOM OUT QUICKLY]
-[Choice]
+[camera: ZOOM OUT FOR 3 SECONDS]
+[camera: PAN TO middle FOR 3 SECONDS AND ZOOM OUT QUICKLY]
 [Choice: next]
 "joack"
 * "choice1": GO TO manos
@@ -96,17 +95,15 @@ the wind: "gamma"
 	(execute: james)
 	(execute: john)
 }
+(else if: 7)
+{
+	(execute: no)
+}
 (else)
 {
-
+	(go to: scene)
 }
-(ELSE)
-(while: stuff)
-(WHILE: no)
-(else if: 7)
-(ELSE IF: 2)
-(elif: why)
-(ELIF: 20)
+(while: stuff) { (execute: me)}
 
 (python)
 {
