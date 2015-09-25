@@ -34,7 +34,8 @@ def p_directive_2_specific(p):
 	p[0] = p[1]
 					
 def p_annotation_2_specific(p):
-	'''annotation	: section_annotation
+	'''annotation	: description_annotation
+					| section_annotation
 					| flagset_annotation
 					| varset_annotation
 					| dialog_annotation
@@ -58,7 +59,7 @@ def p_line_2_id_str(p):
 	
 def p_line_2_str_str(p):
 	'''line : STRING ':' STRING'''
-	p[0] = make_line(('string', p[1]), ('string', unescape(p[3])))
+	p[0] = make_line(('string', unescape(p[1])), ('string', unescape(p[3])))
 	
 def p_line_2_str(p):
 	'''line : ':' STRING'''
@@ -226,12 +227,20 @@ def p_choice_directive_2_label_choices(p):
 	
 def p_choice_directive_2_title_choices(p):
 	'''choice_directive : DIRECTIVEOPEN_CHOICE ']' STRING choices'''
-	p[0] = make_directive('CHOICE', title=('string', p[3]), label=None, choices=p[4])
+	p[0] = make_directive('CHOICE', title=('string', unescape(p[3])), label=None, choices=p[4])
 	
 def p_choice_directive_2_label_title_choices(p):
 	'''choice_directive : DIRECTIVEOPEN_CHOICE ':' ID ']' STRING choices'''
-	p[0] = make_directive('CHOICE', title=('string', p[5]), label=('id', p[3]), choices=p[6])
+	p[0] = make_directive('CHOICE', title=('string', unescape(p[5])), label=('id', p[3]), choices=p[6])
 
+def p_description_annotation_2_str(p):
+	'''description_annotation : ANNOTATIONOPEN_DESCRIPTION ':' STRING ')' '''
+	p[0] = make_annotation('DESCRIPTION', text=('string', unescape(p[3])), target=None)
+	
+def p_description_annotation_2_id_str(p):
+	'''description_annotation : ANNOTATIONOPEN_DESCRIPTION ':' ID ':' STRING ')' '''
+	p[0] = make_annotation('DESCRIPTION', text=('string', unescape(p[5])), target=('id', p[3]))
+	
 def p_section_annotation_2_id(p):
 	'''section_annotation : ANNOTATIONOPEN_SECTION ':' ID ')' '''
 	p[0] = make_annotation('SECTION', section=('id', p[3]), params=[])
