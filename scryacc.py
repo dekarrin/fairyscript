@@ -56,6 +56,10 @@ def p_line_2_id_str(p):
 	'''line : ID ':' STRING'''
 	p[0] = make_line(('id', p[1]), ('string', unescape(p[3])))
 	
+def p_line_2_str_str(p):
+	'''line : STRING ':' STRING'''
+	p[0] = make_line(('string', p[1]), ('string', unescape(p[3])))
+	
 def p_line_2_str(p):
 	'''line : ':' STRING'''
 	p[0] = make_line(None, ('string', unescape(p[2])))
@@ -312,8 +316,8 @@ def p_actor_states_2_id(p):
 	p[0] = [ ('id', p[1]) ]
 	
 def p_actor_states_2_id_actor_states(p):
-	'''actor_states : ID ',' actor_states'''
-	p[0] = [ ('id', p[1] ) ] + p[3]
+	'''actor_states : actor_states ',' ID'''
+	p[0] = p[1] + [ ('id', p[3] ) ]
 
 def p_transition_in_2_id_in(p):
 	'transition_in : ID IN'
@@ -524,15 +528,18 @@ def p_choice_2_varsets_cond_dest(p):
 def p_varsets_2_expr(p):
 	'''varsets	: SET ID inc_dec
 				| SET ID expression'''
-	p[0] = [ (('id', p[2]), p[3]) ]
+	p[0] = [ {'name': ('id', p[2]), 'value': p[3]} ]
 
-def p_varsets_2_expr_and_varsets(p):
-	'''varsets	: SET ID inc_dec AND varsets
-				| SET ID expression AND varsets'''
-	p[0] = [ (('id', p[2]), p[3]) ] + p[5]
+def p_varsets_2_varsets_and_expr(p):
+	'''varsets	: varsets AND SET ID inc_dec
+				| varsets AND SET ID expression'''
+	p[0] = [ {'name': ('id', p[4]), 'value': p[5]} ] + p[1]
 	
 def p_error(p):
-	print "Error on line " + str(p.lineno) + ": Unexpected " + p.value
+	if not p:
+		print "Error parsing script: unexpected end-of-file"
+	else:
+		print "Error parsing script: unexpected "  + p.value + " on line " + str(p.lineno)
 	
 def to_number(s):
 	if '.' in s:

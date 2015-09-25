@@ -33,93 +33,94 @@ annotation			: section_annotation
 					| PYTHON_BLOCK
 					
 line				: ID : STRING
+					| STRING : STRING
 					| : STRING
 					
-scene_directive		: DIRECTIVEOPEN_SCENE : ID ]
-					| DIRECTIVEOPEN_SCENE : transition_to ID ]
+scene_directive		: DIRECTIVEOPEN_SCENE ':' ID ']'
+					| DIRECTIVEOPEN_SCENE ':' transition_to ID ']'
 					
-enter_directive		: DIRECTIVEOPEN_ENTER : ID ]
-					| DIRECTIVEOPEN_ENTER : ID ( actor_states ) ]
-					| DIRECTIVEOPEN_ENTER : ID transition_in ]
-					| DIRECTIVEOPEN_ENTER : ID ( actor_states ) transition_in ]
-					| DIRECTIVEOPEN_ENTER : ID motion_geometry ]
-					| DIRECTIVEOPEN_ENTER : ID ( actor_states ) motion_geometry ]
-					| DIRECTIVEOPEN_ENTER : ID transition_in motion_geometry ]
-					| DIRECTIVEOPEN_ENTER : ID ( actor_states ) transition_in motion_geometry ]
+enter_directive		: DIRECTIVEOPEN_ENTER ':' ID ']'
+					| DIRECTIVEOPEN_ENTER ':' ID '(' actor_states ')' ']'
+					| DIRECTIVEOPEN_ENTER ':' ID transition_in ']'
+					| DIRECTIVEOPEN_ENTER ':' ID '(' actor_states ')' transition_in ']'
+					| DIRECTIVEOPEN_ENTER ':' ID motion_geometry ']'
+					| DIRECTIVEOPEN_ENTER ':' ID '(' actor_states ')' motion_geometry ']'
+					| DIRECTIVEOPEN_ENTER ':' ID transition_in motion_geometry ']'
+					| DIRECTIVEOPEN_ENTER ':' ID '(' actor_states ')' transition_in motion_geometry ']'
 
-action_directive	: DIRECTIVEOPEN_ACTION ID : actor_states ]
-					| DIRECTIVEOPEN_ACTION ID : GO destination ]
-					| DIRECTIVEOPEN_ACTION ID : actor_states , GO destination ]
+action_directive	: DIRECTIVEOPEN_ACTION ID ':' actor_states ']'
+					| DIRECTIVEOPEN_ACTION ID ':' GO destination ']'
+					| DIRECTIVEOPEN_ACTION ID ':' actor_states , GO destination ']'
 					
-exit_directive		: DIRECTIVEOPEN_EXIT : ID ]
-					| DIRECTIVEOPEN_EXIT : ID transition_out ]
-					| DIRECTIVEOPEN_EXIT : ID motion_geometry ]
-					| DIRECTIVEOPEN_EXIT : ID transition_out motion_geometry ]
+exit_directive		: DIRECTIVEOPEN_EXIT ':' ID ']'
+					| DIRECTIVEOPEN_EXIT ':' ID transition_out ']'
+					| DIRECTIVEOPEN_EXIT ':' ID motion_geometry ']'
+					| DIRECTIVEOPEN_EXIT ':' ID transition_out motion_geometry ']'
 
-music_directive		: DIRECTIVEOPEN_MUSIC : STOP ]
-					| DIRECTIVEOPEN_MUSIC : STOP duration ]
-					| DIRECTIVEOPEN_MUSIC : STOP any_element_id ]
-					| DIRECTIVEOPEN_MUSIC : STOP any_element_id duration ]
-					| DIRECTIVEOPEN_MUSIC : element_id ]
-					| DIRECTIVEOPEN_MUSIC : element_id , FADEOUT_OLD ]
-					| DIRECTIVEOPEN_MUSIC : element_id , FADEOUT_OLD duration ]
+music_directive		: DIRECTIVEOPEN_MUSIC ':' STOP ']'
+					| DIRECTIVEOPEN_MUSIC ':' STOP duration ']'
+					| DIRECTIVEOPEN_MUSIC ':' STOP any_element_id ']'
+					| DIRECTIVEOPEN_MUSIC ':' STOP any_element_id duration ']'
+					| DIRECTIVEOPEN_MUSIC ':' element_id ']'
+					| DIRECTIVEOPEN_MUSIC ':' element_id ',' FADEOUT_OLD ']'
+					| DIRECTIVEOPEN_MUSIC ':' element_id ',' FADEOUT_OLD duration ']'
 					
-gfx_directive		: DIRECTIVEOPEN_GFX : element_id ]
-					| DIRECTIVEOPEN_GFX : LOOP element_id ]
-					| DIRECTIVEOPEN_GFX : STOP any_element_id ]
-					| DIRECTIVEOPEN_GFX : STOP any_element_id duration ]
-					| DIRECTIVEOPEN_GFX : STOP ]
-					| DIRECTIVEOPEN_GFX : STOP duration ]
+gfx_directive		: DIRECTIVEOPEN_GFX ':' element_id ']'
+					| DIRECTIVEOPEN_GFX ':' LOOP element_id ']'
+					| DIRECTIVEOPEN_GFX ':' STOP any_element_id ']'
+					| DIRECTIVEOPEN_GFX ':' STOP any_element_id duration ']'
+					| DIRECTIVEOPEN_GFX ':' STOP ']'
+					| DIRECTIVEOPEN_GFX ':' STOP duration ']'
 					
-sfx_directive		: DIRECTIVEOPEN_SFX : element_id ]
-					| DIRECTIVEOPEN_SFX : LOOP element_id ]
-					| DIRECTIVEOPEN_SFX : STOP any_element_id ]
-					| DIRECTIVEOPEN_SFX : STOP any_element_id duration ]
-					| DIRECTIVEOPEN_SFX : STOP ]
-					| DIRECTIVEOPEN_SFX : STOP duration ]
+sfx_directive		: DIRECTIVEOPEN_SFX ':' element_id ']'
+					| DIRECTIVEOPEN_SFX ':' LOOP element_id ']'
+					| DIRECTIVEOPEN_SFX ':' STOP any_element_id ']'
+					| DIRECTIVEOPEN_SFX ':' STOP any_element_id duration ']'
+					| DIRECTIVEOPEN_SFX ':' STOP ']'
+					| DIRECTIVEOPEN_SFX ':' STOP duration ']'
 					
-fmv_directive		: DIRECTIVEOPEN_FMV : element_id ]
+fmv_directive		: DIRECTIVEOPEN_FMV ':' element_id ']'
 
-camera_directive	: DIRECTIVEOPEN_CAMERA : camera_actions ]
+camera_directive	: DIRECTIVEOPEN_CAMERA ':' camera_actions ']'
 
-choice_directive	: DIRECTIVEOPEN_CHOICE ] STRING choices
-					| DIRECTIVEOPEN_CHOICE : ID ] STRING choices
-					| DIRECTIVEOPEN_CHOICE ] choices
-					| DIRECTIVEOPEN_CHOICE : ID ] choices
+choice_directive	: DIRECTIVEOPEN_CHOICE ']' STRING choices
+					| DIRECTIVEOPEN_CHOICE ':' ID ']' STRING choices
+					| DIRECTIVEOPEN_CHOICE ']' choices
+					| DIRECTIVEOPEN_CHOICE ':' ID ']' choices
 					
-section_annotation	: ANNOTATIONOPEN_SECTION : ID )
-					| ANNOTATIONOPEN_SECTION : ID PARAMSOPEN params_declaration )
+section_annotation	: ANNOTATIONOPEN_SECTION ':' ID ')'
+					| ANNOTATIONOPEN_SECTION ':' ID PARAMSOPEN params_declaration ')'
 
-flagset_annotation	: ANNOTATIONOPEN_FLAGSET : ID )
-					| ANNOTATIONOPEN_FLAGSET : ID bool_expression )
+flagset_annotation	: ANNOTATIONOPEN_FLAGSET ':' ID ')'
+					| ANNOTATIONOPEN_FLAGSET ':' ID bool_expression ')'
 					
-varset_annotation	: ANNOTATIONOPEN_VARSET : ID )
-					| ANNOTATIONOPEN_VARSET : ID inc_dec )
-					| ANNOTATIONOPEN_VARSET : ID expression )
+varset_annotation	: ANNOTATIONOPEN_VARSET ':' ID ')'
+					| ANNOTATIONOPEN_VARSET ':' ID inc_dec ')'
+					| ANNOTATIONOPEN_VARSET ':' ID expression ')'
 					
-dialog_annotation	: ANNOTATIONOPEN_DIALOG : HIDE )
-					| ANNOTATIONOPEN_DIALOG : SHOW )
-					| ANNOTATIONOPEN_DIALOG : AUTO )
+dialog_annotation	: ANNOTATIONOPEN_DIALOG ':' HIDE ')'
+					| ANNOTATIONOPEN_DIALOG ':' SHOW ')'
+					| ANNOTATIONOPEN_DIALOG ':' AUTO ')'
 					
-goto_annotation		: ANNOTATIONOPEN_GOTO : ID )
+goto_annotation		: ANNOTATIONOPEN_GOTO ':' ID ')'
 
-execute_annotation	: ANNOTATIONOPEN_EXECUTE : ID )
-					| ANNOTATIONOPEN_EXECUTE : ID PARAMSOPEN params_set )
+execute_annotation	: ANNOTATIONOPEN_EXECUTE ':' ID ')'
+					| ANNOTATIONOPEN_EXECUTE ':' ID PARAMSOPEN params_set ')'
 
-end_annotation		: ANNOTATIONOPEN_END )
-					| ANNOTATIONOPEN_END : RETURN expression )
+end_annotation		: ANNOTATIONOPEN_END ')'
+					| ANNOTATIONOPEN_END ':' RETURN expression ')'
 					
-while_annotation	: ANNOTATIONOPEN_WHILE : bool_expression ) { block }
+while_annotation	: ANNOTATIONOPEN_WHILE ':' bool_expression ')' '{' block '}'
 
-if_annotation		: ANNOTATIONOPEN_IF : bool_expression ) { block } 
-					| ANNOTATIONOPEN_IF : bool_expression ) { block } ANNOTATIONOPEN_ELSE ) { block }
-					| ANNOTATIONOPEN_IF : bool_expression ) { block } else_ifs
-					| ANNOTATIONOPEN_IF : bool_expression ) { block } else_ifs ANNOTATIONOPEN_ELSE ) { block }
+if_annotation		: ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}'
+					| ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}' ANNOTATIONOPEN_ELSE ')' '{' block '}'
+					| ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}' else_ifs
+					| ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}' else_ifs ANNOTATIONOPEN_ELSE ')' '{' block '}'
 					
 transition_to		: ID TO
 
 actor_states		: ID
-					| ID , actor_states
+					| actor_states ',' ID
 					
 transition_in		: ID IN
 
@@ -153,9 +154,9 @@ choices				: choice
 					| choice choices
 		
 params_declaration	: ID
-					| ID = expression
-					| ID , params_declaration
-					| ID = expression , params_declaration
+					| ID '=' expression
+					| ID ',' params_declaration
+					| ID '=' expression ',' params_declaration
 
 bool_expression		: OFF
 					| ON
@@ -172,12 +173,12 @@ expression			: bool_expression
 					| NUMBER
 					
 params_set			: expression
-					| ID = expression
-					| expression, params_set
-					| ID = expression, params_set
+					| ID '=' expression
+					| expression ',' params_set
+					| ID '=' expression ',' params_set
 		
-else_ifs			: ANNOTATIONOPEN_ELIF : bool_expression ) { block }
-					| ANNOTATIONOPEN_ELIF : bool_expression ) { block } else_ifs
+else_ifs			: ANNOTATIONOPEN_ELIF ':' bool_expression ')' '{' block '}'
+					| ANNOTATIONOPEN_ELIF ':' bool_expression ')' '{' block '}' else_ifs
 
 origin				: FROM ID
 					
@@ -191,12 +192,12 @@ camera_action		: SNAP_TO ID
 					
 by_amount			: BY NUMBER
 					
-choice				: * STRING : GO destination
-					| * STRING : SHOW_IF bool_expression, GO destination
-					| * STRING : varsets AND GO destination
-					| * STRING : SHOW_IF bool_expression, varsets AND GO destination
+choice				: '*' STRING ':' GO destination
+					| '*' STRING ':' SHOW_IF bool_expression ',' GO destination
+					| '*' STRING ':' varsets AND GO destination
+					| '*' STRING ':' SHOW_IF bool_expression ',' varsets AND GO destination
 					
 varsets				: SET ID inc_dec
 					| SET ID expression
-					| SET ID inc_dec AND varsets
-					| SET ID expression AND varsets
+					| varsets AND SET ID inc_dec
+					| varsets AND SET ID expression

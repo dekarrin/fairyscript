@@ -22,15 +22,15 @@
 (section: check WITH PARAMS x2, x =6, e)
 john: "Hello!"
 JACK: "No"
-the_wind: "gamma"
+"the wind": "gamma"
 : "Are you serious?!"
 : "but is this an \"escaped\" string?"
 [music: "bob.ogg"]
 [MUSIC: "bob.ogg", FADEOUT OLD]
 [MUSIC: "bob.ogg", FADEOUT OLD FOR 3 SECONDS]
 [music: STOP]
-[music: STOP, FADEOUT]
-[music: STOP, FADEOUT FOR -2.3 SECONDS]
+[music: STOP OVER 9 SECONDS]
+[music: STOP ALL OVER -2.3 SECONDS]
 [SFX: "boom.ogg"]
 [sfx: LOOP "boom.ogg"]
 [sfx: STOP]
@@ -80,11 +80,10 @@ the_wind: "gamma"
 * "choice1": GO TO manos
 * "choice3": SHOW IF bobbers, GO TO manos
 * "choice7": SET a INC BY 2 AND GO TO manos
-* "yay": SHOW IF 22, SET bored OFF AND GO TO manos
+* "yay": SHOW IF '22 == \'7\'', SET bored OFF AND GO TO manos
 
-(if: flag1)
-(if: '28 + 2 == 1')
-[scene: FADE TO BLACK]
+(if: '28 + 2 == 1'){
+[scene: FADE TO BLACK]}
 (If: 'test+22 == 7')
 {
 	Miyuki: "Hello"
@@ -95,7 +94,7 @@ the_wind: "gamma"
 	(execute: james)
 	(execute: john)
 }
-(else if: 7)
+(else if: OFF)
 {
 	(execute: no)
 }
