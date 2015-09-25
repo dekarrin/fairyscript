@@ -64,6 +64,18 @@ def p_line_2_str_str(p):
 def p_line_2_str(p):
 	'''line : ':' STRING'''
 	p[0] = make_line(None, ('string', unescape(p[2])))
+	
+def p_line_2_id_attr_str(p):
+	'''line : ID '(' actor_states ')' ':' STRING'''
+	p[0] = make_line(('id', p[1]), ('string', unescape(p[6])), p[3])
+	
+def p_line_2_str_attr_str(p):
+	'''line : STRING '(' actor_states ')' ':' STRING'''
+	p[0] = make_line(('string', unescape(p[1])), ('string', unescape(p[6])), p[3])
+	
+def p_line_2_str_attr(p):
+	'''line : '(' actor_states ')' ':' STRING'''
+	p[0] = make_line(None, ('string', unescape(p[5])), p[2])
 
 def p_scene_directive_2_id(p):
 	'''scene_directive : DIRECTIVEOPEN_SCENE ':' ID ']' '''
@@ -548,7 +560,22 @@ def p_error(p):
 	if not p:
 		print "Error parsing script: unexpected end-of-file"
 	else:
-		print "Error parsing script: unexpected "  + p.value + " on line " + str(p.lineno)
+		t = None
+		v = None
+		if p.type == "STRING":
+			t = "string"
+			v = unescape(p.value)
+		elif p.type == "BARE_EXPRESSION":
+			t = "quoted expression"
+			v = unescape(p.value)
+		elif p.type == "ID":
+			t = "identifier"
+			v = p.value
+		if t is not None:
+			problem = "unexpected " + t + " \"" + v + "\""
+		else:
+			problem = "unexpected " + p.value
+		print "Error parsing script: " + problem + " on line " + str(p.lineno)
 	
 def to_number(s):
 	if '.' in s:
@@ -580,10 +607,14 @@ def make_directive(instruction, **kwargs):
 		dir[k] = kwargs[k]
 	return dir
 	
-def make_line(speaker, line):
-	return {'type': 'line', 'speaker': speaker, 'text': line}
+def make_line(speaker, line, states=None):
+	if states is None:
+		states = []
+	return {'type': 'line', 'speaker': speaker, 'text': line, 'states': states}
 
-def make_choice(text, jump_target, varsets=[], condition=None):
+def make_choice(text, jump_target, varsets=None, condition=None):
+	if varsets is None:
+		varsets = []
 	return {'text': text, 'target': jump_target, 'sets': varsets, 'condition': condition}
 	
 parser = yacc.yacc()

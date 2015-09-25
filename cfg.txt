@@ -33,9 +33,12 @@ annotation				: description_annotation
 						| if_annotation
 						| PYTHON_BLOCK
 						
-line					: ID : STRING
-						| STRING : STRING
-						| : STRING
+line					: ID ':' STRING
+						| STRING ':' STRING
+						| ':' STRING
+						| ID '(' actor_states ')' ':' STRING
+						| STRING '(' actor_states ')' ':' STRING
+						| '(' actor_states ')' ':' STRING
 						
 scene_directive			: DIRECTIVEOPEN_SCENE ':' ID ']'
 						| DIRECTIVEOPEN_SCENE ':' transition_to ID ']'
