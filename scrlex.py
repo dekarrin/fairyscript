@@ -115,7 +115,7 @@ def t_PARAMSOPEN(t):
 	return t
 
 def t_ID(t):
-	r"[_A-Za-z][_A-Za-z0-9]*"
+	r"[_A-Za-z][_A-Za-z0-9-]*"
 	if t.value in reserved:
 		t.type = t.value
 	elif t.value == 'OVER':
