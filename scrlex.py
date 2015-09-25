@@ -1,5 +1,10 @@
 import ply.lex as lex
 
+states = (
+	('description', 'exclusive'),
+	('descwords', 'exclusive')
+)
+
 reserved = [
 	'TO',
 	'IN',
@@ -60,7 +65,8 @@ tokens = [
 	'PAN_TO',
 	'BARE_EXPRESSION',
 	'SHOW_IF',
-	'COMMENT'
+	'COMMENT',
+	'UNQUOTED_STRING'
 ] + reserved
 
 literals = [',', '=', ':', '*', '}', '{', '(', ')', ']']
@@ -75,7 +81,6 @@ t_DIRECTIVEOPEN_GFX = r"\[[Gg][Ff][Xx]"
 t_DIRECTIVEOPEN_FMV = r"\[[Ff][Mm][Vv]"
 t_DIRECTIVEOPEN_CAMERA = r"\[[Cc][Aa][Mm][Ee][Rr][Aa]"
 t_DIRECTIVEOPEN_CHOICE = r"\[[Cc][Hh][Oo][Ii][Cc][Ee]"
-t_ANNOTATIONOPEN_DESCRIPTION = r"\([Dd][Ee][Ss][Cc][Rr][Ii][Pp][Tt][Ii][Oo][Nn]"
 t_ANNOTATIONOPEN_DIALOG = r"\([Dd][Ii][Aa][Ll][Oo][Gg]"
 t_ANNOTATIONOPEN_SECTION = r"\([Ss][Ee][Cc][Tt][Ii][Oo][Nn]"
 t_ANNOTATIONOPEN_FLAGSET = r"\([Ff][Ll][Aa][Gg]"
@@ -94,7 +99,23 @@ t_PYTHON_BLOCK = r"\([Pp][Yy][Tt][Hh][Oo][Nn]\)\s*\{[^}\\]*(?:\\.[^}\\]*)*\}"
 t_BARE_EXPRESSION = r"'[^'\\]*(?:\\.[^'\\]*)*'"
 t_COMMENT = r"\#.*"
 
-t_ignore = ' \t'
+t_ANY_ignore = ' \t'
+
+def t_ANNOTATIONOPEN_DESCRIPTION(t):
+	r"\([Dd][Ee][Ss][Cc][Rr][Ii][Pp][Tt][Ii][Oo][Nn]"
+	t.lexer.begin('description')
+	return t
+	
+def t_description_colon(t):
+	r":"
+	t.lexer.begin('descwords')
+	t.type = ':'
+	return t
+	
+def t_descwords_UNQUOTED_STRING(t):
+	r"(?:[^)\\]*(?:\\.[^)\\]*)+|[^)\\]+(?:\\.[^)\\]*)*)"
+	t.lexer.begin("INITIAL")
+	return t
 
 def t_FADEOUT_OLD(t):
 	r"FADEOUT\sOLD"
@@ -116,7 +137,7 @@ def t_PARAMSOPEN(t):
 	r"WITH\sPARAMS"
 	return t
 
-def t_ID(t):
+def t_INITIAL_description_ID(t):
 	r"[_A-Za-z][_A-Za-z0-9-]*"
 	if t.value in reserved:
 		t.type = t.value
@@ -126,11 +147,11 @@ def t_ID(t):
 		t.type = 'ID'
 	return t
 
-def t_newline(t):
+def t_ANY_newline(t):
 	r"\n+"
 	t.lexer.lineno += len(t.value)
 	
-def t_error(t):
+def t_ANY_error(t):
 	print("Warning:")
 	print("Line %d: Illegal character '%s'; skipping" % (t.lexer.lineno, t.value[0]))
 	t.lexer.skip(1)

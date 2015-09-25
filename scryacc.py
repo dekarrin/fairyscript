@@ -245,13 +245,13 @@ def p_choice_directive_2_label_title_choices(p):
 	'''choice_directive : DIRECTIVEOPEN_CHOICE ':' ID ']' STRING choices'''
 	p[0] = make_directive('CHOICE', title=('string', unescape(p[5])), label=('id', p[3]), choices=p[6])
 
-def p_description_annotation_2_str(p):
-	'''description_annotation : ANNOTATIONOPEN_DESCRIPTION ':' STRING ')' '''
-	p[0] = make_annotation('DESCRIPTION', text=('string', unescape(p[3])), target=None)
+def p_description_annotation_2_unstr(p):
+	'''description_annotation : ANNOTATIONOPEN_DESCRIPTION ':' UNQUOTED_STRING ')' '''
+	p[0] = make_annotation('DESCRIPTION', text=('string', unescape(' ' + p[3] + ' ')), target=None)
 	
 def p_description_annotation_2_id_str(p):
-	'''description_annotation : ANNOTATIONOPEN_DESCRIPTION ':' ID ':' STRING ')' '''
-	p[0] = make_annotation('DESCRIPTION', text=('string', unescape(p[5])), target=('id', p[3]))
+	'''description_annotation : ANNOTATIONOPEN_DESCRIPTION ':' ID ':' UNQUOTED_STRING ')' '''
+	p[0] = make_annotation('DESCRIPTION', text=('string', unescape(' ' + p[5] + ' ')), target=('id', p[3]))
 	
 def p_section_annotation_2_id(p):
 	'''section_annotation : ANNOTATIONOPEN_SECTION ':' ID ')' '''

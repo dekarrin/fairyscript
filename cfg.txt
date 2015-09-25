@@ -92,8 +92,8 @@ choice_directive		: DIRECTIVEOPEN_CHOICE ']' STRING choices
 						| DIRECTIVEOPEN_CHOICE ']' choices
 						| DIRECTIVEOPEN_CHOICE ':' ID ']' choices
 
-description_annotation	: ANNOTATIONOPEN_DESCRIPTION ':' STRING ')'
-						| ANNOTATIONOPEN_DESCRIPTION ':' ID ':' STRING ')'						
+description_annotation	: ANNOTATIONOPEN_DESCRIPTION ':' UNQUOTED_STRING ')'
+						| ANNOTATIONOPEN_DESCRIPTION ':' ID ':' UNQUOTED_STRING ')'						
 					
 section_annotation		: ANNOTATIONOPEN_SECTION ':' ID ')'
 						| ANNOTATIONOPEN_SECTION ':' ID PARAMSOPEN params_declaration ')'
