@@ -66,7 +66,8 @@ tokens = [
 	'BARE_EXPRESSION',
 	'SHOW_IF',
 	'COMMENT',
-	'UNQUOTED_STRING'
+	'UNQUOTED_STRING',
+	'WITH_PREVIOUS'
 ] + reserved
 
 literals = [',', '=', ':', '*', '}', '{', '(', ')', ']']
@@ -119,6 +120,10 @@ def t_descwords_UNQUOTED_STRING(t):
 
 def t_FADEOUT_OLD(t):
 	r"FADEOUT\sOLD"
+	return t
+	
+def t_WITH_PREVIOUS(t):
+	r"WITH\sPREVIOUS"
 	return t
 	
 def t_SNAP_TO(t):

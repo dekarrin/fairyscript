@@ -119,15 +119,23 @@ def p_enter_directive_2_id_states_trans_in_motion(p):
 
 def p_action_directive_2_states(p):
 	'''action_directive : DIRECTIVEOPEN_ACTION ID ':' actor_states ']' '''
-	p[0] = make_directive('ACTION', target=('id', p[2]), states=p[4], destination=None)
+	p[0] = make_directive('ACTION', target=('id', p[2]), states=p[4], destination=None, duration=None)
 	
 def p_action_directive_2_go_destination(p):
 	'''action_directive : DIRECTIVEOPEN_ACTION ID ':' GO destination ']' '''
-	p[0] = make_directive('ACTION', target=('id', p[2]), states=[], destination=p[5])
+	p[0] = make_directive('ACTION', target=('id', p[2]), states=[], destination=p[5], duration=None)
+	
+def p_action_directive_2_go_destination_duration(p):
+	'''action_directive : DIRECTIVEOPEN_ACTION ID ':' GO destination duration ']' '''
+	p[0] = make_directive('ACTION', target=('id', p[2]), states=[], destination=p[5], duration=p[6])
 	
 def p_action_directive_2_states_go_destination(p):
 	'''action_directive : DIRECTIVEOPEN_ACTION ID ':' actor_states ',' GO destination ']' '''
-	p[0] = make_directive('ACTION', target=('id', p[2]), states=p[4], destination=p[7])
+	p[0] = make_directive('ACTION', target=('id', p[2]), states=p[4], destination=p[7], duration=None)
+	
+def p_action_directive_2_states_go_destination_dur(p):
+	'''action_directive : DIRECTIVEOPEN_ACTION ID ':' actor_states ',' GO destination duration ']' '''
+	p[0] = make_directive('ACTION', target=('id', p[2]), states=p[4], destination=p[7], duration=p[8])
 
 def p_exit_directive_2_id(p):
 	'''exit_directive : DIRECTIVEOPEN_EXIT ':' ID ']' '''
@@ -343,6 +351,10 @@ def p_actor_states_2_id_actor_states(p):
 def p_transition_in_2_id_in(p):
 	'transition_in : ID IN'
 	p[0] = ('id', p[1])
+	
+def p_transition_in_2_with_scene(p):
+	'transition_in : WITH_PREVIOUS':
+	p[0] = ('rel', p[1])
 
 def p_motion_geometry_2_destination(p):
 	'motion_geometry : destination'
@@ -379,6 +391,10 @@ def p_destination_2_to_id(p):
 def p_transition_out_2_id_out(p):
 	'transition_out : ID OUT'
 	p[0] = ('id', p[1])
+	
+def p_transition_out_2_with_scene(p):
+	'transition_out : WITH_PREVIOUS'
+	p[0] = ('rel', p[1])
 	
 def p_any_elem_id_2_elem_id(p):
 	'any_element_id : element_id'

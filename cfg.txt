@@ -54,7 +54,9 @@ enter_directive			: DIRECTIVEOPEN_ENTER ':' ID ']'
 	
 action_directive		: DIRECTIVEOPEN_ACTION ID ':' actor_states ']'
 						| DIRECTIVEOPEN_ACTION ID ':' GO destination ']'
+						| DIRECTIVEOPEN_ACTION ID ':' GO destination duration ']'
 						| DIRECTIVEOPEN_ACTION ID ':' actor_states , GO destination ']'
+						| DIRECTIVEOPEN_ACTION ID ':' actor_states , GO destination duration ']'
 						
 exit_directive			: DIRECTIVEOPEN_EXIT ':' ID ']'
 						| DIRECTIVEOPEN_EXIT ':' ID transition_out ']'
@@ -130,6 +132,7 @@ actor_states			: ID
 						| actor_states ',' ID
 					
 transition_in			: ID IN
+						| WITH_PREVIOUS
 
 motion_geometry			: destination
 						| origin destination
@@ -142,6 +145,7 @@ motion_geometry			: destination
 destination				: TO ID
 
 transition_out			: ID OUT
+						| WITH_PREVIOUS
 
 any_element_id			: element_id
 						| ALL
