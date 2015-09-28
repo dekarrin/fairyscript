@@ -71,10 +71,10 @@ music_directive			: DIRECTIVEOPEN_MUSIC ':' STOP ']'
 						| DIRECTIVEOPEN_MUSIC ':' element_id ',' FADEOUT_OLD ']'
 						| DIRECTIVEOPEN_MUSIC ':' element_id ',' FADEOUT_OLD duration ']'
 					
-gfx_directive			: DIRECTIVEOPEN_GFX ':' element_id ']'
-						| DIRECTIVEOPEN_GFX ':' LOOP element_id ']'
-						| DIRECTIVEOPEN_GFX ':' STOP any_element_id ']'
-						| DIRECTIVEOPEN_GFX ':' STOP any_element_id duration ']'
+gfx_directive			: DIRECTIVEOPEN_GFX ':' ID ']'
+						| DIRECTIVEOPEN_GFX ':' LOOP ID ']'
+						| DIRECTIVEOPEN_GFX ':' STOP id_or_all']'
+						| DIRECTIVEOPEN_GFX ':' STOP id_or_all duration ']'
 						| DIRECTIVEOPEN_GFX ':' STOP ']'
 						| DIRECTIVEOPEN_GFX ':' STOP duration ']'
 						
@@ -95,7 +95,7 @@ choice_directive		: DIRECTIVEOPEN_CHOICE ']' STRING choices
 						| DIRECTIVEOPEN_CHOICE ':' ID ']' choices
 
 description_annotation	: ANNOTATIONOPEN_DESCRIPTION ':' UNQUOTED_STRING ')'
-						| ANNOTATIONOPEN_DESCRIPTION ':' ID ':' UNQUOTED_STRING ')'						
+						| ANNOTATIONOPEN_DESCRIPTION ':' ID ':' UNQUOTED_STRING ')'			
 					
 section_annotation		: ANNOTATIONOPEN_SECTION ':' ID ')'
 						| ANNOTATIONOPEN_SECTION ':' ID PARAMSOPEN params_declaration ')'
@@ -212,3 +212,6 @@ varsets					: SET ID inc_dec
 						| SET ID expression
 						| varsets AND SET ID inc_dec
 						| varsets AND SET ID expression
+						
+id_or_all				: ID
+						| ALL

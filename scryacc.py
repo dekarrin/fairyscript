@@ -181,20 +181,20 @@ def p_music_directive_2_elem_fadeout_dur(p):
 	'''music_directive : DIRECTIVEOPEN_MUSIC ':' element_id ',' FADEOUT_OLD duration ']' '''
 	p[0] = make_directive('MUSIC', target=p[3], fadeout=p[6], action='start')
 
-def p_gfx_directive_2_elem_id(p):
-	'''gfx_directive : DIRECTIVEOPEN_GFX ':' element_id ']' '''
-	p[0] = make_directive('GFX', target=p[3], loop=('boolean', False), action='start')
+def p_gfx_directive_2_id(p):
+	'''gfx_directive : DIRECTIVEOPEN_GFX ':' ID ']' '''
+	p[0] = make_directive('GFX', target=('id', p[3]), loop=('boolean', False), action='start')
 	
-def p_gfx_directive_2_loop_elem_id(p):
-	'''gfx_directive : DIRECTIVEOPEN_GFX ':' LOOP element_id ']' '''
-	p[0] = make_directive('GFX', target=p[4], loop=('boolean', True), action='start')
+def p_gfx_directive_2_loop_id(p):
+	'''gfx_directive : DIRECTIVEOPEN_GFX ':' LOOP ID ']' '''
+	p[0] = make_directive('GFX', target=('id', p[4]), loop=('boolean', True), action='start')
 	
 def p_gfx_directive_2_stop_elem(p):
-	'''gfx_directive : DIRECTIVEOPEN_GFX ':' STOP any_element_id ']' '''
+	'''gfx_directive : DIRECTIVEOPEN_GFX ':' STOP id_or_all ']' '''
 	p[0] = make_directive('GFX', target=p[4], duration=None, action='stop')
 	
 def p_gfx_directive_2_stop_elem_dur(p):
-	'''gfx_directive : DIRECTIVEOPEN_GFX ':' STOP any_element_id duration ']' '''
+	'''gfx_directive : DIRECTIVEOPEN_GFX ':' STOP id_or_all duration ']' '''
 	p[0] = make_directive('GFX', target=p[4], duration=p[5], action='stop')
 	
 def p_gfx_directive_2_stop(p):
@@ -353,7 +353,7 @@ def p_transition_in_2_id_in(p):
 	p[0] = ('id', p[1])
 	
 def p_transition_in_2_with_scene(p):
-	'transition_in : WITH_PREVIOUS':
+	'transition_in : WITH_PREVIOUS'
 	p[0] = ('rel', p[1])
 
 def p_motion_geometry_2_destination(p):
@@ -473,12 +473,12 @@ def p_bool_expression_2_id(p):
 def p_inc_dec_2_rel(p):
 	'''inc_dec	: INC
 				| DEC'''
-	p[0] = {'type': ('rel', p[1]), 'amount': ('number', 1)}
+	p[0] = ('incdec', {'type': ('rel', p[1]), 'amount': ('number', 1)})
 	
 def p_inc_dec_2_rel_amount(p):
 	'''inc_dec	: INC by_amount
 				| DEC by_amount'''
-	p[0] = {'type': ('rel', p[1]), 'amount': p[2]}
+	p[0] = ('incdec', {'type': ('rel', p[1]), 'amount': p[2]})
 	
 def p_expression_2_bool(p):
 	'expression : bool_expression'
@@ -571,6 +571,14 @@ def p_varsets_2_varsets_and_expr(p):
 	'''varsets	: varsets AND SET ID inc_dec
 				| varsets AND SET ID expression'''
 	p[0] = [ {'name': ('id', p[4]), 'value': p[5]} ] + p[1]
+	
+def p_id_or_all_2_id(p):
+	'id_or_all : ID'
+	p[0] = ('id', p[1])
+	
+def p_id_or_all_2_all(p):
+	'id_or_all : ALL'
+	p[0] = ('rel', p[1])
 	
 def p_error(p):
 	if not p:
