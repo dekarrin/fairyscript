@@ -1,11 +1,9 @@
-
-from pprint import pprint
-
+import scp
 
 class RenpyCompiler(object):
 	def __init__(self):
 		self._indent_lev = 0
-		self.quote_spaces = 4
+		self.scp.quote_spaces = 4
 		self._compiled = None
 		self._to_add = ""
 		self.background_ent = 'bg'
@@ -80,19 +78,19 @@ class RenpyCompiler(object):
 		
 	def add_line(self, text=""):
 		self.add(text)
-		indent = (' ' * self.quote_spaces * self._indent_lev)
+		indent = (' ' * self.scp.quote_spaces * self._indent_lev)
 		self._compiled += indent + self._to_add + '\n'
 		self._to_add = ""
 		
 	def _compile_line(self, line):
-		text = quote(line['text'][1])
+		text = scp.quote(line['text'][1])
 		if line['speaker'] is None:
 			self.add_line(text)
 		else:
 			if line['speaker'][0] is 'id':
 				self.add_line(line['speaker'][1] + ' ' + text)
 			else:
-				self.add_line(quote(line['speaker'][1]) + ' ' + text)
+				self.add_line(scp.quote(line['speaker'][1]) + ' ' + text)
 				
 	def _compile_SCENE(self, scene):
 		self.add_line("scene " + self.background_ent + " " + scene['name'][1])
@@ -103,7 +101,7 @@ class RenpyCompiler(object):
 			self.add_line()
 	
 	def _compile_ENTER(self, enter):
-		if self._has_enter_trans and enter['transition'] is not None and not typed_check(enter['transition'], 'rel', 'WITH PREVIOUS'):
+		if self._has_enter_trans and enter['transition'] is not None and not scp.typed_check(enter['transition'], 'rel', 'WITH PREVIOUS'):
 			self._finish_transition()
 		self.add_line(build_show(enter['target'][1], enter['states']))
 		geom = enter['motion']
@@ -122,11 +120,11 @@ class RenpyCompiler(object):
 				self.add_line('at ' + dest)
 			else:
 				self.add_line('at ' + orig)
-		if enter['transition'] is not None and not typed_check(enter['transition'], 'rel', 'WITH PREVIOUS'):
+		if enter['transition'] is not None and not scp.typed_check(enter['transition'], 'rel', 'WITH PREVIOUS'):
 			self._has_enter_trans = True
 			self._scene_trans = enter['transition'][1]
 		if geom is not None and orig is not None:
-			time = self.get_duration(geom['duration'])
+			time = scp.get_duration(geom['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
 			self.add_line(build_show(enter['target'][1], enter['states']))
 			self.add_line('at ' + dest)
 			self.add_line('with MoveTransition(' + str(time) + ')')
@@ -135,13 +133,13 @@ class RenpyCompiler(object):
 	def _compile_ACTION(self, action):
 		self.add_line(build_show(action['target'][1], action['states']))
 		if action['destination'] is not None:
-			time = self.get_duration(action['duration'])
+			time = scp.get_duration(action['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
 			self.add_line('at ' + action['destination'][1])
 			self.add_line('with MoveTransition(' + str(time) + ')')
 		self.add_line()
 	
 	def _compile_EXIT(self, exit):
-		if self._has_exit_trans and exit['transition'] is not None and not typed_check(exit['transition'], 'rel', 'WITH PREVIOUS'):
+		if self._has_exit_trans and exit['transition'] is not None and not scp.typed_check(exit['transition'], 'rel', 'WITH PREVIOUS'):
 			self._finish_transition()
 		self.add_line('show ' + exit['target'][1])
 		geom = exit['motion']
@@ -160,11 +158,11 @@ class RenpyCompiler(object):
 				self.add_line('at ' + dest)
 			else:
 				self.add_line('at ' + orig)
-		if exit['transition'] is not None and not typed_check(exit['transition'], 'rel', 'WITH PREVIOUS'):
+		if exit['transition'] is not None and not scp.typed_check(exit['transition'], 'rel', 'WITH PREVIOUS'):
 			self._has_exit_trans = True
 			self._scene_trans = exit['transition'][1]
 		if geom is not None and orig is not None:
-			time = self.get_duration(geom['duration'])
+			time = scp.get_duration(geom['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
 			self.add_line('show ' + exit['target'][1])
 			self.add_line('at ' + orig)
 			self.add_line('with MoveTransition(' + str(time) + ')')
@@ -174,35 +172,35 @@ class RenpyCompiler(object):
 	def _compile_MUSIC(self, music):
 		if music['action'] == 'start':
 			self.add('play music ')
-			if typed_check(music['target'], 'id'):
+			if scp.typed_check(music['target'], 'id'):
 				self.add(music['target'][1])
-			elif typed_check(music['target'], 'string'):
-				self.add(quote(music['target'][1]))
+			elif scp.typed_check(music['target'], 'string'):
+				self.add(scp.quote(music['target'][1]))
 			if music['fadeout'] is not None:
-				time = self.get_duration(music['fadeout'])
+				time = scp.get_duration(music['fadeout'], self.quickly_rel, self.slowly_rel, self.default_duration)
 				self.add(' fadeout ' + str(time))
 		elif music['action'] == 'stop':
 			explicit_all = False
-			if typed_check(music['target'], 'rel', 'ALL'):
+			if scp.typed_check(music['target'], 'rel', 'ALL'):
 				explicit_all = True
 			self.add('stop music')
 			if not explicit_all:
 				self._warnings['targeted_music_stop'] = ["Ren'py does not support targeted music stop; any such directives will be compiled as if they were STOP ALL"]
 			if music['duration'] is not None:
-				time = self.get_duration(music['duration'])
+				time = scp.get_duration(music['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
 				self.add(' fadeout ' + str(time))
 		self.add_line()
 		self.add_line()
 		
 	def _compile_GFX(self, gfx):
-		if typed_check(gfx['target'], 'id'):
+		if scp.typed_check(gfx['target'], 'id'):
 			eff = gfx['target'][1]
 			if eff not in self._gfx_targets:
 				self.add_warning('no_gfx_binding', "GFX '%s' does not have any binding defined; assuming 'scene'" % eff)
 				self.add_gfx_target(eff, 'scene')
 			binding_type = self._gfx_targets[eff]
 		if gfx['action'] == 'start':
-			if typed_check(gfx['loop'], 'boolean', True):
+			if scp.typed_check(gfx['loop'], 'boolean', True):
 				if binding_type != 'DISPLAYABLE':
 					eff += '_loop'
 				else:
@@ -223,9 +221,9 @@ class RenpyCompiler(object):
 		elif gfx['action'] == 'stop':
 			dissolve = None
 			if gfx['duration'] is not None:
-				time = self.get_duration(gfx['duration'])
+				time = scp.get_duration(gfx['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
 				dissolve = " with Dissolve(" + str(time) + ")"
-			if typed_check(gfx['target'], 'rel', 'ALL'):
+			if scp.typed_check(gfx['target'], 'rel', 'ALL'):
 				self.add_line('show layer master')
 				if self._use_camera_system:
 					self.add_line('at ' + self._get_current_camera())
@@ -259,29 +257,29 @@ class RenpyCompiler(object):
 	def _compile_SFX(self, sfx):
 		if sfx['action'] == 'start':
 			self.add('play sound ')
-			if typed_check(sfx['target'], 'string'):
-				self.add(quote(sfx['target'][1]))
+			if scp.typed_check(sfx['target'], 'string'):
+				self.add(scp.quote(sfx['target'][1]))
 			else:
 				self.add(sfx['target'][1])
-			if typed_check(sfx['loop'], 'boolean', True):
+			if scp.typed_check(sfx['loop'], 'boolean', True):
 				self.add(' loop')
 		elif sfx['action'] == 'stop':
 			explicit_all = False
-			if typed_check(sfx['target'], 'rel', 'ALL'):
+			if scp.typed_check(sfx['target'], 'rel', 'ALL'):
 				explicit_all = True
 			self.add('stop sound')
 			if not explicit_all:
 				self._warnings['targeted_sfx_stop'] = ["Ren'py does not support targeted sound stop; any such directives will be compiled as if they were STOP ALL"]
 			if sfx['duration'] is not None:
-				time = self.get_duration(sfx['duration'])
+				time = scp.get_duration(sfx['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
 				self.add(' fadeout ' + time)
 		self.add_line()
 		self.add_line()
 			
 	def _compile_FMV(self, fmv):
 		name = fmv['target'][1]
-		if typed_check(fmv['target'], 'string'):
-			name = quote(name)
+		if scp.typed_check(fmv['target'], 'string'):
+			name = scp.quote(name)
 		self.add_line('renpy.movie_cutscene(' + name + ')')
 		self.add_line()
 		
@@ -302,13 +300,13 @@ class RenpyCompiler(object):
 					self.add_line('show layer master')
 					self.add_line('at ' + self._get_current_scene_transforms())
 				elif a['type'] == 'PAN':
-					time = self.get_duration(a['duration'])
+					time = scp.get_duration(a['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
 					self._cam_pan = a['target'][1]
 					self.add_line('show layer master')
 					self.add_line('at ' + self._get_current_scene_transforms())
 					self.add_line('with MoveTransition(' + time + ')')
 				elif a['type'] == 'ZOOM':
-					time = self.get_duration(a['duration'])
+					time = scp.get_duration(a['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
 					self._cam_zoom = a['target'][1]
 					self.add_line('show layer master')
 					self.add_line('at ' + self._get_current_scene_transforms())
@@ -317,12 +315,12 @@ class RenpyCompiler(object):
 			
 	def _compile_CHOICE(self, choice):
 		label = ""
-		if typed_check(choice['label'], 'id'):
+		if scp.typed_check(choice['label'], 'id'):
 			label = " " + choice['label'][1]
 		self.add_line("menu" + label + ":")
 		self._indent_lev += 1
-		if typed_check(choice['title'], 'string'):
-			self.add_line(quote(choice['title'][1]))
+		if scp.typed_check(choice['title'], 'string'):
+			self.add_line(scp.quote(choice['title'][1]))
 			self.add_line()
 		for c in choice['choices']:
 			cond = ""
@@ -344,7 +342,7 @@ class RenpyCompiler(object):
 		for p in section['params']:
 			params += p['name'][1]
 			if 'default' in p:
-				params += "=" + get_expr(p['default'])
+				params += "=" + scp.get_expr(p['default'])
 			params += ", "
 		if len(params) > 0:
 			params = '(' + params[:-2] + ')'
@@ -352,11 +350,11 @@ class RenpyCompiler(object):
 		self._indent_lev += 1
 		
 	def _compile_FLAGSET(self, flagset):
-		self.add_line('$ ' + flagset['name'][1] + ' = ' + get_expr(flagset['value']))
+		self.add_line('$ ' + flagset['name'][1] + ' = ' + scp.get_expr(flagset['value']))
 		self.add_line()
 		
 	def _compile_VARSET(self, varset):
-		self.add_line('$ ' + varset['name'][1] + ' ' + get_expr(varset['value'], '= '))
+		self.add_line('$ ' + varset['name'][1] + ' ' + scp.get_expr(varset['value'], '= '))
 		self.add_line()
 		
 	def _compile_DIALOG(self, dialog):
@@ -374,24 +372,24 @@ class RenpyCompiler(object):
 			if 'name' in p:
 				use_pass = True
 				params += p['name'][1] + "="
-			params += get_expr(p['value'])
+			params += scp.get_expr(p['value'])
 			params += ', '
 		if len(params) > 0:
 			params = '(' + params[:-2] + ')'
 		if use_pass:
-			self.add_line('call expression %s pass %s' % (quote(execute['section'][1]), params))
+			self.add_line('call expression %s pass %s' % (scp.quote(execute['section'][1]), params))
 		else:
 			self.add_line('call %s%s' % (execute['section'][1], params))
 		self.add_line()
 		
 	def _compile_END(self, end):
 		if 'retval' in end:
-			self.add_line('return ' + get_expr(end['retval']))
+			self.add_line('return ' + scp.get_expr(end['retval']))
 		self._indent_lev -= 1
 		self.add_line()
 		
 	def _compile_WHILE(self, whilestmt):
-		self.add_line('while ' + get_expr(whilestmt['condition']) + ':')
+		self.add_line('while ' + scp.get_expr(whilestmt['condition']) + ':')
 		self._indent_lev += 1
 		for st in whilestmt['statements']:
 			self.compile_statement(st)
@@ -406,10 +404,10 @@ class RenpyCompiler(object):
 				elsestmt = br
 			else:
 				if firstbr:
-					self.add_line('if ' + get_expr(br['condition']) + ':')
+					self.add_line('if ' + scp.get_expr(br['condition']) + ':')
 					firstbr = False
 				else:
-					self.add_line('elif ' + get_expr(br['condition']) + ':')
+					self.add_line('elif ' + scp.get_expr(br['condition']) + ':')
 				self._indent_lev += 1
 				for st in br['statements']:
 					self.compile_statement(st)
@@ -447,52 +445,8 @@ class RenpyCompiler(object):
 		self._has_exit_trans = False
 		self.add_line()
 		
-	def get_duration(self, source):
-		time = None
-		if typed_check(source, 'rel', 'QUICKLY'):
-			time = self.quickly_rel
-		elif typed_check(source, 'rel', 'SLOWLY'):
-			time = self.slowly_rel
-		elif typed_check(source, 'number'):
-			time = source[1]
-		else:
-			time = self.default_duration
-		return time
-		
 def build_show(target, states):
 	show = 'show ' + target
 	for s in states:
 		show += " " + s[1]
 	return show
-
-def typed_check(var, type, val=None):
-	if var is None:
-		return False
-	if val is None:
-		return var[0] == type
-	else:
-		return var[0] == type and var[1] == val
-		
-def get_expr(var, non_incdec_prefix=None):
-	if non_incdec_prefix is None:
-		non_incdec_prefix = ""
-	if typed_check(var, 'string'):
-		return non_incdec_prefix + quote(var[1])
-	elif typed_check(var, 'expr'):
-		return non_incdec_prefix + '(' + var[1] + ')'
-	elif typed_check(var, 'incdec'):
-		return get_incdec_str(var)
-	else:
-		return non_incdec_prefix + str(var[1])
-		
-def get_incdec_str(var):
-	val = var[1]
-	if typed_check(val['type'], 'rel', 'INC'):
-		return '+= ' + str(val['amount'][1])
-	elif typed_check(val['type'], 'rel', 'DEC'):
-		return '-= ' + str(val['amount'][1])
-		
-def quote(str, quote_char='"'):
-		str = str.replace('\\', '\\\\')
-		str = str.replace(quote_char, '\\' + quote_char)
-		return quote_char + str + quote_char
