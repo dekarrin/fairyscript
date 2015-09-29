@@ -3,7 +3,7 @@ import scp
 class RenpyCompiler(object):
 	def __init__(self):
 		self._indent_lev = 0
-		self.scp.quote_spaces = 4
+		self.quote_spaces = 4
 		self._compiled = None
 		self._to_add = ""
 		self.background_ent = 'bg'
@@ -78,7 +78,7 @@ class RenpyCompiler(object):
 		
 	def add_line(self, text=""):
 		self.add(text)
-		indent = (' ' * self.scp.quote_spaces * self._indent_lev)
+		indent = (' ' * self.quote_spaces * self._indent_lev)
 		self._compiled += indent + self._to_add + '\n'
 		self._to_add = ""
 		

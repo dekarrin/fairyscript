@@ -1,6 +1,6 @@
 import ply.yacc as yacc
 
-from scrlex import tokens
+from scp_lex import tokens
 
 def p_block_2_stmt(p):
 	'''block : statement'''
