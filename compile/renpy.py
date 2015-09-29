@@ -180,7 +180,7 @@ class RenpyCompiler(object):
 				self.add(quote(music['target'][1]))
 			if music['fadeout'] is not None:
 				time = self.get_duration(music['fadeout'])
-				self.add(' fadeout ' + time)
+				self.add(' fadeout ' + str(time))
 		elif music['action'] == 'stop':
 			explicit_all = False
 			if typed_check(music['target'], 'rel', 'ALL'):
@@ -190,7 +190,7 @@ class RenpyCompiler(object):
 				self._warnings['targeted_music_stop'] = ["Ren'py does not support targeted music stop; any such directives will be compiled as if they were STOP ALL"]
 			if music['duration'] is not None:
 				time = self.get_duration(music['duration'])
-				self.add(' fadeout ' + time)
+				self.add(' fadeout ' + str(time))
 		self.add_line()
 		self.add_line()
 		
@@ -224,7 +224,7 @@ class RenpyCompiler(object):
 			dissolve = None
 			if gfx['duration'] is not None:
 				time = self.get_duration(gfx['duration'])
-				dissolve = " with Dissolve(" + time + ")"
+				dissolve = " with Dissolve(" + str(time) + ")"
 			if typed_check(gfx['target'], 'rel', 'ALL'):
 				self.add_line('show layer master')
 				if self._use_camera_system:
@@ -331,7 +331,7 @@ class RenpyCompiler(object):
 			self.add_line(c['text'][1] + cond + ":")
 			for v in c['sets']:
 				self._compile_VARSET(v)
-			self.add_line('jump ' + c['destination'][1])
+			self.add_line('jump ' + c['target'][1])
 			self.add_line()
 		self._indent_lev -= 1
 			
@@ -342,7 +342,7 @@ class RenpyCompiler(object):
 	def _compile_SECTION(self, section):
 		params=""
 		for p in section['params']:
-			params += p['name']
+			params += p['name'][1]
 			if 'default' in p:
 				params += "=" + get_expr(p['default'])
 			params += ", "
@@ -352,23 +352,11 @@ class RenpyCompiler(object):
 		self._indent_lev += 1
 		
 	def _compile_FLAGSET(self, flagset):
-		self.add('$ ' + flagset['name'] + ' = ')
-		if typed_check(flagset['value'], 'expr'):
-			self.add('(' + flagset['value'][1] + ')')
-		else:
-			self.add(flagset['value'][1])
-		self.add_line()
+		self.add_line('$ ' + flagset['name'][1] + ' = ' + get_expr(flagset['value']))
 		self.add_line()
 		
 	def _compile_VARSET(self, varset):
-		self.add('$ ' + varset['name'] + ' ')
-		if typed_check(varset['value'], 'expr'):
-			self.add('= (' + varset['value'][1] + ')')
-		elif typed_check(varset['value'], 'incdec'):
-			self.add(get_incdec_str(varset['value']))
-		else:
-			self.add('= ' + varset['value'][1])
-		self.add_line()
+		self.add_line('$ ' + varset['name'][1] + ' ' + get_expr(varset['value'], '= '))
 		self.add_line()
 		
 	def _compile_DIALOG(self, dialog):
@@ -383,7 +371,7 @@ class RenpyCompiler(object):
 		params = ""
 		use_pass = False
 		for p in execute['params']:
-			if typed_check(p['name'], 'id'):
+			if 'name' in p:
 				use_pass = True
 				params += p['name'][1] + "="
 			params += get_expr(p['value'])
@@ -440,6 +428,7 @@ class RenpyCompiler(object):
 		for line in lines:
 			self.add_line(line.strip())
 		self._indent_lev -= 1
+		self.add_line()
 	
 	def _get_current_scene_transforms(self):
 		effects = ""
@@ -484,13 +473,17 @@ def typed_check(var, type, val=None):
 	else:
 		return var[0] == type and var[1] == val
 		
-def get_expr(var):
+def get_expr(var, non_incdec_prefix=None):
+	if non_incdec_prefix is None:
+		non_incdec_prefix = ""
 	if typed_check(var, 'string'):
-		return quote(var[1])
+		return non_incdec_prefix + quote(var[1])
 	elif typed_check(var, 'expr'):
-		return '(' + var[1] + ')'
+		return non_incdec_prefix + '(' + var[1] + ')'
+	elif typed_check(var, 'incdec'):
+		return get_incdec_str(var)
 	else:
-		return var[1]
+		return non_incdec_prefix + str(var[1])
 		
 def get_incdec_str(var):
 	val = var[1]
