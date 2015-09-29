@@ -1,1 +1,1 @@
-__all__ = ['renpy']
+__all__ = ['renpy', 'word']

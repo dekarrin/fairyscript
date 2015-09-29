@@ -1,0 +1,401 @@
+import scp
+
+from docx import Document
+
+class WordCompiler(object):
+	def __init__(self):
+		self._document = None
+		self._last_paragraph = None
+		self._just_completed_line = False
+		self._last_speaker = None
+		self._num_docs = 0
+	
+	def compile_script(self, script):
+		self._num_docs += 1
+		self._document = Document()
+		self._document.add_heading("Script File #" + str(self._num_docs))
+		self._last_paragraph = None
+		self._just_completed_line = False
+		self._last_speaker = None
+		
+		for statement in script:
+			self.compile_statement(statement)
+		return self._document
+		
+	def add_paragraph(self, text=None, bold=False, italic=False):
+		self._last_paragraph = self._document.add_paragraph()
+		if text is not None:
+			self.add_run(text[0:1].upper() + text[1:], bold, italic)
+			
+	def add_run(self, text, bold=False, italic=False):
+		run = self._last_paragraph.add_run(text)
+		run.bold = bold
+		run.italic = italic
+		
+	def compile_statement(self, statement):
+		if statement['type'] == 'line':
+			self._compile_line(statement)
+		elif statement['type'] == 'comment':
+			if self._just_completed_line:
+				self.add_paragraph()
+				self._last_speaker == None
+			self.add_paragraph(statement['text'].lstrip('#').lstrip(), italic=True)
+		else:
+			if self._just_completed_line
+				self.add_paragraph()
+				self._last_speaker == None
+			instruction = statement['instruction']
+			func = getattr(WordCompiler, '_compile_' + instruction)
+			func(self, statement)
+		
+	def _compile_line(self, line):
+		sp = line['speaker']
+		if sp is not None:
+			sp = sp[1]
+		if self._just_completed_line and sp != self._last_speaker:
+			self.add_paragraph()
+		if sp is None:
+			self.add_paragraph(line['text'])
+		else:
+			self.add_paragraph(sp + ': "' + line['text'] + '"')
+		self._just_completed_line = True
+		self._last_speaker = sp
+		
+	def _compile_SCENE(self, scene):
+		if scene['transition'] is None:
+			trans = "cut to"
+		else:
+			trans = scene['transition'].lower() + " to"
+		self.add_paragraph(trans + " " scene['name'][1], italic=True)
+		self.add_paragraph()
+		
+		
+	
+	def _compile_ENTER(self, enter):
+		line = "enter " + enter['target'][1]
+		if self._has_enter_trans and enter['transition'] is not None and not scp.typed_check(enter['transition'], 'rel', 'WITH PREVIOUS'):
+			self._finish_transition()
+		self.add_line(build_show(enter['target'][1], enter['states']))
+		geom = enter['motion']
+		if geom is not None:
+			orig = None
+			dest = None
+			if geom['origin'] is None and geom['duration'] is not None:
+				orig = self.default_origin
+			elif geom['origin'] is not None:
+				orig = geom['origin'][1]
+			if geom['destination'] is None and orig is not None:
+				dest = self.default_destination
+			elif geom['destination'] is not None:
+				dest = geom['destination'][1]
+			if orig is None:
+				self.add_line('at ' + dest)
+			else:
+				self.add_line('at ' + orig)
+		if enter['transition'] is not None and not scp.typed_check(enter['transition'], 'rel', 'WITH PREVIOUS'):
+			self._has_enter_trans = True
+			self._scene_trans = enter['transition'][1]
+		if geom is not None and orig is not None:
+			time = scp.get_duration(geom['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
+			self.add_line(build_show(enter['target'][1], enter['states']))
+			self.add_line('at ' + dest)
+			self.add_line('with MoveTransition(' + str(time) + ')')
+		self.add_line()
+			
+	def _compile_ACTION(self, action):
+		self.add_line(build_show(action['target'][1], action['states']))
+		if action['destination'] is not None:
+			time = scp.get_duration(action['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
+			self.add_line('at ' + action['destination'][1])
+			self.add_line('with MoveTransition(' + str(time) + ')')
+		self.add_line()
+	
+	def _compile_EXIT(self, exit):
+		if self._has_exit_trans and exit['transition'] is not None and not scp.typed_check(exit['transition'], 'rel', 'WITH PREVIOUS'):
+			self._finish_transition()
+		self.add_line('show ' + exit['target'][1])
+		geom = exit['motion']
+		if geom is not None:
+			orig = None
+			dest = None
+			if geom['origin'] is None and geom['duration'] is not None:
+				orig = self.default_origin
+			elif geom['origin'] is not None:
+				orig = geom['origin'][1]
+			if geom['destination'] is None and orig is not None:
+				dest = self.default_destination
+			elif geom['destination'] is not None:
+				dest = geom['destination'][1]
+			if orig is None:
+				self.add_line('at ' + dest)
+			else:
+				self.add_line('at ' + orig)
+		if exit['transition'] is not None and not scp.typed_check(exit['transition'], 'rel', 'WITH PREVIOUS'):
+			self._has_exit_trans = True
+			self._scene_trans = exit['transition'][1]
+		if geom is not None and orig is not None:
+			time = scp.get_duration(geom['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
+			self.add_line('show ' + exit['target'][1])
+			self.add_line('at ' + orig)
+			self.add_line('with MoveTransition(' + str(time) + ')')
+		self.add_line('hide ' + exit['target'][1])
+		self.add_line()
+		
+	def _compile_MUSIC(self, music):
+		if music['action'] == 'start':
+			self.add('play music ')
+			if scp.typed_check(music['target'], 'id'):
+				self.add(music['target'][1])
+			elif scp.typed_check(music['target'], 'string'):
+				self.add(scp.quote(music['target'][1]))
+			if music['fadeout'] is not None:
+				time = scp.get_duration(music['fadeout'], self.quickly_rel, self.slowly_rel, self.default_duration)
+				self.add(' fadeout ' + str(time))
+		elif music['action'] == 'stop':
+			explicit_all = False
+			if scp.typed_check(music['target'], 'rel', 'ALL'):
+				explicit_all = True
+			self.add('stop music')
+			if not explicit_all:
+				self._warnings['targeted_music_stop'] = ["Ren'py does not support targeted music stop; any such directives will be compiled as if they were STOP ALL"]
+			if music['duration'] is not None:
+				time = scp.get_duration(music['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
+				self.add(' fadeout ' + str(time))
+		self.add_line()
+		self.add_line()
+		
+	def _compile_GFX(self, gfx):
+		if scp.typed_check(gfx['target'], 'id'):
+			eff = gfx['target'][1]
+			if eff not in self._gfx_targets:
+				self.add_warning('no_gfx_binding', "GFX '%s' does not have any binding defined; assuming 'scene'" % eff)
+				self.add_gfx_target(eff, 'scene')
+			binding_type = self._gfx_targets[eff]
+		if gfx['action'] == 'start':
+			if scp.typed_check(gfx['loop'], 'boolean', True):
+				if binding_type != 'DISPLAYABLE':
+					eff += '_loop'
+				else:
+					self.add_warning('loop_displayable', "The GFX '%s' cannot be looped, because it is bound to a displayable" % eff)
+			if binding_type == 'SCENE':
+				self.add_line('show layer master')
+				self._cur_scene_gfx.append(eff)
+				prefix = self._get_current_scene_transforms()
+				self.add_line('at ' + prefix)
+			elif binding_type == 'IMAGE':
+				img = eff + '_img'
+				self.add_line('show ' + img)
+				prefix = ""
+				self._cur_img_gfx.append(eff)
+				self.add_line('at ' + eff)
+			elif binding_type == 'DISPLAYABLE':
+				self.add_line('show ' + eff)
+		elif gfx['action'] == 'stop':
+			dissolve = None
+			if gfx['duration'] is not None:
+				time = scp.get_duration(gfx['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
+				dissolve = " with Dissolve(" + str(time) + ")"
+			if scp.typed_check(gfx['target'], 'rel', 'ALL'):
+				self.add_line('show layer master')
+				if self._use_camera_system:
+					self.add_line('at ' + self._get_current_camera())
+				self._cur_scene_gfx = []
+				for fx in self._cur_img_gfx:
+					self.add_line('hide ' + fx)
+				self._cur_img_gfx = []
+			else:
+				if binding_type == 'SCENE':
+					try:
+						self._cur_scene_gfx.remove(eff)
+						self._cur_scene_gfx.remove(eff + '_loop')
+					except:
+						pass
+					self.add_line("show layer master")
+					prefix = self._get_current_scene_transforms()
+					self.add_line('at ' + prefix)
+				elif binding_type == 'IMAGE':
+					if eff + '_loop' in self._cur_img_gfx:
+						self._cur_img_gfx.remove(eff + '_loop')
+						self.add_line('hide ' + eff + '_loop' + '_img')
+					if eff in self._cur_img_gfx:
+						self._cur_img_gfx.remove(eff)
+						self.add_line('hide ' + eff + '_img')
+				elif binding_type == 'DISPLAYABLE':
+					self.add_line('hide ' + eff)
+			if dissolve is not None:
+				self.add_line(dissolve)
+		self.add_line()
+		
+	def _compile_SFX(self, sfx):
+		if sfx['action'] == 'start':
+			self.add('play sound ')
+			if scp.typed_check(sfx['target'], 'string'):
+				self.add(scp.quote(sfx['target'][1]))
+			else:
+				self.add(sfx['target'][1])
+			if scp.typed_check(sfx['loop'], 'boolean', True):
+				self.add(' loop')
+		elif sfx['action'] == 'stop':
+			explicit_all = False
+			if scp.typed_check(sfx['target'], 'rel', 'ALL'):
+				explicit_all = True
+			self.add('stop sound')
+			if not explicit_all:
+				self._warnings['targeted_sfx_stop'] = ["Ren'py does not support targeted sound stop; any such directives will be compiled as if they were STOP ALL"]
+			if sfx['duration'] is not None:
+				time = scp.get_duration(sfx['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
+				self.add(' fadeout ' + time)
+		self.add_line()
+		self.add_line()
+			
+	def _compile_FMV(self, fmv):
+		name = fmv['target'][1]
+		if scp.typed_check(fmv['target'], 'string'):
+			name = scp.quote(name)
+		self.add_line('renpy.movie_cutscene(' + name + ')')
+		self.add_line()
+		
+	def _compile_CAMERA(self, camera):
+		if not self._use_camera_system:
+			for a in camera['actions']:
+				if a['type'] == 'SNAP':
+					self._compile_line({'speaker': None, 'text': ('string', "[snap camera to %s]" % a['target'][1])})
+				elif a['type'] == 'PAN':
+					self._compile_line({'speaker': None, 'text': ('string', "[pan camera to %s]" % a['target'][1])})
+				elif a['type'] == 'ZOOM':
+					self._compile_line({'speaker': None, 'text': ('string', "[zoom camera %s]" % a['target'][1].lower())})
+				self.add_line()
+		else:
+			for a in camera['actions']:
+				if a['type'] == 'SNAP':
+					self._cam_pan = a['target'][1]
+					self.add_line('show layer master')
+					self.add_line('at ' + self._get_current_scene_transforms())
+				elif a['type'] == 'PAN':
+					time = scp.get_duration(a['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
+					self._cam_pan = a['target'][1]
+					self.add_line('show layer master')
+					self.add_line('at ' + self._get_current_scene_transforms())
+					self.add_line('with MoveTransition(' + time + ')')
+				elif a['type'] == 'ZOOM':
+					time = scp.get_duration(a['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
+					self._cam_zoom = a['target'][1]
+					self.add_line('show layer master')
+					self.add_line('at ' + self._get_current_scene_transforms())
+					self.add_line('with MoveTransition(' + time + ')')
+			self.add_line()
+			
+	def _compile_CHOICE(self, choice):
+		label = ""
+		if scp.typed_check(choice['label'], 'id'):
+			label = " " + choice['label'][1]
+		self.add_line("menu" + label + ":")
+		self._indent_lev += 1
+		if scp.typed_check(choice['title'], 'string'):
+			self.add_line(scp.quote(choice['title'][1]))
+			self.add_line()
+		for c in choice['choices']:
+			cond = ""
+			if c['condition'] is not None:
+				cond = " if " + c['condition'][1]
+			self.add_line(c['text'][1] + cond + ":")
+			for v in c['sets']:
+				self._compile_VARSET(v)
+			self.add_line('jump ' + c['target'][1])
+			self.add_line()
+		self._indent_lev -= 1
+			
+	def _compile_DESCRIPTION(self, desc):
+		# ren'py does not use descriptions, so we throw this out
+		pass
+		
+	def _compile_SECTION(self, section):
+		params=""
+		for p in section['params']:
+			params += p['name'][1]
+			if 'default' in p:
+				params += "=" + scp.get_expr(p['default'])
+			params += ", "
+		if len(params) > 0:
+			params = '(' + params[:-2] + ')'
+		self.add_line('label ' + section['section'][1] + params + ":")
+		self._indent_lev += 1
+		
+	def _compile_FLAGSET(self, flagset):
+		self.add_line('$ ' + flagset['name'][1] + ' = ' + scp.get_expr(flagset['value']))
+		self.add_line()
+		
+	def _compile_VARSET(self, varset):
+		self.add_line('$ ' + varset['name'][1] + ' ' + scp.get_expr(varset['value'], '= '))
+		self.add_line()
+		
+	def _compile_DIALOG(self, dialog):
+		self.add_line('window ' + dialog['mode'].lower())
+		self.add_line()
+		
+	def _compile_GOTO(self, goto):
+		self.add_line('jump ' + goto['destination'][1])
+		self.add_line()
+		
+	def _compile_EXECUTE(self, execute):
+		params = ""
+		use_pass = False
+		for p in execute['params']:
+			if 'name' in p:
+				use_pass = True
+				params += p['name'][1] + "="
+			params += scp.get_expr(p['value'])
+			params += ', '
+		if len(params) > 0:
+			params = '(' + params[:-2] + ')'
+		if use_pass:
+			self.add_line('call expression %s pass %s' % (scp.quote(execute['section'][1]), params))
+		else:
+			self.add_line('call %s%s' % (execute['section'][1], params))
+		self.add_line()
+		
+	def _compile_END(self, end):
+		if 'retval' in end:
+			self.add_line('return ' + scp.get_expr(end['retval']))
+		self._indent_lev -= 1
+		self.add_line()
+		
+	def _compile_WHILE(self, whilestmt):
+		self.add_line('while ' + scp.get_expr(whilestmt['condition']) + ':')
+		self._indent_lev += 1
+		for st in whilestmt['statements']:
+			self.compile_statement(st)
+		self._indent_lev -= 1
+		self.add_line()
+		
+	def _compile_IF(self, ifstmt):
+		elsebr = None
+		firstbr = True
+		for br in ifstmt['branches']:
+			if br['condition'] is None:
+				elsestmt = br
+			else:
+				if firstbr:
+					self.add_line('if ' + scp.get_expr(br['condition']) + ':')
+					firstbr = False
+				else:
+					self.add_line('elif ' + scp.get_expr(br['condition']) + ':')
+				self._indent_lev += 1
+				for st in br['statements']:
+					self.compile_statement(st)
+				self._indent_lev -= 1
+		if elsebr is not None:
+			self.add_line('else:')
+			self._indent_lev += 1
+			for st in elsebr['statements']:
+				self.compile_statement(st)
+			self._indent_lev -= 1
+			
+	def _compile_PYTHON(self, python):
+		self.add_line('python:')
+		self._indent_lev += 1
+		lines = python['body'].split('\n')
+		for line in lines:
+			self.add_line(line.strip())
+		self._indent_lev -= 1
+		self.add_line()
