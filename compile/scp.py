@@ -43,3 +43,26 @@ def get_duration(source, quickly_time, slowly_time, default_time):
 	else:
 		time = default_time
 	return time
+
+def get_duration_words(source, num_fmt):
+	if source is not None:
+		if typed_check(source, 'rel'):
+			dur = source[1].lower()
+		else:
+			dur = num_fmt % source[1]
+		return ' ' + dur
+	else:
+		return ''
+	
+def to_words(identifier):
+	return " ".join(identifier.split('_'))
+	
+def extract_comment(source):
+	return source.lstrip('#').lstrip()
+
+def indef_article(noun):
+	start = noun.lower().lstrip()[0]
+	if start in ('a', 'e', 'i', 'o', 'u'):
+		return 'an'
+	else:
+		return 'a'

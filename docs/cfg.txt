@@ -172,6 +172,7 @@ params_declaration		: ID
 bool_expression			: OFF
 						| ON
 						| BARE_EXPRESSION
+						| ID
 	
 inc_dec					: INC
 						: INC by_amount
@@ -180,7 +181,6 @@ inc_dec					: INC
 
 expression				: bool_expression
 						| STRING
-						| ID
 						| NUMBER
 					
 params_set				: expression
