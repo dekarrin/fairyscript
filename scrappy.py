@@ -137,5 +137,5 @@ if __name__ == "__main__":
 				output_file.write(str(output))
 		if args.output != '--' and args.output_mode != 'word':
 			output_file.close()
-	except Exception, e:
+	except (InvalidInputFormatException, InvalidOutputFormatException), e:
 		print("Fatal error: " + e.message)
