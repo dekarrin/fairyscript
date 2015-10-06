@@ -143,7 +143,7 @@ def p_exit_directive_2_id(p):
 	
 def p_exit_directive_2_id_trans_out(p):
 	'''exit_directive : DIRECTIVEOPEN_EXIT ':' ID transition_out ']' '''
-	p[0] = make_directive('EXIT', target=('id', p[3]), transition=p[4])
+	p[0] = make_directive('EXIT', target=('id', p[3]), transition=p[4], motion=None)
 	
 def p_exit_directive_2_id_motion(p):
 	'''exit_directive : DIRECTIVEOPEN_EXIT ':' ID motion_geometry ']' '''

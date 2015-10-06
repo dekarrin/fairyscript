@@ -273,7 +273,7 @@ class RenpyCompiler(object):
 				self._warnings['targeted_sfx_stop'] = ["Ren'py does not support targeted sound stop; any such directives will be compiled as if they were STOP ALL"]
 			if sfx['duration'] is not None:
 				time = scp.get_duration(sfx['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
-				self.add(' fadeout ' + time)
+				self.add(' fadeout ' + str(time))
 		self.add_line()
 		self.add_line()
 			
@@ -326,7 +326,7 @@ class RenpyCompiler(object):
 		for c in choice['choices']:
 			cond = ""
 			if c['condition'] is not None:
-				cond = " if " + c['condition'][1]
+				cond = " if " + str(c['condition'][1])
 			self.add_line(c['text'][1] + cond + ":")
 			for v in c['sets']:
 				self._compile_VARSET(v)
