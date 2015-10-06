@@ -17,6 +17,9 @@ class WordCompiler(object):
 		self.main_character = None
 		self._warnings = {}
 		self._screenplay_actor_margin = Inches(4)
+		self.include_flagsets = True
+		self.include_varsets = True
+		self._add_break = True
 	
 	def compile_script(self, script):
 		self._check_format()
@@ -75,6 +78,7 @@ class WordCompiler(object):
 			self.set_text_format(italic=italic)
 		
 	def compile_statement(self, statement):
+		self._add_break = True
 		if statement['type'] == 'line':
 			self._compile_line(statement)
 		elif statement['type'] == 'comment':
@@ -82,7 +86,8 @@ class WordCompiler(object):
 				self.add_paragraph()
 				self._last_speaker == None
 			self.add_paragraph('(' + scp.extract_comment(statement['text']) + ')', italic=True)
-			self.add_paragraph()
+			if self._add_break:
+				self.add_paragraph()
 		else:
 			if self._just_completed_line and not self.screenplay_mode:
 				self.add_paragraph()
@@ -90,7 +95,8 @@ class WordCompiler(object):
 			instruction = statement['instruction']
 			func = getattr(WordCompiler, '_compile_' + instruction)
 			func(self, statement)
-			self.add_paragraph()
+			if self._add_break:
+				self.add_paragraph()
 		
 	def _compile_line(self, line):
 		internal = False
@@ -297,8 +303,6 @@ class WordCompiler(object):
 			actions_added += 1
 		self.add_paragraph(line, italic=True)
 		
-		
-		
 	def _compile_CHOICE(self, choice):
 		if choice['label'] is not None:
 			labelstmt = {'type': 'annotation', 'instruction': 'section', 'section': choice['label'], 'params': []}
@@ -315,13 +319,17 @@ class WordCompiler(object):
 				elif scp.typed_check(c['condition'], 'boolean', False):
 					self.add_run('(never shown) ', italic=True)
 				elif scp.typed_check(c['condition'], 'id'):
-					self.add_run('(only shown if we ' + scp.to_words(c['condition'][1]).lower() + ') ', italic=True)
+					cond_id = scp.to_words(c['condition'][1]).lower()
+					if cond_id.startswith('have '):
+						self.add_run('(only shown if we ' + cond_id + ') ', italic=True)
+					else:
+						self.add_run('(only shown if \'' + cond_id + '\' is set) ', italic=True)
 				else:
-					self.add_run('(only shown if ' + c['condition'][1] + ') ', italic=True)
+					self.add_run('(only shown if ' + scp.to_human_readable(c['condition'][1]) + ') ', italic=True)
 				line = c['text'][1] + ":\n"
 				for v in c['sets']:
-					line += make_varset(v) + "\n"
-				line += 'Now we jump to section ' + scp.to_words(c['target'][1]).title()
+					line += self.make_varset(v) + "\n"
+				line += self.make_goto({'destination': c['target']})
 				self.add_run(line, italic=False)
 			
 	def _compile_DESCRIPTION(self, desc):
@@ -332,56 +340,58 @@ class WordCompiler(object):
 		self.add_paragraph(line)
 			
 	def _compile_SECTION(self, section):
-		self._document.add_heading(scp.to_words(section['section'][1]).title())
-		
-		
+		self._document.add_heading(scp.to_words(section['section'][1]).title(), level=2)
 		
 	def _compile_FLAGSET(self, flagset):
-		self.add_line('$ ' + flagset['name'][1] + ' = ' + scp.get_expr(flagset['value']))
-		self.add_line()
-		
+		if self.include_flagsets:
+			self.add_paragraph(self.make_flagset(flagset), italic=True)
+		else:
+			self._add_break = False
+				
 	def _compile_VARSET(self, varset):
-		self.add_line('$ ' + varset['name'][1] + ' ' + scp.get_expr(varset['value'], '= '))
-		self.add_line()
+		if self.include_varsets:
+			self.add_paragraph(self.make_varset(varset), italic=True)
+		else:
+			self._add_break = False
 		
 	def _compile_DIALOG(self, dialog):
-		self.add_line('window ' + dialog['mode'].lower())
-		self.add_line()
+		self.add_paragraph("We set the dialog window to " + dialog['mode'].upper() + " mode.", italic=True
 		
 	def _compile_GOTO(self, goto):
-		self.add_line('jump ' + goto['destination'][1])
-		self.add_line()
+		self.add_paragraph(self.make_goto(goto))
 		
 	def _compile_EXECUTE(self, execute):
-		params = ""
-		use_pass = False
-		for p in execute['params']:
-			if 'name' in p:
-				use_pass = True
-				params += p['name'][1] + "="
-			params += scp.get_expr(p['value'])
-			params += ', '
-		if len(params) > 0:
-			params = '(' + params[:-2] + ')'
-		if use_pass:
-			self.add_line('call expression %s pass %s' % (scp.quote(execute['section'][1]), params))
-		else:
-			self.add_line('call %s%s' % (execute['section'][1], params))
-		self.add_line()
+		line = "We set the proper parameters and execute section " + scp.to_words(execute['section'][1]).title() + '.'
+		self.add_paragraph(line, italic=True)
 		
 	def _compile_END(self, end):
 		if 'retval' in end:
-			self.add_line('return ' + scp.get_expr(end['retval']))
-		self._indent_lev -= 1
-		self.add_line()
+			self.add_paragraph('We return the appropriate value from this section.', italic=True, bold=True)
+		else:
+			self._add_break = False
 		
 	def _compile_WHILE(self, whilestmt):
-		self.add_line('while ' + scp.get_expr(whilestmt['condition']) + ':')
-		self._indent_lev += 1
+		line = "We do the following "
+		cond = scp.get_expr(whilestmt['condition'])
+		if scp.typed_check(whilestmt['condition'], 'boolean'):
+			if cond:
+				line += 'forever:'
+			else:
+				line = 'We never do the following:'
+		elif scp.typed_check(whilestmt['condition'], 'id'):
+			cond_words = scp.to_words(whilestmt['condition'][1]).lower()
+			if cond_words.startswith('have '):
+				line += 'while we ' + cond_words + ':'
+			else:
+				line += 'while ' + scp.quote(cond_words, "'") + ' is set:'
+		else:
+			line += 'while ' + scp.to_human_readable(cond) + ':'
+		self.add_paragraph(line, italic=True)
+		self.add_paragraph('{', italic=True)
+		self.add_paragraph()
 		for st in whilestmt['statements']:
 			self.compile_statement(st)
-		self._indent_lev -= 1
-		self.add_line()
+		self.add_paragraph('}', italic=True)
 		
 	def _compile_IF(self, ifstmt):
 		elsebr = None
@@ -390,36 +400,108 @@ class WordCompiler(object):
 			if br['condition'] is None:
 				elsestmt = br
 			else:
+				negation = ''
 				if firstbr:
-					self.add_line('if ' + scp.get_expr(br['condition']) + ':')
+					line = 'We%s do the following' + scp.get_expr(br['condition']) + ':')
 					firstbr = False
 				else:
-					self.add_line('elif ' + scp.get_expr(br['condition']) + ':')
-				self._indent_lev += 1
+					line = 'Otherwise, we%s do the following'
+				cond = scp.get_expr(br['condition'])
+				if scp.typed_check(br['condition'], 'boolean'):
+					if cond:
+						negation = ' always'
+						line += ':'
+					else:
+						negation = ' never'
+						line += ':'
+				elif scp.typed_check(br['condition'], 'id'):
+					cond_words = scp.to_words(br['condition'][1]).lower()
+					if cond_words.startswith('have '):
+						line += ' if we ' + cond_words + ':'
+					else:
+						line += ' if ' + scp.quote(cond_words, "'") + ' is set:'
+				else:
+					line += ' if ' + scp.to_human_readable(cond) + ':'
+				self.add_paragraph(line % negation, italic=True)
+				self.add_paragraph('{', italic=True)
+				self.add_paragraph()
 				for st in br['statements']:
 					self.compile_statement(st)
-				self._indent_lev -= 1
+				self.add_paragraph('}', italic=True)
+				self.add_paragraph()
 		if elsebr is not None:
-			self.add_line('else:')
-			self._indent_lev += 1
+			self.add_paragraph("Otherwise, we do the following:", italic=True)
+			self.add_paragraph("{", italic=True)
+			self.add_paragraph()
 			for st in elsebr['statements']:
 				self.compile_statement(st)
-			self._indent_lev -= 1
+			self.add_paragraph("}", italic=True)
+			self.add_paragraph()
+		self._add_break = False
 			
 	def _compile_PYTHON(self, python):
-		self.add_line('python:')
-		self._indent_lev += 1
-		lines = python['body'].split('\n')
-		for line in lines:
-			self.add_line(line.strip())
-		self._indent_lev -= 1
-		self.add_line()
+		if self.include_python:
+			self.add_paragraph("We execute the following python code:", italic=True)
+			self.add_paragraph("{", italic=True)
+			self.add_paragraph()
+			lines = python['body'].split('\n')
+			for line in lines:
+				self.add_paragraph(line.strip())
+			self.add_paragraph("}", italic=True)
+		else:
+			self.add_paragraph("We execute python code.", italic=True)
 		
 	def _check_format(self):
 		if self.screenplay_mode:
 			if self.main_character is None:
 				self.add_warning('main_char_not_defined', "a main character is required for screenplay mode; using 'Main character'")
 				self.main_character = 'Main character'
+				
+	def make_flagset(self, flagset):
+		line = ''
+		value = scp.get_expr(flagset['value'])
+		flag = scp.to_words(flagset['name'][1]).lower()
+		if scp.typed_check(flagset['value'], 'boolean'):
+			if not flag.startswith('have '):
+				if value:
+					line = 'We set ' + scp.quote(flag, "'") + '.'
+				else:
+					line = 'We unset ' + scp.quote(flag, "'") + '.'
+			elif value:
+				line = 'We now ' + flag + '.'
+			else:
+				line = 'We now no longer ' + flag + '.'
+		elif scp.typed_check(flagset['value'], 'id'):
+			if flag.startswith('have '):
+				line = 'Whether we ' + flag + ' is determined by '
+			else:
+				line = 'We set ' + scp.quote(flag, "'") + ' to the same as '
+			value_id = scp.to_words(value).lower()
+			if value_id.startswith('have '):
+				line += 'whether we ' + value_id + '.'
+			else:
+				line += 'the value of ' + scp.quote(value_id, "'") + '.'
+		elif scp.typed_check(flagset['value'], 'expr'):
+			if flag.startswith('have '):
+				line = 'Whether we now ' + flag + ' is determined by the value of ' + value + '.'
+			else:
+				line = 'We set ' + scp.quote(flag, "'") + ' to the same as the value of ' + value + '.'
+		return line
+		
+	def make_varset(self, varset):
+		line = ''
+		if scp.typed_check(varset['value'], 'boolean'):
+			line = self.make_flagset(varset)
+		var = scp.to_words(varset['name'][1]).lower()
+		value = scp.get_expr(varset['value'])
+		elif scp.typed_check(varset['value'], 'incdec'):
+			line = 'We ' + scp.to_human_readable(var + value).replace(var, scp.quote(var, "'")) + '.'
+		else:
+			line = 'We set ' + scp.quote(var, "'") + ' to ' + value + '.'
+		return line
+		
+	def make_goto(self, goto):
+		return 'We jump to section ' + scp.to_words(goto['destination'][1]).title() + '.'
 				
 def make_states(states):	
 	states_added = 0

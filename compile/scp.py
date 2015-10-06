@@ -1,5 +1,7 @@
 # contains various functions useful for getting information out ouf a .scp script tree
 
+import re
+
 def typed_check(var, type, val=None):
 	if var is None:
 		return False
@@ -66,3 +68,21 @@ def indef_article(noun):
 		return 'an'
 	else:
 		return 'a'
+		
+def to_human_readable(expr):
+	readable_versions = [
+		('==', 'is equal to'),
+		('>', 'is greater than'),
+		('<', 'is less than'),
+		('>=', 'is greater than or equal to'),
+		('<=', 'is less than or equal to'),
+		('!=', 'is not equal to'),
+		(r'(\w+)\s*+=', r'increase \1 by'),
+		(r'(\w+)\s*-=', r'decrease \1 by')
+	]
+	for readable in readable_versions:
+		search = r'\s*' + readable[0] + r'\s*'
+		replacement = ' ' + readable[1] + ' '
+		expr = re.sub(search, replacement, expr)
+	return expr
+	
