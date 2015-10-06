@@ -503,7 +503,11 @@ class DocxCompiler(object):
 		var = scp.to_words(varset['name'][1]).lower()
 		value = scp.get_expr(varset['value'])
 		if scp.typed_check(varset['value'], 'incdec'):
-			line = 'We ' + scp.to_human_readable(var + value).replace(var, scp.quote(var, "'")) + '.'
+			readable = scp.to_human_readable(var + value)
+			var_in = readable.rfind(var)
+			var_str = readable[var_in:].replace(var, scp.quote(var, "'"), 1)
+			readable = readable[0:var_in] + var_str
+			line = 'We' + readable + '.'
 		else:
 			line = 'We set ' + scp.quote(var, "'") + ' to ' + value + '.'
 		return line
