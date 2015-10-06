@@ -3,6 +3,35 @@ import parse.scp_lex
 import parse.scp_yacc
 from compile.renpy import RenpyCompiler
 from compile.word import DocxCompiler
+
+_parser = None
+_lexer = None
+_comp_renpy = None
+_comp_word = None
+
+def get_parser():
+	global _parser
+	if _parser is None:
+		_parser = parse.scp_yacc.parser
+	return _parser
+	
+def get_lexer():
+	global _lexer
+	if _lexer is None:
+		_lexer = parse.scp_lex.lexer
+	return _lexer
+	
+def get_renpy_compiler():
+	global _comp_renpy
+	if _comp_renpy is None:
+		_comp_renpy = RenpyCompiler()
+	return _comp_renpy
+	
+def get_word_compiler():
+	global _comp_word
+	if _comp_word is None:
+		_comp_word = DocxCompiler()
+	return _comp_word
 	
 def lex_manuscript(script_text):
 	symbols = []
@@ -26,11 +55,11 @@ def parse_symbols(symbols):
 	return script_ast
 	
 def compile_to_renpy(manuscript_ast):
-	compiler = RenpyCompiler()
+	compiler = get_renpy_compiler()
 	return compiler.compile_script(manuscript_ast)
 	
 def compile_to_word(manuscript_ast):
-	compiler = DocxCompiler()
+	compiler = get_word_compiler()
 	return compiler.compile_script(manuscript_ast)
 
 if __name__ == "__main__":

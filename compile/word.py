@@ -35,8 +35,9 @@ class DocxCompiler(object):
 		self._just_completed_line = False
 		self._last_speaker = None
 		
-		for statement in script:
-			self.compile_statement(statement)
+		if script is not None:
+			for statement in script:
+				self.compile_statement(statement)
 		return self._document
 	
 	def add_warning(self, key, text):
@@ -109,7 +110,7 @@ class DocxCompiler(object):
 			sp = sp[1]
 		else:
 			internal = True
-		continuing = self._just_completed_line and sp == self._last_speaker:
+		continuing = self._just_completed_line and sp == self._last_speaker
 		if self.screenplay_mode:
 			cont = ""
 			vo = ""
@@ -124,12 +125,12 @@ class DocxCompiler(object):
 			self.add_paragraph(charname + vo + cont)
 			self.set_para_format(left_indent=self._screenplay_actor_margin)
 		else:
-		if self._just_completed_line and sp != self._last_speaker:
-			self.add_paragraph()
-		if sp is None:
-			self.add_paragraph(line['text'])
-		else:
-			self.add_paragraph(sp + ': "' + line['text'] + '"')
+			if self._just_completed_line and sp != self._last_speaker:
+				self.add_paragraph()
+			if sp is None:
+				self.add_paragraph(line['text'])
+			else:
+				self.add_paragraph(sp + ': "' + line['text'] + '"')
 		self._just_completed_line = True
 		self._last_speaker = sp
 		
@@ -246,7 +247,7 @@ class DocxCompiler(object):
 			if scp.typed_check(gfx['loop'], 'boolean', True):
 				line += ' effect begin and continue'
 			line += '.'
-		elif gfx['action'] = 'stop':
+		elif gfx['action'] == 'stop':
 			if scp.typed_check(gfx['target'], 'rel'):
 				line += gfx['target'][1].lower() + ' effects '
 			else:
@@ -359,7 +360,7 @@ class DocxCompiler(object):
 			self._add_break = False
 		
 	def _compile_DIALOG(self, dialog):
-		self.add_paragraph("We set the dialog window to " + dialog['mode'].upper() + " mode.", italic=True
+		self.add_paragraph("We set the dialog window to " + dialog['mode'].upper() + " mode.", italic=True)
 		
 	def _compile_GOTO(self, goto):
 		self.add_paragraph(self.make_goto(goto))
@@ -406,7 +407,7 @@ class DocxCompiler(object):
 			else:
 				negation = ''
 				if firstbr:
-					line = 'We%s do the following' + scp.get_expr(br['condition']) + ':')
+					line = 'We%s do the following' + scp.get_expr(br['condition']) + ':'
 					firstbr = False
 				else:
 					line = 'Otherwise, we%s do the following'
@@ -498,7 +499,7 @@ class DocxCompiler(object):
 			line = self.make_flagset(varset)
 		var = scp.to_words(varset['name'][1]).lower()
 		value = scp.get_expr(varset['value'])
-		elif scp.typed_check(varset['value'], 'incdec'):
+		if scp.typed_check(varset['value'], 'incdec'):
 			line = 'We ' + scp.to_human_readable(var + value).replace(var, scp.quote(var, "'")) + '.'
 		else:
 			line = 'We set ' + scp.quote(var, "'") + ' to ' + value + '.'

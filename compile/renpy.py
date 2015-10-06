@@ -51,8 +51,9 @@ class RenpyCompiler(object):
 		self._compiled = ""
 		self.last_line = False
 		
-		for statement in script:
-			self.compile_statement(statement)
+		if script is not None:
+			for statement in script:
+				self.compile_statement(statement)
 		return self._compiled
 		
 	def compile_statement(self, statement):
