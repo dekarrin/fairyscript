@@ -223,7 +223,7 @@ class RenpyCompiler(object):
 			dissolve = None
 			if gfx['duration'] is not None:
 				time = scp.get_duration(gfx['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
-				dissolve = " with Dissolve(" + str(time) + ")"
+				dissolve = "with Dissolve(" + str(time) + ")"
 			if scp.typed_check(gfx['target'], 'rel', 'ALL'):
 				self.add_line('show layer master')
 				if self._use_camera_system:
@@ -241,7 +241,8 @@ class RenpyCompiler(object):
 						pass
 					self.add_line("show layer master")
 					prefix = self._get_current_scene_transforms()
-					self.add_line('at ' + prefix)
+					if len(prefix) > 0:
+						self.add_line('at ' + prefix)
 				elif binding_type == 'IMAGE':
 					if eff + '_loop' in self._cur_img_gfx:
 						self._cur_img_gfx.remove(eff + '_loop')
@@ -327,11 +328,13 @@ class RenpyCompiler(object):
 			cond = ""
 			if c['condition'] is not None:
 				cond = " if " + str(c['condition'][1])
-			self.add_line(c['text'][1] + cond + ":")
+			self.add_line(scp.quote(c['text'][1]) + cond + ":")
+			self._indent_lev += 1
 			for v in c['sets']:
-				self._compile_VARSET(v)
+				self._compile_VARSET(v, noline=True)
 			self.add_line('jump ' + c['target'][1])
 			self.add_line()
+			self._indent_lev -= 1
 		self._indent_lev -= 1
 			
 	def _compile_DESCRIPTION(self, desc):
@@ -354,9 +357,10 @@ class RenpyCompiler(object):
 		self.add_line('$ ' + flagset['name'][1] + ' = ' + scp.get_expr(flagset['value']))
 		self.add_line()
 		
-	def _compile_VARSET(self, varset):
+	def _compile_VARSET(self, varset, noline=False):
 		self.add_line('$ ' + varset['name'][1] + ' ' + scp.get_expr(varset['value'], '= '))
-		self.add_line()
+		if not noline:
+			self.add_line()
 		
 	def _compile_DIALOG(self, dialog):
 		self.add_line('window ' + dialog['mode'].lower())
