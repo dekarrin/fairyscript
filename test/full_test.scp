@@ -47,7 +47,7 @@
 [GFX: LOOP flash]
 [GFX: STOP flash]
 [GFX: STOP ALL]
-[GFX: STOP flash OVER 5 seconds]
+[GFX: STOP flash OVER 5 SECONDS]
 [GFX: STOP ALL QUICKLY]
 [GFX: STOP]
 [GFX: STOP SLOWLY]
@@ -77,7 +77,7 @@
 * "Show her the 'private collection'": GO TO private
 * "Show her the missing files": SHOW IF have_hacked_computer, GO TO files
 * "Show him the broken chair": SHOW IF hacked_computer, GO TO files
-* "Punch her": SHOW IF OFF, SET have_punched_aerith AND GO TO punch
+* "Punch her": SHOW IF OFF, SET have_punched_aerith ON AND GO TO punch
 
 [choice: choice-section]
 "What should I tell him?"
@@ -92,22 +92,22 @@
 
 (section: punch WITH PARAMS target="Aerith", location)
 
-(flagset: have_drank_tea)
-(flagset: drank_tea ON)
-(flagset: drank_tea OFF)
-(flagset: have_drank_tea ON)
-(flagset: have_drank_tea OFF)
-(flagset: impressed_aerith have_hacked_computer)
-(flagset: have_impressed_aerith have_hacked_computer)
-(flagset: impressed_aerith hacked_computer)
-(flagset: have_impressed_aerith hacked_computer)
+(flag: have_drank_tea)
+(flag: drank_tea ON)
+(flag: drank_tea OFF)
+(flag: have_drank_tea ON)
+(flag: have_drank_tea OFF)
+(flag: impressed_aerith have_hacked_computer)
+(flag: have_impressed_aerith have_hacked_computer)
+(flag: impressed_aerith hacked_computer)
+(flag: have_impressed_aerith hacked_computer)
 
-(varset: runs)
-(varset: runs "82")
-(varset: runs INC)
-(varset: have_run OFF)
-(varset: reps 28)
-(varset: reps DEC BY 5)
+(var: runs)
+(var: runs "82")
+(var: runs INC)
+(var: have_run OFF)
+(var: reps 28)
+(var: reps DEC BY 5)
 
 (dialog: HIDE)
 (dialog: SHOW)
@@ -124,42 +124,42 @@
 (End: RETURN 5)
 
 (while: staff) {
-	(varset: runs INC)
+	(var: runs INC)
 }
 
 (while: ON) {
-	(varset: runs DEC)
+	(var: runs DEC)
 }
 
 (while: OFF) {
-	(varset: runs INC BY 2)
+	(var: runs INC BY 2)
 }
 
 (while: 'x > 8 and q is not 6') {
-	(flagset: have_seen_god)
+	(flag: have_seen_god)
 }
 
 (if: staff) {
-	(varset: runs INC)
+	(var: runs INC)
 }
 
 (if: ON) {
-	(varset: runs DEC)
+	(var: runs DEC)
 }
 (else if: OFF) {
-	(varset: runs INC BY 2)
+	(var: runs INC BY 2)
 }
 
 (if: 'x > 8 and q is not 6') {
-	(flagset: have_seen_god)
+	(flag: have_seen_god)
 }
-(elif: '35 + 14 > 4')
+(else if: '35 + 14 > 4')
 {
 	(execute: aerith-punch)
 }
 (else)
 {
-	(flagset: have_seen_god OFF)
+	(flag: have_seen_god OFF)
 }
 
 (python)
