@@ -144,8 +144,8 @@ class DocxCompiler(object):
 		self.set_para_format(alignment=WD_ALIGN_PARAGRAPH.RIGHT)
 		self.add_paragraph()
 		self.add_paragraph()
-		name = scp.to_words(scene['name'][1]).title()
-		self.add_paragraph(name, italic=True, bold=True)
+		name = scp.to_words(scene['name'][1]).upper()
+		self.add_paragraph(name, italic=False, bold=True)
 		
 	def _compile_ENTER(self, enter):
 		geom = enter['motion']
@@ -157,11 +157,13 @@ class DocxCompiler(object):
 			if geom['origin'] is not None:
 				origin = geom['origin'][1]
 				
-		line = scp.to_words(enter['target'][1]).title() + ' '
+		line = scp.to_words(enter['target'][1]).title()
 		if len(enter['states']) > 0:
 			line += ','
 			line += make_states(enter['states'])
 			line += ', '
+		else:
+			line += ' '
 		if enter['transition'] is not None:
 			line += scp.to_words(enter['transition'][1]).lower() + 's in to '
 		else:
@@ -215,10 +217,15 @@ class DocxCompiler(object):
 		line += 'the scene'
 		if geom is not None:
 			line += scp.get_duration_words(geom['duration'], 'over %d seconds')
+		line += '.'
 		self.add_paragraph(line, italic=True)
 		
 	def _compile_MUSIC(self, music):
 		self.add_paragraph()
+		song = music['target'][1]
+		if scp.typed_check(music['target'], 'string'):
+			dot = song.rfind('.')
+			song = song[0:dot]
 		line = 'We hear '
 		if music['action'] == 'start':
 			if music['fadeout'] is not None:
@@ -226,15 +233,15 @@ class DocxCompiler(object):
 				line += 'and then we hear '
 			line += 'the song '
 			self.add_run(line, italic=True)
-			self.add_run(scp.to_words(music['target'][1]).title(), italic=False)
+			self.add_run(scp.to_words(song).title(), italic=False)
 			self.add_run(' begin to play.', italic=True)
 		elif music['action'] == 'stop':
 			if scp.typed_check(music['target'], 'rel'):
-				line += music['target'][1].lower() + ' music '
+				line += song.lower() + ' music '
 			else:
 				line += 'the song '
 				self.add_run(line, italic=True)
-				self.add_run(scp.to_words(music['target'][1]).title(), italic=False)
+				self.add_run(scp.to_words(song).title(), italic=False)
 				line = ' '
 			if music['duration'] is not None:
 				line += 'fade out' + scp.get_duration_words(music['duration'], 'over %d seconds') + '.'
@@ -261,19 +268,23 @@ class DocxCompiler(object):
 				line += 'stop.'
 		self.add_paragraph(line, italic=True)
 
-	def _compile_SFX(self, sfx):
+	def _compile_SFX(self, sfx):	
+		fx = sfx['target'][1]
+		if scp.typed_check(sfx['target'], 'string'):
+			dot = fx.rfind('.')
+			fx = fx[0:dot]
 		line = 'We hear '
 		if sfx['action'] == 'start':
-			a = scp.indef_article(sfx['target'][1])
-			line += a + ' ' + scp.to_words(sfx['target'][1]).upper()
+			a = scp.indef_article(fx)
+			line += a + ' ' + scp.to_words(fx).upper()
 			if scp.typed_check(sfx['loop'], 'boolean', True):
 				line += ' sound begin to repeat'
 			line += '.'
 		elif sfx['action'] == 'stop':
 			if scp.typed_check(sfx['target'], 'rel'):
-				line += sfx['target'][1].lower() + ' repeating sounds '
+				line += fx.lower() + ' repeating sounds '
 			else:
-				line += 'the repeated ' + scp.to_words(sfx['target'][1]).upper() + ' sound '
+				line += 'the repeated ' + scp.to_words(fx).upper() + ' sound '
 			if sfx['duration'] is not None:
 				line += 'fade away' + scp.get_duration_words(sfx['duration'], 'over %d seconds') + '.'
 			else:
@@ -284,7 +295,7 @@ class DocxCompiler(object):
 		self.add_paragraph()
 		self.add_run("We see the full-motion video ", italic=True)
 		self.add_run(scp.to_words(fmv['target'][1]), italic=False)
-		self.add_run(' play.')
+		self.add_run(' play.', italic=True)
 		
 	def _compile_CAMERA(self, camera):
 		line = 'We'
@@ -301,14 +312,15 @@ class DocxCompiler(object):
 			elif act['type'] == 'ZOOM':
 				line += ' move '
 				if scp.typed_check(act['target'], 'rel', 'IN'):
-					line += ' in closer'
+					line += 'in closer'
 				elif scp.typed_check(act['target'], 'rel', 'OUT'):
-					line += ' back farther'
+					line += 'back farther'
 			if 'duration' in act and not scp.typed_check(act['duration'], 'rel'):
 				line += scp.get_duration_words(act['duration'], 'over %d seconds')
 			if acts_added < len(camera['actions']) - 1 and len(camera['actions']) > 2:
 				line += ','
 			acts_added += 1
+		line += '.'
 		self.add_paragraph(line, italic=True)
 		
 	def _compile_CHOICE(self, choice):
@@ -345,7 +357,7 @@ class DocxCompiler(object):
 		if desc['target'] is not None:
 			line = "Regarding " + scp.to_words(desc['target'][1]) + ': '
 		line += desc['text'][1]
-		self.add_paragraph(line)
+		self.add_paragraph(line, italic=True)
 			
 	def _compile_SECTION(self, section):
 		self._document.add_heading(scp.to_words(section['section'][1]).title(), level=2)

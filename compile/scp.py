@@ -57,7 +57,8 @@ def get_duration_words(source, num_fmt):
 		return ''
 	
 def to_words(identifier):
-	return " ".join(identifier.split('_'))
+	step1 = " ".join(identifier.split('_'))
+	return " ".join(step1.split('-'))
 	
 def extract_comment(source):
 	return source.lstrip('#').lstrip()
