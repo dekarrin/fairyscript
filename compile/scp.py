@@ -77,7 +77,7 @@ def to_human_readable(expr):
 		('>=', 'is greater than or equal to'),
 		('<=', 'is less than or equal to'),
 		('!=', 'is not equal to'),
-		(r'(\w+)\s*+=', r'increase \1 by'),
+		(r'(\w+)\s*\+=', r'increase \1 by'),
 		(r'(\w+)\s*-=', r'decrease \1 by')
 	]
 	for readable in readable_versions:

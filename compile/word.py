@@ -4,6 +4,7 @@ import copy
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches
+from docx.shared import Pt
 
 class DocxCompiler(object):
 	def __init__(self):
@@ -17,6 +18,7 @@ class DocxCompiler(object):
 		self.main_character = None
 		self._warnings = {}
 		self._screenplay_actor_margin = Inches(4)
+		self.paragraph_spacing = 0
 		self.include_flagsets = True
 		self.include_varsets = True
 		self.include_python = True
@@ -71,6 +73,9 @@ class DocxCompiler(object):
 			self._last_paragraph = self._document.add_paragraph()
 		else:
 			self._last_paragraph = self._document.add_paragraph(style=style)
+		fmt = self._last_paragraph.paragraph_format
+		fmt.space_before = Pt(self.paragraph_spacing)
+		fmt.space_after = Pt(self.paragraph_spacing)
 		self._last_run = None
 		if text is not None:
 			self.add_run(text[0:1].upper() + text[1:], bold, italic)
@@ -86,20 +91,17 @@ class DocxCompiler(object):
 		self._add_break = True
 		if statement['type'] == 'line':
 			self._compile_line(statement)
-		elif statement['type'] == 'comment':
-			if self._just_completed_line and not self.screenplay_mode:
-				self.add_paragraph()
-				self._last_speaker == None
-			self.add_paragraph('(' + scp.extract_comment(statement['text']) + ')', italic=True)
-			if self._add_break:
-				self.add_paragraph()
 		else:
 			if self._just_completed_line and not self.screenplay_mode:
 				self.add_paragraph()
 				self._last_speaker == None
-			instruction = statement['instruction']
-			func = getattr(WordCompiler, '_compile_' + instruction)
-			func(self, statement)
+				self._just_completed_line = False
+			if statement['type'] == 'comment':
+				self.add_paragraph('(' + scp.extract_comment(statement['text']) + ')', italic=True)
+			else:
+				instruction = statement['instruction']
+				func = getattr(DocxCompiler, '_compile_' + instruction)
+				func(self, statement)
 			if self._add_break:
 				self.add_paragraph()
 		
@@ -128,9 +130,9 @@ class DocxCompiler(object):
 			if self._just_completed_line and sp != self._last_speaker:
 				self.add_paragraph()
 			if sp is None:
-				self.add_paragraph(line['text'])
+				self.add_paragraph(line['text'][1])
 			else:
-				self.add_paragraph(sp + ': "' + line['text'] + '"')
+				self.add_paragraph(sp + ': "' + line['text'][1] + '"')
 		self._just_completed_line = True
 		self._last_speaker = sp
 		
@@ -138,7 +140,7 @@ class DocxCompiler(object):
 		if scene['transition'] is None:
 			trans = "cut to:"
 		else:
-			trans = scene['transition'].lower() + " to:"
+			trans = scene['transition'][1].lower() + " to:"
 		self.add_paragraph(trans, italic=True, bold=True)
 		self.set_para_format(alignment=WD_ALIGN_PARAGRAPH.RIGHT)
 		self.add_paragraph()
@@ -170,13 +172,14 @@ class DocxCompiler(object):
 			line += ' near the ' + scp.to_words(origin).lower()
 		if dest is not None:
 			line += ' and moves to the ' + scp.to_words(dest).lower()
-		line += scp.get_duration_words(geom['duration'], 'over %d seconds')
+		if geom is not None:
+			line += scp.get_duration_words(geom['duration'], 'over %d seconds')
 		line += '.'
 		self.add_paragraph(line, italic=True)
 
 	def _compile_ACTION(self, action):
 		line = scp.to_words(action['target'][1]).title() + ' '
-		if len(action['states'] > 0):
+		if len(action['states']) > 0:
 			line += 'changes to appear'
 			line += make_states(action['states'])
 			if action['destination'] is not None:
@@ -207,11 +210,12 @@ class DocxCompiler(object):
 		if geom is not None:
 			line += 'and '
 		if exit['transition'] is not None:
-			line += to_words(exit['transition'][1]).lower() + 's out of '
+			line += scp.to_words(exit['transition'][1]).lower() + 's out of '
 		else:
 			line += 'exits '
 		line += 'the scene'
-		line += scp.get_duration_words(geom['duration'], 'over %d seconds')
+		if geom is not None:
+			line += scp.get_duration_words(geom['duration'], 'over %d seconds')
 		self.add_paragraph(line, italic=True)
 		
 	def _compile_MUSIC(self, music):
@@ -292,9 +296,9 @@ class DocxCompiler(object):
 			if 'duration' in act and scp.typed_check(act['duration'], 'rel'):
 				line += scp.get_duration_words(act['duration'], '')
 			if act['type'] == 'SNAP':
-				line += ' focus on the ' + scp.to_words(act['target'])
+				line += ' focus on the ' + scp.to_words(act['target'][1])
 			elif act['type'] == 'PAN':
-				line += ' shift our focus to the ' + scp.to_words(act['target'])
+				line += ' shift our focus to the ' + scp.to_words(act['target'][1])
 			elif act['type'] == 'ZOOM':
 				line += ' move '
 				if scp.typed_check(act['target'], 'rel', 'IN'):
@@ -305,19 +309,19 @@ class DocxCompiler(object):
 				line += scp.get_duration_words(act['duration'], 'over %d seconds')
 			if acts_added < len(camera['actions']) - 1 and len(camera['actions']) > 2:
 				line += ','
-			actions_added += 1
+			acts_added += 1
 		self.add_paragraph(line, italic=True)
 		
 	def _compile_CHOICE(self, choice):
 		if choice['label'] is not None:
-			labelstmt = {'type': 'annotation', 'instruction': 'section', 'section': choice['label'], 'params': []}
+			labelstmt = {'type': 'annotation', 'instruction': 'SECTION', 'section': choice['label'], 'params': []}
 			self.compile_statement(labelstmt)
 		line = "We are presented with a choice:"
 		if choice['title'] is not None:
 			line += ' ' + choice['title'][1]
 		self.add_paragraph(line)
 		for c in choice['choices']:
-			self.add_paragraph(style='ListBullet')
+			self.add_paragraph(style='List Bullet')
 			if c['condition'] is not None:
 				if scp.typed_check(c['condition'], 'boolean', True):
 					self.add_run('(always shown) ', italic=True)
@@ -510,10 +514,12 @@ class DocxCompiler(object):
 				
 def make_states(states):	
 	states_added = 0
-	for s in enter['states']:
-		if states_added == len(enter['states']) - 1 and len(enter['states']) > 1: # we are on the last one
+	line = ''
+	for s in states:
+		if states_added == len(states) - 1 and len(states) > 1: # we are on the last one
 			line += ' and'
 		line += ' ' + scp.to_words(s[1]).lower()
-		if states_added < len(enter['states']) - 1 and len(enter['states']) > 2:
+		if states_added < len(states) - 1 and len(states) > 2:
 			line += ','
 		states_added += 1
+	return line

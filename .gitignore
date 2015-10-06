@@ -3,3 +3,4 @@ parser.out
 *.rpy
 *.lex
 *.ast
+*.docx

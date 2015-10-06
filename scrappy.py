@@ -132,7 +132,12 @@ if __name__ == "__main__":
 			if (args.output_mode == 'lex' or args.output_mode == 'ast') and args.pretty:
 				pprint.pprint(output, output_file)
 			elif args.output_mode == 'word':
-				output.save(args.output)
+				try:
+					output.save(args.output)
+				except IOError, e:
+					if e.errno == 13:
+						print "Error writing file: permission denied"
+						print "Make sure that '" + args.output + "' is not open in another application"
 			else:
 				output_file.write(str(output))
 		if args.output != '--' and args.output_mode != 'word':
