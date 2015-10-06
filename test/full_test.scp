@@ -1,0 +1,170 @@
+# This script is specifically designed to hit every possible combination of the grammar.
+
+[scene: Bobs-garage-2]
+[scene: FADE TO my-house]
+
+[enter: Aerith]
+[enter: Aerith (pissed-off)]
+[enter: Aerith (pissed-off, annoyed)]
+[enter: Aerith (pissed, annoyed, with-back-turned)]
+[enter: Aerith DISSOLVE IN]
+[enter: Aerith (pissed-off) DISSOLVE IN]
+[enter: Aerith (pissed-off, annoyed) DISSOLVE IN]
+[enter: Aerith (pissed, annoyed, with-back-turned) FADE IN]
+[enter: Aerith FROM LEFT]
+[Enter: Aerith TO DOOR]
+[Enter: Aerith QUICKLY]
+[Enter: Aerith FADE IN SLOWLY]
+[Enter: Aerith FADE IN FROM LEFT TO DOOR]
+[Enter: Aerith FADE IN FROM LEFT TO DOOR FOR 4.5 SECONDS]
+[Enter: Aerith (pissed, mean) FADE IN FROM LEFT TO DOOR OVER 4.5 SECONDS]
+
+[Bob: pissed]
+[Bob: GO TO stage-front]
+[Bob: GO TO stage-left QUICKLY]
+[Bob: pissed, happy, GO TO bookshelf SLOWLY]
+
+[Exit: Aerith]
+[Exit: Aerith FADE OUT]
+[Exit: Aerith FROM door]
+[Exit: Aerith TO east-stairwell]
+[Exit: Aerith SLOWLY]
+[Exit: Aerith FADE OUT SLOWLY]
+[Exit: Aerith FADE OUT FROM door TO east-stairwell FOR 9 SECONDS]
+
+[Music: STOP]
+[Music: STOP QUICKLY]
+[Music: STOP OVER 3 SECONDS]
+[Music: STOP ALL]
+[Music: STOP ALL SLOWLY]
+[Music: STOP "bad.ogg"]
+[Music: STOP main_theme SLOWLY]
+[Music: main-theme]
+[Music: "main.ogg", FADEOUT OLD]
+[Music: "main.ogg", FADEOUT OLD FOR 5 SECONDS]
+
+[GFX: flash]
+[GFX: LOOP flash]
+[GFX: STOP flash]
+[GFX: STOP ALL]
+[GFX: STOP flash OVER 5 seconds]
+[GFX: STOP ALL QUICKLY]
+[GFX: STOP]
+[GFX: STOP SLOWLY]
+
+[SFX: bang]
+[SFX: "concrete-sprint.ogg"]
+[SFX: LOOP "swish.ogg"]
+[SFX: LOOP swish]
+[SFX: STOP "swish.ogg"]
+[SFX: STOP swish SLOWLY]
+[SFX: STOP ALL QUICKLY]
+[SFX: STOP]
+[SFX: STOP OVER 4 SECONDS]
+
+[FMV: opening]
+[FMV: "opening_video.mp4"]
+
+[camera: SNAP TO middle]
+[camera: PAN TO center QUICKLY]
+[camera: ZOOM IN]
+[camera: ZOOM OUT]
+[camera: ZOOM OUT FOR 3 SECONDS]
+[camera: PAN TO middle FOR 3 SECONDS AND ZOOM OUT QUICKLY]
+[camera: PAN TO middle FOR 3 SECONDS AND ZOOM OUT QUICKLY AND SNAP TO bookshelf]
+
+[choice]
+* "Show her the 'private collection'": GO TO private
+* "Show her the missing files": SHOW IF have_hacked_computer, GO TO files
+* "Show him the broken chair": SHOW IF hacked_computer, GO TO files
+* "Punch her": SHOW IF OFF, SET have_punched_aerith AND GO TO punch
+
+[choice: choice-section]
+"What should I tell him?"
+* "Try to feign ignorance": SET ignore INC AND SET goodness DEC BY 5 AND GO TO ignorance
+* "Tell the truth": SET truth ON AND SET badness goodness AND GO TO tell_truth
+
+[Scene: ayase-bedroom]
+(Description: We see a series of shelves and boxes. There is a huge mess everywhere. It pretty much looks like the room of any 12th-grader.)
+(Description: millenium-falcon: What a hunk of junk! Those wanna-be commandos mounted a rescue operation and came to rescue you in THAT?)
+
+(section: punch)
+
+(section: punch WITH PARAMS target="Aerith", location)
+
+(flagset: have_drank_tea)
+(flagset: drank_tea ON)
+(flagset: drank_tea OFF)
+(flagset: have_drank_tea ON)
+(flagset: have_drank_tea OFF)
+(flagset: impressed_aerith have_hacked_computer)
+(flagset: have_impressed_aerith have_hacked_computer)
+(flagset: impressed_aerith hacked_computer)
+(flagset: have_impressed_aerith hacked_computer)
+
+(varset: runs)
+(varset: runs "82")
+(varset: runs INC)
+(varset: have_run OFF)
+(varset: reps 28)
+(varset: reps DEC BY 5)
+
+(dialog: HIDE)
+(dialog: SHOW)
+(dialog: AUTO)
+
+(Go to: aerith-punch)
+(Goto: bob-punch)
+
+(Execute: punch WITH PARAMS target="bob")
+(Execute: aerith-punch)
+
+(End)
+
+(End: RETURN 5)
+
+(while: staff) {
+	(varset: runs INC)
+}
+
+(while: ON) {
+	(varset: runs DEC)
+}
+
+(while: OFF) {
+	(varset: runs INC BY 2)
+}
+
+(while: 'x > 8 and q is not 6') {
+	(flagset: have_seen_god)
+}
+
+(if: staff) {
+	(varset: runs INC)
+}
+
+(if: ON) {
+	(varset: runs DEC)
+}
+(else if: OFF) {
+	(varset: runs INC BY 2)
+}
+
+(if: 'x > 8 and q is not 6') {
+	(flagset: have_seen_god)
+}
+(elif: '35 + 14 > 4')
+{
+	(execute: aerith-punch)
+}
+(else)
+{
+	(flagset: have_seen_god OFF)
+}
+
+(python)
+{
+	42+1
+	for i in ziebel:
+		print i
+}
