@@ -5,7 +5,7 @@ from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches
 
-class WordCompiler(object):
+class DocxCompiler(object):
 	def __init__(self):
 		self._document = None
 		self._last_paragraph = None
@@ -19,12 +19,16 @@ class WordCompiler(object):
 		self._screenplay_actor_margin = Inches(4)
 		self.include_flagsets = True
 		self.include_varsets = True
+		self.include_python = True
 		self._add_break = True
 	
-	def compile_script(self, script):
+	def compile_script(self, script, inputfile=None):
 		self._check_format()
 		self._num_docs += 1
-		self._document = Document()
+		if inputfile is None:
+			self._document = Document()
+		else:
+			self._document = Document(inputfile)
 		self._document.add_heading("Script File #" + str(self._num_docs))
 		self._last_paragraph = None
 		self._last_run = None

@@ -2,6 +2,7 @@ import os.path
 import parse.scp_lex
 import parse.scp_yacc
 from compile.renpy import RenpyCompiler
+from compile.word import DocxCompiler
 	
 def lex_manuscript(script_text):
 	symbols = []
@@ -29,7 +30,8 @@ def compile_to_renpy(manuscript_ast):
 	return compiler.compile_script(manuscript_ast)
 	
 def compile_to_word(manuscript_ast):
-	return ""
+	compiler = DocxCompiler()
+	return compiler.compile_script(manuscript_ast)
 
 if __name__ == "__main__":
 	import argparse
@@ -37,6 +39,9 @@ if __name__ == "__main__":
 	import sys
 	
 	class InvalidInputFormatException(Exception):
+		pass
+		
+	class InvalidOutputFormatException(Exception):
 		pass
 	
 	argparser = argparse.ArgumentParser(description="Compiles manuscripts to other formats")
@@ -58,8 +63,10 @@ if __name__ == "__main__":
 		args.input = ['--'] # don't pass into set_defaults() or else '--' will always be present
 	
 	if args.output == '--':
+		if args.output_mode == 'word':
+			raise InvalidOutputFormatException("cannot output DOCX file to stdout")
 		output_file = sys.stdout
-	else:
+	elif args.output_mode != 'word':
 		output_file = open(args.output, 'w')
 	
 	for filename in args.input:
@@ -95,8 +102,10 @@ if __name__ == "__main__":
 				
 		if (args.output_mode == 'lex' or args.output_mode == 'ast') and args.pretty:
 			pprint.pprint(output, output_file)
+		elif args.output_mode == 'word':
+			output.save(args.output)
 		else:
 			output_file.write(str(output))
-	if args.output != '--':
+	if args.output != '--' and args.output_mode != 'word':
 		output_file.close()
 		
