@@ -73,9 +73,8 @@ class DocxCompiler(object):
 			self._last_paragraph = self._document.add_paragraph()
 		else:
 			self._last_paragraph = self._document.add_paragraph(style=style)
-		fmt = self._last_paragraph.paragraph_format
-		fmt.space_before = Pt(self.paragraph_spacing)
-		fmt.space_after = Pt(self.paragraph_spacing)
+		self.set_para_format(space_before=Pt(self.paragraph_spacing))
+		self.set_para_format(space_after=Pt(self.paragraph_spacing))
 		self._last_run = None
 		if text is not None:
 			self.add_run(text[0:1].upper() + text[1:], bold, italic)
