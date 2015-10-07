@@ -1,5 +1,6 @@
 import scp
 import copy
+import re
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -376,11 +377,12 @@ class DocxCompiler(object):
 			self.add_paragraph(self.make_goto({'destination': c['target']}), italic=True, bold=False, style='List Bullet 2')
 			
 	def _compile_DESCRIPTION(self, desc):
+		self.add_paragraph()
 		line = ''
 		if desc['target'] is not None:
-			line = "Regarding " + scp.to_words(desc['target'][1]) + ': '
-		line += desc['text'][1]
-		self.add_paragraph(line, italic=True)
+			self.add_run("Regarding ", italic=True)
+			self.add_run(scp.to_words(desc['target'][1]).title() + ': ', italic=False)
+		self.add_run(desc['text'][1], italic=True)
 			
 	def _compile_SECTION(self, section):
 		self._document.add_heading(scp.to_words(section['section'][1]).title(), level=2)
@@ -401,7 +403,7 @@ class DocxCompiler(object):
 		self.add_paragraph("We set the dialog window to " + dialog['mode'].upper() + " mode.", italic=True)
 		
 	def _compile_GOTO(self, goto):
-		self.add_paragraph(self.make_goto(goto))
+		self.add_paragraph(self.make_goto(goto), italic=True)
 		
 	def _compile_EXECUTE(self, execute):
 		line = "We set the proper parameters and execute section " + scp.to_words(execute['section'][1]).title() + '.'
@@ -417,7 +419,8 @@ class DocxCompiler(object):
 		line = "We do the following "
 		cond = scp.get_expr(whilestmt['condition'])
 		if scp.typed_check(whilestmt['condition'], 'boolean'):
-			if cond:
+			tcond = whilestmt['condition'][1]
+			if tcond:
 				line += 'forever:'
 			else:
 				line = 'We never do the following:'
@@ -430,11 +433,11 @@ class DocxCompiler(object):
 		else:
 			line += 'while ' + scp.to_human_readable(cond) + ':'
 		self.add_paragraph(line, italic=True)
-		self.add_paragraph('{', italic=True)
+		self.add_paragraph('{', italic=False)
 		self.add_paragraph()
 		for st in whilestmt['statements']:
 			self.compile_statement(st)
-		self.add_paragraph('}', italic=True)
+		self.add_paragraph('}', italic=False)
 		
 	def _compile_IF(self, ifstmt):
 		elsebr = None
@@ -445,13 +448,14 @@ class DocxCompiler(object):
 			else:
 				negation = ''
 				if firstbr:
-					line = 'We%s do the following' + scp.get_expr(br['condition']) + ':'
+					line = 'We%s do the following'
 					firstbr = False
 				else:
 					line = 'Otherwise, we%s do the following'
 				cond = scp.get_expr(br['condition'])
 				if scp.typed_check(br['condition'], 'boolean'):
-					if cond:
+					tcond = br['condition'][1]
+					if tcond:
 						negation = ' always'
 						line += ':'
 					else:
@@ -466,31 +470,32 @@ class DocxCompiler(object):
 				else:
 					line += ' if ' + scp.to_human_readable(cond) + ':'
 				self.add_paragraph(line % negation, italic=True)
-				self.add_paragraph('{', italic=True)
+				self.add_paragraph('{', italic=False)
 				self.add_paragraph()
 				for st in br['statements']:
 					self.compile_statement(st)
-				self.add_paragraph('}', italic=True)
-				self.add_paragraph()
+				self.add_paragraph('}', italic=False)
 		if elsebr is not None:
 			self.add_paragraph("Otherwise, we do the following:", italic=True)
-			self.add_paragraph("{", italic=True)
+			self.add_paragraph("{", italic=False)
 			self.add_paragraph()
 			for st in elsebr['statements']:
 				self.compile_statement(st)
-			self.add_paragraph("}", italic=True)
-			self.add_paragraph()
+			self.add_paragraph("}", italic=False)
+		self.add_paragraph()
 		self._add_break = False
 			
 	def _compile_PYTHON(self, python):
 		if self.include_python:
 			self.add_paragraph("We execute the following python code:", italic=True)
-			self.add_paragraph("{", italic=True)
+			self.add_paragraph("{", italic=False)
 			self.add_paragraph()
 			lines = python['body'].split('\n')
-			for line in lines:
-				self.add_paragraph(line.strip())
-			self.add_paragraph("}", italic=True)
+			start = re.match(r'\s*', lines[0]).end(0)
+			for line in lines:	
+				self.add_paragraph(line[start:])
+			self.add_paragraph()
+			self.add_paragraph("}", italic=False)
 		else:
 			self.add_paragraph("We execute python code.", italic=True)
 		
@@ -503,14 +508,15 @@ class DocxCompiler(object):
 	def make_flagset(self, flagset):
 		line = ''
 		value = scp.get_expr(flagset['value'])
+		tvalue = flagset['value'][1]
 		flag = scp.to_words(flagset['name'][1]).lower()
 		if scp.typed_check(flagset['value'], 'boolean'):
 			if not flag.startswith('have '):
-				if value:
+				if tvalue:
 					line = 'We set ' + scp.quote(flag, "'") + '.'
 				else:
 					line = 'We unset ' + scp.quote(flag, "'") + '.'
-			elif value:
+			elif tvalue:
 				line = 'We now ' + flag + '.'
 			else:
 				line = 'We now no longer ' + flag + '.'
@@ -534,7 +540,7 @@ class DocxCompiler(object):
 	def make_varset(self, varset):
 		line = ''
 		if scp.typed_check(varset['value'], 'boolean'):
-			line = self.make_flagset(varset)
+			return self.make_flagset(varset)
 		var = scp.to_words(varset['name'][1]).lower()
 		value = scp.get_expr(varset['value'])
 		if scp.typed_check(varset['value'], 'incdec'):

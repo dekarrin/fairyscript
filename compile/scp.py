@@ -79,11 +79,18 @@ def to_human_readable(expr):
 		('<=', 'is less than or equal to'),
 		('!=', 'is not equal to'),
 		(r'(\w+)\s*\+=', r'increase \1 by'),
-		(r'(\w+)\s*-=', r'decrease \1 by')
+		(r'(\w+)\s*-=', r'decrease \1 by'),
+		(r'\+', 'plus'),
+		('-', 'minus'),
+		(r'\*', 'times'),
+		('/', 'divided by'),
+		('%', 'modulo')
 	]
 	for readable in readable_versions:
 		search = r'\s*' + readable[0] + r'\s*'
 		replacement = ' ' + readable[1] + ' '
 		expr = re.sub(search, replacement, expr)
+	if expr.startswith('(') and expr.endswith(')'):
+		expr = expr[1:-1]
 	return expr
 	
