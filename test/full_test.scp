@@ -87,6 +87,9 @@
 [Scene: ayase-bedroom]
 (Description: We see a series of shelves and boxes. There is a huge mess everywhere. It pretty much looks like the room of any 12th-grader.)
 (Description: millenium-falcon: What a hunk of junk! Those wanna-be commandos mounted a rescue operation and came to rescue you in THAT?)
+(Description: :this description is explicitly escaped with a pre-colon, though it probably doesn't need it.)
+(Description: ::This description begins with a colon, and so it must be escaped, I guess.)
+(Description: :starting_like_this: means that it must be escaped.)
 
 (section: punch)
 

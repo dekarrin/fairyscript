@@ -1,7 +1,10 @@
 import ply.lex as lex
 
 states = (
-	('description', 'exclusive'),
+	('descopen', 'exclusive'),
+	('descscan', 'exclusive'),
+	('descid', 'exclusive'),
+	('descescapedwords', 'exclusive'),
 	('descwords', 'exclusive')
 )
 
@@ -102,20 +105,18 @@ t_COMMENT = r"\#.*"
 
 t_ANY_ignore = ' \t'
 
+
 def t_ANNOTATIONOPEN_DESCRIPTION(t):
 	r"\([Dd][Ee][Ss][Cc][Rr][Ii][Pp][Tt][Ii][Oo][Nn]"
-	t.lexer.begin('description')
+	t.lexer.desc_id = False
+	t.lexer.begin('descopen')
 	return t
 	
-def t_description_colon(t):
-	r":"
-	t.lexer.begin('descwords')
+def t_descopen_colon(t):
+	':'
+	t.lexer.desc_start = t.lexer.lexpos
+	t.lexer.begin('descscan')
 	t.type = ':'
-	return t
-	
-def t_descwords_UNQUOTED_STRING(t):
-	r"(?:[^)\\]*(?:\\.[^)\\]*)+|[^)\\]+(?:\\.[^)\\]*)*)"
-	t.lexer.begin("INITIAL")
 	return t
 
 def t_FADEOUT_OLD(t):
@@ -142,7 +143,7 @@ def t_PARAMSOPEN(t):
 	r"WITH\sPARAMS"
 	return t
 
-def t_INITIAL_description_ID(t):
+def t_INITIAL_descscan_descid_ID(t):
 	r"[_A-Za-z][_A-Za-z0-9-]*"
 	if t.value in reserved:
 		t.type = t.value
@@ -150,7 +151,39 @@ def t_INITIAL_description_ID(t):
 		t.type = 'FOR'
 	else:
 		t.type = 'ID'
+	if t.lexer.lexstate == 'descscan':
+		t.lexer.desc_id = True
+	else:
+		return t
+	
+def t_descscan_colon(t):
+	':'
+	t.lexer.lexpos = t.lexer.desc_start
+	if t.lexer.desc_id:
+		t.lexer.begin('descid')
+	else:
+		t.lexer.begin('descescapedwords')
+		
+def t_descid_colon(t):
+	':'
+	t.type = ':'
+	t.lexer.begin('descwords')
 	return t
+	
+def t_descescapedwords_colon(t):
+	':'
+	t.type = ':'
+	t.lexer.begin('descwords')
+	return t
+	
+def t_descscan_descwords_UNQUOTED_STRING(t):
+	r"(?:[^)\\]*(?:\\.[^)\\]*)+|[^)\\]+(?:\\.[^)\\]*)*)"
+	if t.lexer.lexstate == 'descscan':
+		t.lexer.lexpos = t.lexer.desc_start
+		t.lexer.begin('descwords')
+	else:
+		t.lexer.begin("INITIAL")
+		return t
 
 def t_ANY_newline(t):
 	r"\n+"

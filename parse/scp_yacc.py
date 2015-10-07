@@ -261,6 +261,10 @@ def p_description_annotation_2_id_str(p):
 	'''description_annotation : ANNOTATIONOPEN_DESCRIPTION ':' ID ':' UNQUOTED_STRING ')' '''
 	p[0] = make_annotation('DESCRIPTION', text=('string', unescape(' ' + p[5] + ' ')), target=('id', p[3]))
 	
+def p_description_annotation_2_c_unstr(p):
+	'''description_annotation : ANNOTATIONOPEN_DESCRIPTION ':' ':' UNQUOTED_STRING ')' '''
+	p[0] = make_annotation('DESCRIPTION', text=('string', unescape(' ' + p[4] + ' ')), target=None)
+	
 def p_section_annotation_2_id(p):
 	'''section_annotation : ANNOTATIONOPEN_SECTION ':' ID ')' '''
 	p[0] = make_annotation('SECTION', section=('id', p[3]), params=[])
