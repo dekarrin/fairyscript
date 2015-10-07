@@ -3,6 +3,7 @@ import copy
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.style import WD_STYLE_TYPE
 from docx.shared import Inches
 from docx.shared import Pt
 
@@ -25,12 +26,13 @@ class DocxCompiler(object):
 		self._add_break = True
 	
 	def compile_script(self, script, inputfile=None):
-		self._check_format()
+		self._check_screenplay_vars()
 		self._num_docs += 1
 		if inputfile is None:
 			self._document = Document()
 		else:
 			self._document = Document(inputfile)
+		self._set_style_defaults()
 		self._document.add_heading("Script File #" + str(self._num_docs))
 		self._last_paragraph = None
 		self._last_run = None
@@ -67,14 +69,38 @@ class DocxCompiler(object):
 		fmt = self._last_run.font
 		for k in kwargs:
 			setattr(fmt, k, kwargs[k])
+			
+	def _set_style_defaults(self):
+		styles = self._document.styles
+		normal_style = styles['Normal']
+		normal_fmt = normal_style.paragraph_format
+		normal_fmt.space_before = Pt(self.paragraph_spacing)
+		normal_fmt.space_after = Pt(self.paragraph_spacing)
+		if 'Slugline Transition' not in styles:
+			sl_trans_style = styles.add_style('Slugline Transition', WD_STYLE_TYPE.PARAGRAPH)
+			sl_trans_style.base_style = styles['Normal']
+			pfmt = sl_trans_style.paragraph_format
+			pfmt.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+			pfmt.keep_together = True
+			pfmt.keep_with_next = True
+			pfmt.widow_control = True
+			ffmt = sl_trans_style.font
+			ffmt.bold = True
+			ffmt.italic = True
+		if 'Slugline' not in styles:
+			sl_style = styles.add_style('Slugline', WD_STYLE_TYPE.PARAGRAPH)
+			sl_style.base_style = styles['Normal']
+			pfmt = sl_style.paragraph_format
+			pfmt.widow_control = True
+			ffmt = sl_style.font
+			ffmt.bold = True
+			ffmt.all_caps = True
 		
 	def add_paragraph(self, text=None, bold=None, italic=None, style=None):
 		if style is None:
 			self._last_paragraph = self._document.add_paragraph()
 		else:
 			self._last_paragraph = self._document.add_paragraph(style=style)
-		self.set_para_format(space_before=Pt(self.paragraph_spacing))
-		self.set_para_format(space_after=Pt(self.paragraph_spacing))
 		self._last_run = None
 		if text is not None:
 			self.add_run(text[0:1].upper() + text[1:], bold, italic)
@@ -140,12 +166,9 @@ class DocxCompiler(object):
 			trans = "cut to:"
 		else:
 			trans = scene['transition'][1].lower() + " to:"
-		self.add_paragraph(trans, italic=True, bold=True)
-		self.set_para_format(alignment=WD_ALIGN_PARAGRAPH.RIGHT)
-		self.add_paragraph()
-		self.add_paragraph()
-		name = scp.to_words(scene['name'][1]).upper()
-		self.add_paragraph(name, italic=False, bold=True)
+		self.add_paragraph(trans + "\n\n", style='Slugline Transition')
+		name = scp.to_words(scene['name'][1])
+		self.add_paragraph(name, style='Slugline')
 		
 	def _compile_ENTER(self, enter):
 		geom = enter['motion']
@@ -327,30 +350,30 @@ class DocxCompiler(object):
 		if choice['label'] is not None:
 			labelstmt = {'type': 'annotation', 'instruction': 'SECTION', 'section': choice['label'], 'params': []}
 			self.compile_statement(labelstmt)
-		line = "We are presented with a choice:"
+		self.add_paragraph("We are presented with a choice:", italic=True)
 		if choice['title'] is not None:
-			line += ' ' + choice['title'][1]
-		self.add_paragraph(line)
+			self.add_paragraph(choice['title'][1], italic=False)
 		for c in choice['choices']:
 			self.add_paragraph(style='List Bullet')
-			if c['condition'] is not None:
+			if c['condition'] is None:
+				self.add_run(c['text'][1], italic=False, bold=True)
+			else:
+				self.add_run(c['text'][1] + "\n", italic=False, bold=True)
 				if scp.typed_check(c['condition'], 'boolean', True):
-					self.add_run('(always shown) ', italic=True)
+					self.add_run('(always shown)', italic=True)
 				elif scp.typed_check(c['condition'], 'boolean', False):
-					self.add_run('(never shown) ', italic=True)
+					self.add_run('(never shown)', italic=True)
 				elif scp.typed_check(c['condition'], 'id'):
 					cond_id = scp.to_words(c['condition'][1]).lower()
 					if cond_id.startswith('have '):
-						self.add_run('(only shown if we ' + cond_id + ') ', italic=True)
+						self.add_run('(only shown if we ' + cond_id + ')', italic=True)
 					else:
-						self.add_run('(only shown if \'' + cond_id + '\' is set) ', italic=True)
+						self.add_run('(only shown if \'' + cond_id + '\' is set)', italic=True)
 				else:
-					self.add_run('(only shown if ' + scp.to_human_readable(c['condition'][1]) + ') ', italic=True)
-				line = c['text'][1] + ":\n"
-				for v in c['sets']:
-					line += self.make_varset(v) + "\n"
-				line += self.make_goto({'destination': c['target']})
-				self.add_run(line, italic=False)
+					self.add_run('(only shown if ' + scp.to_human_readable(c['condition'][1]) + ')', italic=True)
+			for v in c['sets']:
+				self.add_paragraph(self.make_varset(v), italic=True, bold=False, style='List Bullet 2')
+			self.add_paragraph(self.make_goto({'destination': c['target']}), italic=True, bold=False, style='List Bullet 2')
 			
 	def _compile_DESCRIPTION(self, desc):
 		line = ''
@@ -471,7 +494,7 @@ class DocxCompiler(object):
 		else:
 			self.add_paragraph("We execute python code.", italic=True)
 		
-	def _check_format(self):
+	def _check_screenplay_vars(self):
 		if self.screenplay_mode:
 			if self.main_character is None:
 				self.add_warning('main_char_not_defined', "a main character is required for screenplay mode; using 'Main character'")
