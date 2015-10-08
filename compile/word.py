@@ -449,8 +449,9 @@ class DocxCompiler(object):
 						self.add_run('(choice shown only if \'' + cond_id + '\' is set)', style='Choice Condition')
 				else:
 					self.add_run('(choice shown only if ' + scp.to_human_readable(c['condition'][1]) + ')', style='Choice Condition')
-			for v in c['sets']:
-				self.add_paragraph(self.make_varset(v)[0], style='Choice Instruction')
+			if self.include_varsets:
+				for v in c['sets']:
+					self.add_paragraph(self.make_varset(v)[0], style='Choice Instruction')
 			self.add_paragraph(style='Choice Instruction')
 			go = self.make_goto({'destination': c['target']})
 			self.add_run(go[0])
@@ -509,7 +510,7 @@ class DocxCompiler(object):
 	def _compile_EXECUTE(self, execute):
 		section_name = scp.to_words(execute['section'][1]).title()
 		bookmark = self.to_bookmark(section_name)
-		self.add_paragraph("Execute section ", style='Reader Instruction')
+		self.add_paragraph("Execute ", style='Reader Instruction')
 		self.add_internal_link(section_name, bookmark)
 		
 	def _compile_END(self, end):
@@ -536,16 +537,23 @@ class DocxCompiler(object):
 				line += 'while ' + scp.quote(cond_words, "'") + ' is set:'
 		else:
 			line += 'while ' + scp.to_human_readable(cond) + ':'
-		self.add_paragraph(line, style='Engine Instruction')
-		self.compile_block(whilestmt['statements'])
+		if self.contains_writeable(whilestmt['statements']):
+			self.add_paragraph(line, style='Engine Instruction')
+			self.compile_block(whilestmt['statements'])
+		else:
+			self._add_break = False
 		
 	def _compile_IF(self, ifstmt):
 		elsebr = None
 		firstbr = True
+		had_output = False
 		for br in ifstmt['branches']:
 			if br['condition'] is None:
 				elsestmt = br
 			else:
+				if not self.contains_writeable(br['statements']):
+					continue
+				had_output = True
 				negation = ''
 				if firstbr:
 					line = '%s do the following'
@@ -572,9 +580,11 @@ class DocxCompiler(object):
 					line += ' only if ' + scp.to_human_readable(cond) + ':'
 				self.add_paragraph((line % negation).strip().capitalize(), style='Engine Instruction')
 				self.compile_block(br['statements'])
-		if elsebr is not None:
+		if elsebr is not None and had_output and self.contains_writeable(elsebr['statements']):
 			self.add_paragraph("Otherwise, do the following:", style='Engine Instruction')
 			self.compile_block(elsebr['statements'])
+		if not had_output:
+			self._add_break = False
 			
 	def _compile_PYTHON(self, python):
 		if self.include_python:
@@ -588,7 +598,7 @@ class DocxCompiler(object):
 			self._indent_level -= 1
 			self.add_paragraph("}")
 		else:
-			self.add_paragraph("Execute python code.", style='Engine Instruction')
+			self.add_paragraph("Execute python code here.", style='Engine Instruction')
 		
 	def _check_screenplay_vars(self):
 		if self.screenplay_mode:
@@ -622,9 +632,9 @@ class DocxCompiler(object):
 		if scp.typed_check(flagset['value'], 'boolean'):
 			if not nat_lang:
 				if tvalue:
-					line = 'Set flag ' + scp.quote(flag, "'") + '.'
+					line = 'Set the flag ' + scp.quote(flag, "'") + '.'
 				else:
-					line = 'Unset ' + scp.quote(flag, "'") + '.'
+					line = 'Unset the flag ' + scp.quote(flag, "'") + '.'
 			else:
 				if tvalue:
 					line = 'We have now ' + phrase + '.'
@@ -634,18 +644,18 @@ class DocxCompiler(object):
 			if nat_lang:
 				line = 'Whether we have ' + phrase + ' is determined by '
 			else:
-				line = 'Set ' + scp.quote(flag, "'") + ' to the same as '
+				line = 'Set the flag ' + scp.quote(flag, "'") + ' to the same as '
 			value_id = scp.to_words(value).lower()
 			if value_id.startswith('have '):
 				val_phrase = value_id[len('have '):]
 				line += 'whether we have ' + val_phrase + '.'
 			else:
-				line += 'the value of ' + scp.quote(value_id, "'") + '.'
+				line += 'the value of the variable ' + scp.quote(value_id, "'") + '.'
 		elif scp.typed_check(flagset['value'], 'expr'):
 			if nat_lang:
-				line = 'Whether we have now ' + flag + ' is determined by the value of ' + value + '.'
+				line = 'Whether we have now ' + flag + ' is determined by the value of the variable ' + value + '.'
 			else:
-				line = 'Set ' + scp.quote(flag, "'") + ' to the same as the value of ' + value + '.'
+				line = 'Set the flag ' + scp.quote(flag, "'") + ' to the same as the value of the variable ' + value + '.'
 		return (line, nat_lang)
 		
 	def make_varset(self, varset):
@@ -661,12 +671,12 @@ class DocxCompiler(object):
 			readable = readable[0:var_in] + var_str
 			line = readable.strip().capitalize() + '.'
 		else:
-			line = 'Set ' + scp.quote(var, "'") + ' to ' + value + '.'
+			line = 'Set the variable ' + scp.quote(var, "'") + ' to ' + value + '.'
 		return (line, False)
 		
 	def make_goto(self, goto):
 		bookmark = self.to_bookmark(scp.to_words(goto['destination'][1]).title())
-		return ('Jump to section ', scp.to_words(goto['destination'][1]).title(), bookmark)
+		return ('Jump to ', scp.to_words(goto['destination'][1]).title(), bookmark)
 		
 	def to_bookmark(self, text, hidden=False):
 		text = text.strip()
@@ -686,6 +696,28 @@ class DocxCompiler(object):
 			text = text[:40]
 			
 		return text
+		
+	def contains_writeable(self, stmts):
+		for s in stmts:
+			if s['type'] == 'line' or s['type'] == 'comment':
+				return True
+			else:
+				if s['instruction'] == 'VARSET':
+					if self.include_varsets:
+						return True
+				elif s['instruction'] == 'FLAGSET':
+					if self.include_flagsets:
+						return True
+				elif s['instruction'] == 'IF':
+					for br in s['branches']:
+						if self.contains_writeable(br['statements']):
+							return True
+				elif s['instruction'] == 'WHILE':
+					if self.contains_writeable(s['statements']):
+						return True
+				else:
+					return True
+		return False
 				
 def make_states(states):	
 	states_added = 0
