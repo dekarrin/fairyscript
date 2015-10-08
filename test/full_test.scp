@@ -1,5 +1,7 @@
 # This script is specifically designed to hit every possible combination of the grammar.
 
+(goto: choice-section)
+
 [scene: Bobs-garage-2]
 [scene: FADE TO my-house]
 
@@ -75,6 +77,7 @@
 
 [choice]
 * "Show her the 'private collection'": GO TO private
+* "Show them the call logs": SHOW IF ON, GO TO call_logs
 * "Show her the missing files": SHOW IF have_hacked_computer, GO TO files
 * "Show him the broken chair": SHOW IF hacked_computer, GO TO files
 * "Punch her": SHOW IF OFF, SET have_punched_aerith ON AND GO TO punch
@@ -83,6 +86,7 @@
 "What should I tell him?"
 * "Try to feign ignorance": SET ignore INC AND SET goodness DEC BY 5 AND GO TO ignorance
 * "Tell the truth": SET truth ON AND SET badness goodness AND GO TO tell_truth
+* "Run away.": SHOW IF 'x + 4 >= 39', GO TO run
 
 [Scene: ayase-bedroom]
 (Description: We see a series of shelves and boxes. There is a huge mess everywhere. It pretty much looks like the room of any 12th-grader.)
@@ -92,8 +96,6 @@
 (Description: :starting_like_this: means that it must be escaped.)
 
 (section: punch)
-
-(section: punch WITH PARAMS target="Aerith", location)
 
 (flag: have_drank_tea)
 (flag: drank_tea ON)
@@ -151,10 +153,15 @@
 }
 (else if: OFF) {
 	(var: runs INC BY 2)
+	(var: runs INC)
 }
 
 (if: 'x > 8 and q is not 6') {
 	(flag: have_seen_god)
+	(goto: bob-world)
+	(if: have_seen_god) {
+		(goto: aerith-world)
+	}
 }
 (else if: '35 + 14 > 4')
 {

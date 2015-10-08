@@ -73,10 +73,10 @@ def indef_article(noun):
 def to_human_readable(expr):
 	readable_versions = [
 		('==', 'is equal to'),
-		('>', 'is greater than'),
-		('<', 'is less than'),
 		('>=', 'is greater than or equal to'),
 		('<=', 'is less than or equal to'),
+		('>', 'is greater than'),
+		('<', 'is less than'),
 		('!=', 'is not equal to'),
 		(r'(\w+)\s*\+=', r'increase \1 by'),
 		(r'(\w+)\s*-=', r'decrease \1 by'),

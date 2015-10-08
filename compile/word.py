@@ -3,10 +3,12 @@ import copy
 import re
 
 from docx import Document
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_UNDERLINE
 from docx.enum.style import WD_STYLE_TYPE
 from docx.shared import Inches
 from docx.shared import Pt
+from docx.shared import RGBColor
+from docx.dml.color import ColorFormat
 
 class DocxCompiler(object):
 	def __init__(self):
@@ -25,10 +27,15 @@ class DocxCompiler(object):
 		self.include_varsets = True
 		self.include_python = True
 		self._add_break = True
+		self._indent_level = 0
+		self._outer_loops_ending = 0
+		self._used_bookmarks = []
 	
 	def compile_script(self, script, inputfile=None):
 		self._check_screenplay_vars()
 		self._num_docs += 1
+		self._indent_level = 0
+		self._outer_loops_ending = 0
 		if inputfile is None:
 			self._document = Document()
 		else:
@@ -77,6 +84,8 @@ class DocxCompiler(object):
 		normal_fmt = normal_style.paragraph_format
 		normal_fmt.space_before = Pt(self.paragraph_spacing)
 		normal_fmt.space_after = Pt(self.paragraph_spacing)
+		fmt = normal_style.font
+		fmt.size = Pt(11)
 		if 'Slugline Transition' not in styles:
 			sl_trans_style = styles.add_style('Slugline Transition', WD_STYLE_TYPE.PARAGRAPH)
 			sl_trans_style.base_style = styles['Normal']
@@ -96,6 +105,52 @@ class DocxCompiler(object):
 			ffmt = sl_style.font
 			ffmt.bold = True
 			ffmt.all_caps = True
+		if 'Actor Instruction' not in styles:
+			ai_style = styles.add_style('Actor Instruction', WD_STYLE_TYPE.PARAGRAPH)
+			ai_style.base_style = styles['Normal']
+			ffmt = ai_style.font
+			ffmt.italic = True
+		if 'Engine Instruction' not in styles:
+			ei_style = styles.add_style('Engine Instruction', WD_STYLE_TYPE.PARAGRAPH)
+			ei_style.base_style = styles['Normal']
+			ffmt = ei_style.font
+			ffmt.bold = True
+			ffmt.italic = True
+		if 'Reader Instruction' not in styles:
+			ri_style = styles.add_style('Reader Instruction', WD_STYLE_TYPE.PARAGRAPH)
+			ri_style.base_style = styles['Normal']
+			ffmt = ri_style.font
+			ffmt.bold = True
+			ffmt.italic = True
+			ffmt.all_caps = True
+		if 'Choice' not in styles:
+			ch_style = styles.add_style('Choice', WD_STYLE_TYPE.PARAGRAPH)
+			ch_style.base_style = styles['List Bullet']
+			ffmt = ch_style.font
+			ffmt.bold = True
+		if 'Choice Condition' not in styles:
+			chc_style = styles.add_style('Choice Condition', WD_STYLE_TYPE.CHARACTER)
+			chc_style.base_style = styles['Choice']
+			ffmt = chc_style.font
+			ffmt.italic = True
+		if 'Choice Instruction' not in styles:
+			chi_style = styles.add_style('Choice Instruction', WD_STYLE_TYPE.PARAGRAPH)
+			chi_style.base_style = styles['List Bullet 2']
+			ffmt = chi_style.font
+			ffmt.italic = True
+		if 'Code' not in styles:
+			s = styles.add_style('Code', WD_STYLE_TYPE.PARAGRAPH)
+			pfmt = s.paragraph_format
+			pfmt.space_before = Pt(0)
+			pfmt.space_after = Pt(0)
+			ffmt = s.font
+			ffmt.name = "Courier New"
+			ffmt.size = Pt(styles['Normal'].font.size.pt - 3)
+		if 'Hyperlink' not in styles:
+			s = styles.add_style('Hyperlink', WD_STYLE_TYPE.CHARACTER)
+			ffmt = s.font
+			ffmt.color.rgb = RGBColor(0x00, 0x00, 0xff)
+			ffmt.underline = WD_UNDERLINE.SINGLE
 		
 	def add_paragraph(self, text=None, bold=None, italic=None, style=None):
 		if style is None:
@@ -104,10 +159,26 @@ class DocxCompiler(object):
 			self._last_paragraph = self._document.add_paragraph(style=style)
 		self._last_run = None
 		if text is not None:
-			self.add_run(text[0:1].upper() + text[1:], bold, italic)
+			self.add_run(text, bold, italic)
+		if self._indent_level > 0:
+			tabs = 0.5 * self._indent_level
+			fmt = self._last_paragraph.paragraph_format
+			start = 0
+			if fmt.left_indent is not None:
+				start = fmt.left_indent.inches
+			fmt.left_indent = Inches(tabs + start)
 			
-	def add_run(self, text, bold=None, italic=None):
-		self._last_run = self._last_paragraph.add_run(text)
+	def add_bookmark(self, title):
+		self._last_paragraph.add_bookmark(title)
+		
+	def add_internal_link(self, text, bookmark):
+		self._last_paragraph.add_hyperlink(text=text, anchor=bookmark, style='Hyperlink')
+			
+	def add_run(self, text, bold=None, italic=None, style=None):
+		if style is not None:
+			self._last_run = self._last_paragraph.add_run(text, style=style)
+		else:
+			self._last_run = self._last_paragraph.add_run(text)
 		if bold is not None:
 			self.set_text_format(bold=bold)
 		if italic is not None:
@@ -123,12 +194,12 @@ class DocxCompiler(object):
 				self._last_speaker == None
 				self._just_completed_line = False
 			if statement['type'] == 'comment':
-				self.add_paragraph('(' + scp.extract_comment(statement['text']) + ')', italic=True)
+				self.add_paragraph('(' + scp.extract_comment(statement['text']) + ')', style='Actor Instruction')
 			else:
 				instruction = statement['instruction']
 				func = getattr(DocxCompiler, '_compile_' + instruction)
 				func(self, statement)
-			if self._add_break:
+			if self._add_break and self._outer_loops_ending == 0:
 				self.add_paragraph()
 		
 	def _compile_line(self, line):
@@ -166,8 +237,8 @@ class DocxCompiler(object):
 		if scene['transition'] is None:
 			trans = "cut to:"
 		else:
-			trans = scene['transition'][1].lower() + " to:"
-		self.add_paragraph(trans + "\n\n", style='Slugline Transition')
+			trans = scene['transition'][1] + " to:"
+		self.add_paragraph(trans.capitalize() + "\n\n", style='Slugline Transition')
 		name = scp.to_words(scene['name'][1])
 		self.add_paragraph(name, style='Slugline')
 		
@@ -200,7 +271,7 @@ class DocxCompiler(object):
 		if geom is not None:
 			line += scp.get_duration_words(geom['duration'], 'over %d seconds')
 		line += '.'
-		self.add_paragraph(line, italic=True)
+		self.add_paragraph(line, style='Actor Instruction')
 
 	def _compile_ACTION(self, action):
 		line = scp.to_words(action['target'][1]).title() + ' '
@@ -213,7 +284,7 @@ class DocxCompiler(object):
 			line += 'moves to the ' + scp.to_words(action['destination'][1]).lower()
 			line += scp.get_duration_words(action['duration'], 'over %d seconds')
 		line += '.'
-		self.add_paragraph(line, italic=True)
+		self.add_paragraph(line, style='Actor Instruction')
 		
 	def _compile_EXIT(self, exit):
 		geom = exit['motion']
@@ -242,10 +313,10 @@ class DocxCompiler(object):
 		if geom is not None:
 			line += scp.get_duration_words(geom['duration'], 'over %d seconds')
 		line += '.'
-		self.add_paragraph(line, italic=True)
+		self.add_paragraph(line, style='Actor Instruction')
 		
 	def _compile_MUSIC(self, music):
-		self.add_paragraph()
+		self.add_paragraph(style='Actor Instruction')
 		song = music['target'][1]
 		if scp.typed_check(music['target'], 'string'):
 			dot = song.rfind('.')
@@ -256,22 +327,22 @@ class DocxCompiler(object):
 				line += 'the current music fade out' + scp.get_duration_words(music['fadeout'], 'over %d seconds') + ', '
 				line += 'and then we hear '
 			line += 'the song '
-			self.add_run(line, italic=True)
+			self.add_run(line)
 			self.add_run(scp.to_words(song).title(), italic=False)
-			self.add_run(' begin to play.', italic=True)
+			self.add_run(' begin to play.')
 		elif music['action'] == 'stop':
 			if scp.typed_check(music['target'], 'rel'):
 				line += song.lower() + ' music '
 			else:
 				line += 'the song '
-				self.add_run(line, italic=True)
+				self.add_run(line)
 				self.add_run(scp.to_words(song).title(), italic=False)
 				line = ' '
 			if music['duration'] is not None:
 				line += 'fade out' + scp.get_duration_words(music['duration'], 'over %d seconds') + '.'
 			else:
 				line += 'stop.'
-			self.add_run(line, italic=True)
+			self.add_run(line)
 			
 	def _compile_GFX(self, gfx):
 		line = 'We see '
@@ -290,7 +361,7 @@ class DocxCompiler(object):
 				line += 'fade away' + scp.get_duration_words(gfx['duration'], 'over %d seconds') + '.'
 			else:
 				line += 'stop.'
-		self.add_paragraph(line, italic=True)
+		self.add_paragraph(line, style='Actor Instruction')
 
 	def _compile_SFX(self, sfx):	
 		fx = sfx['target'][1]
@@ -313,13 +384,13 @@ class DocxCompiler(object):
 				line += 'fade away' + scp.get_duration_words(sfx['duration'], 'over %d seconds') + '.'
 			else:
 				line += 'stop.'
-		self.add_paragraph(line, italic=True)
+		self.add_paragraph(line, style='Actor Instruction')
 			
 	def _compile_FMV(self, fmv):
-		self.add_paragraph()
-		self.add_run("We see the full-motion video ", italic=True)
+		self.add_paragraph(style='Actor Instruction')
+		self.add_run("We see the full-motion video ")
 		self.add_run(scp.to_words(fmv['target'][1]), italic=False)
-		self.add_run(' play.', italic=True)
+		self.add_run(' play.')
 		
 	def _compile_CAMERA(self, camera):
 		line = 'We'
@@ -345,99 +416,123 @@ class DocxCompiler(object):
 				line += ','
 			acts_added += 1
 		line += '.'
-		self.add_paragraph(line, italic=True)
+		self.add_paragraph(line, style='Actor Instruction')
 		
 	def _compile_CHOICE(self, choice):
 		if choice['label'] is not None:
 			labelstmt = {'type': 'annotation', 'instruction': 'SECTION', 'section': choice['label'], 'params': []}
 			self.compile_statement(labelstmt)
-		self.add_paragraph("We are presented with a choice:", italic=True)
+		self.add_paragraph("We are presented with a choice:", style='Actor Instruction')
 		if choice['title'] is not None:
 			self.add_paragraph(choice['title'][1], italic=False)
 		for c in choice['choices']:
-			self.add_paragraph(style='List Bullet')
+			self.add_paragraph(style='Choice')
 			if c['condition'] is None:
-				self.add_run(c['text'][1], italic=False, bold=True)
+				self.add_run(c['text'][1])
 			else:
-				self.add_run(c['text'][1] + "\n", italic=False, bold=True)
+				self.add_run(c['text'][1] + "\n")
 				if scp.typed_check(c['condition'], 'boolean', True):
-					self.add_run('(always shown)', italic=True)
+					self.add_run('(always shown)', style='Choice Condition')
 				elif scp.typed_check(c['condition'], 'boolean', False):
-					self.add_run('(never shown)', italic=True)
+					self.add_run('(never shown)', style='Choice Condition')
 				elif scp.typed_check(c['condition'], 'id'):
 					cond_id = scp.to_words(c['condition'][1]).lower()
 					if cond_id.startswith('have '):
-						self.add_run('(only shown if we ' + cond_id + ')', italic=True)
+						cond_ph = cond_id[len('have '):]
+						self.add_run('(choice shown only if we have ' + cond_ph + ')', style='Choice Condition')
 					else:
-						self.add_run('(only shown if \'' + cond_id + '\' is set)', italic=True)
+						self.add_run('(choice shown only if \'' + cond_id + '\' is set)', style='Choice Condition')
 				else:
-					self.add_run('(only shown if ' + scp.to_human_readable(c['condition'][1]) + ')', italic=True)
+					self.add_run('(choice shown only if ' + scp.to_human_readable(c['condition'][1]) + ')', style='Choice Condition')
 			for v in c['sets']:
-				self.add_paragraph(self.make_varset(v), italic=True, bold=False, style='List Bullet 2')
-			self.add_paragraph(self.make_goto({'destination': c['target']}), italic=True, bold=False, style='List Bullet 2')
+				self.add_paragraph(self.make_varset(v)[0], style='Choice Instruction')
+			self.add_paragraph(style='Choice Instruction')
+			go = self.make_goto({'destination': c['target']})
+			self.add_run(go[0])
+			self.add_internal_link(go[1], go[2])
+			self.add_run('.')
 			
 	def _compile_DESCRIPTION(self, desc):
-		self.add_paragraph()
+		self.add_paragraph(style='Actor Instruction')
 		line = ''
 		if desc['target'] is not None:
-			self.add_run("Regarding ", italic=True)
+			self.add_run("Regarding ")
 			self.add_run(scp.to_words(desc['target'][1]).title() + ': ', italic=False)
-		self.add_run(desc['text'][1], italic=True)
+		self.add_run(desc['text'][1])
 			
 	def _compile_SECTION(self, section):
-		self._document.add_heading(scp.to_words(section['section'][1]).title(), level=2)
+		name = scp.to_words(section['section'][1]).title()
+		bookmark = self.to_bookmark(name)
+		self._document.add_heading(scp.to_words(section['section'][1]).title(), level=2, bookmark_name=bookmark)
+		self._add_break = False
 		
 	def _compile_FLAGSET(self, flagset):
 		if self.include_flagsets:
-			self.add_paragraph(self.make_flagset(flagset), italic=True)
+			fs = self.make_flagset(flagset)
+			if fs[1]:
+				style = 'Actor Instruction'
+			else:
+				style = 'Engine Instruction'
+			self.add_paragraph(fs[0], style=style)
 		else:
 			self._add_break = False
-				
+			
 	def _compile_VARSET(self, varset):
 		if self.include_varsets:
-			self.add_paragraph(self.make_varset(varset), italic=True)
+			vs = self.make_varset(varset)
+			if vs[1]:
+				style = 'Actor Instruction'
+			else:
+				style = 'Engine Instruction'
+			self.add_paragraph(vs[0], style=style)
 		else:
 			self._add_break = False
 		
 	def _compile_DIALOG(self, dialog):
-		self.add_paragraph("We set the dialog window to " + dialog['mode'].upper() + " mode.", italic=True)
+		if dialog['mode'] == 'AUTO':
+			line = 'Set the dialog window to automatically show/hide.'
+		else:
+			line = dialog['mode'].capitalize() + " the dialog window."
+		self.add_paragraph(line, style='Engine Instruction')
 		
 	def _compile_GOTO(self, goto):
-		self.add_paragraph(self.make_goto(goto), italic=True)
+		self.add_paragraph(style='Reader Instruction')
+		go = self.make_goto(goto)
+		self.add_run(go[0])
+		self.add_internal_link(go[1], go[2])
 		
 	def _compile_EXECUTE(self, execute):
-		line = "We set the proper parameters and execute section " + scp.to_words(execute['section'][1]).title() + '.'
-		self.add_paragraph(line, italic=True)
+		section_name = scp.to_words(execute['section'][1]).title()
+		bookmark = self.to_bookmark(section_name)
+		self.add_paragraph("Execute section ", style='Reader Instruction')
+		self.add_internal_link(section_name, bookmark)
 		
 	def _compile_END(self, end):
 		if 'retval' in end:
-			self.add_paragraph('We return the appropriate value from this section.', italic=True, bold=True)
+			self.add_paragraph('Return from this section', style='Reader Instruction')
 		else:
 			self._add_break = False
 		
 	def _compile_WHILE(self, whilestmt):
-		line = "We do the following "
+		line = "Do the following "
 		cond = scp.get_expr(whilestmt['condition'])
 		if scp.typed_check(whilestmt['condition'], 'boolean'):
 			tcond = whilestmt['condition'][1]
 			if tcond:
 				line += 'forever:'
 			else:
-				line = 'We never do the following:'
+				line = 'Never do the following:'
 		elif scp.typed_check(whilestmt['condition'], 'id'):
 			cond_words = scp.to_words(whilestmt['condition'][1]).lower()
 			if cond_words.startswith('have '):
-				line += 'while we ' + cond_words + ':'
+				cond_ph = cond_words[len('have '):]
+				line += 'while we have ' + cond_ph + ':'
 			else:
 				line += 'while ' + scp.quote(cond_words, "'") + ' is set:'
 		else:
 			line += 'while ' + scp.to_human_readable(cond) + ':'
-		self.add_paragraph(line, italic=True)
-		self.add_paragraph('{', italic=False)
-		self.add_paragraph()
-		for st in whilestmt['statements']:
-			self.compile_statement(st)
-		self.add_paragraph('}', italic=False)
+		self.add_paragraph(line, style='Engine Instruction')
+		self.compile_block(whilestmt['statements'])
 		
 	def _compile_IF(self, ifstmt):
 		elsebr = None
@@ -448,10 +543,10 @@ class DocxCompiler(object):
 			else:
 				negation = ''
 				if firstbr:
-					line = 'We%s do the following'
+					line = '%s do the following'
 					firstbr = False
 				else:
-					line = 'Otherwise, we%s do the following'
+					line = 'Otherwise,%s do the following'
 				cond = scp.get_expr(br['condition'])
 				if scp.typed_check(br['condition'], 'boolean'):
 					tcond = br['condition'][1]
@@ -464,40 +559,31 @@ class DocxCompiler(object):
 				elif scp.typed_check(br['condition'], 'id'):
 					cond_words = scp.to_words(br['condition'][1]).lower()
 					if cond_words.startswith('have '):
-						line += ' if we ' + cond_words + ':'
+						cond_ph = cond_words[len('have '):]
+						line += ' only if we have ' + cond_ph + ':'
 					else:
-						line += ' if ' + scp.quote(cond_words, "'") + ' is set:'
+						line += ' only if ' + scp.quote(cond_words, "'") + ' is set:'
 				else:
-					line += ' if ' + scp.to_human_readable(cond) + ':'
-				self.add_paragraph(line % negation, italic=True)
-				self.add_paragraph('{', italic=False)
-				self.add_paragraph()
-				for st in br['statements']:
-					self.compile_statement(st)
-				self.add_paragraph('}', italic=False)
+					line += ' only if ' + scp.to_human_readable(cond) + ':'
+				self.add_paragraph((line % negation).strip().capitalize(), style='Engine Instruction')
+				self.compile_block(br['statements'])
 		if elsebr is not None:
-			self.add_paragraph("Otherwise, we do the following:", italic=True)
-			self.add_paragraph("{", italic=False)
-			self.add_paragraph()
-			for st in elsebr['statements']:
-				self.compile_statement(st)
-			self.add_paragraph("}", italic=False)
-		self.add_paragraph()
-		self._add_break = False
+			self.add_paragraph("Otherwise, do the following:", style='Engine Instruction')
+			self.compile_block(elsebr['statements'])
 			
 	def _compile_PYTHON(self, python):
 		if self.include_python:
-			self.add_paragraph("We execute the following python code:", italic=True)
-			self.add_paragraph("{", italic=False)
-			self.add_paragraph()
+			self.add_paragraph("Execute the following python code:", style='Engine Instruction')
+			self.add_paragraph("{")
 			lines = python['body'].split('\n')
 			start = re.match(r'\s*', lines[0]).end(0)
+			self._indent_level += 1
 			for line in lines:	
-				self.add_paragraph(line[start:])
-			self.add_paragraph()
-			self.add_paragraph("}", italic=False)
+				self.add_paragraph(line[start:], style='Code')
+			self._indent_level -= 1
+			self.add_paragraph("}")
 		else:
-			self.add_paragraph("We execute python code.", italic=True)
+			self.add_paragraph("Execute python code.", style='Engine Instruction')
 		
 	def _check_screenplay_vars(self):
 		if self.screenplay_mode:
@@ -505,37 +591,57 @@ class DocxCompiler(object):
 				self.add_warning('main_char_not_defined', "a main character is required for screenplay mode; using 'Main character'")
 				self.main_character = 'Main character'
 				
+	def compile_block(self, statements):
+		self.add_paragraph("{")
+		self._indent_level += 1
+		stmts_added = 0
+		for st in statements:
+			if stmts_added == len(statements) - 1:
+				self._outer_loops_ending += 1
+			self.compile_statement(st)
+			stmts_added += 1
+		self._outer_loops_ending -= 1
+		self._indent_level -= 1
+		self._last_speaker == None
+		self._just_completed_line = False
+		self.add_paragraph("}")
+				
 	def make_flagset(self, flagset):
 		line = ''
 		value = scp.get_expr(flagset['value'])
 		tvalue = flagset['value'][1]
 		flag = scp.to_words(flagset['name'][1]).lower()
+		nat_lang = flag.startswith('have ')
+		if nat_lang:
+			phrase = flag[len('have '):]
 		if scp.typed_check(flagset['value'], 'boolean'):
-			if not flag.startswith('have '):
+			if not nat_lang:
 				if tvalue:
-					line = 'We set ' + scp.quote(flag, "'") + '.'
+					line = 'Set flag ' + scp.quote(flag, "'") + '.'
 				else:
-					line = 'We unset ' + scp.quote(flag, "'") + '.'
-			elif tvalue:
-				line = 'We now ' + flag + '.'
+					line = 'Unset ' + scp.quote(flag, "'") + '.'
 			else:
-				line = 'We now no longer ' + flag + '.'
+				if tvalue:
+					line = 'We have now ' + phrase + '.'
+				else:
+					line = 'We have now not ' + phrase + '.'
 		elif scp.typed_check(flagset['value'], 'id'):
-			if flag.startswith('have '):
-				line = 'Whether we ' + flag + ' is determined by '
+			if nat_lang:
+				line = 'Whether we have ' + phrase + ' is determined by '
 			else:
-				line = 'We set ' + scp.quote(flag, "'") + ' to the same as '
+				line = 'Set ' + scp.quote(flag, "'") + ' to the same as '
 			value_id = scp.to_words(value).lower()
 			if value_id.startswith('have '):
-				line += 'whether we ' + value_id + '.'
+				val_phrase = value_id[len('have '):]
+				line += 'whether we have ' + val_phrase + '.'
 			else:
 				line += 'the value of ' + scp.quote(value_id, "'") + '.'
 		elif scp.typed_check(flagset['value'], 'expr'):
-			if flag.startswith('have '):
-				line = 'Whether we now ' + flag + ' is determined by the value of ' + value + '.'
+			if nat_lang:
+				line = 'Whether we have now ' + flag + ' is determined by the value of ' + value + '.'
 			else:
-				line = 'We set ' + scp.quote(flag, "'") + ' to the same as the value of ' + value + '.'
-		return line
+				line = 'Set ' + scp.quote(flag, "'") + ' to the same as the value of ' + value + '.'
+		return (line, nat_lang)
 		
 	def make_varset(self, varset):
 		line = ''
@@ -548,13 +654,36 @@ class DocxCompiler(object):
 			var_in = readable.rfind(var)
 			var_str = readable[var_in:].replace(var, scp.quote(var, "'"), 1)
 			readable = readable[0:var_in] + var_str
-			line = 'We' + readable + '.'
+			line = readable.strip().capitalize() + '.'
 		else:
-			line = 'We set ' + scp.quote(var, "'") + ' to ' + value + '.'
-		return line
+			line = 'Set ' + scp.quote(var, "'") + ' to ' + value + '.'
+		return (line, False)
 		
 	def make_goto(self, goto):
-		return 'We jump to section ' + scp.to_words(goto['destination'][1]).title() + '.'
+		bookmark = self.to_bookmark(scp.to_words(goto['destination'][1]).title())
+		return ('Jump to section ', scp.to_words(goto['destination'][1]).title(), bookmark)
+		
+	def to_bookmark(self, text, hidden=False):
+		text = text.strip()
+		if not hidden: # initial digit okay if hidden; '_' will be added at start
+			text = re.sub(r'^\d', '_', text) # remove initial digit
+		text = re.sub(r'\W', '_', text) # remove illegal chars
+		text = re.sub('_+', '_', text) # collapse runs of underscores
+		
+		# add/remove initial underscore
+		if not hidden and text[0] == '_':
+			text = text[1:]
+		elif hidden and text[0] != '_':
+			text = '_' + text
+		
+		# truncate to 40 chars:
+		if len(text) > 40:
+			text = text[:40]
+		
+		if text not in self._used_bookmarks:
+			self._used_bookmarks.append(text)
+			
+		return text
 				
 def make_states(states):	
 	states_added = 0
