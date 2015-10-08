@@ -2,19 +2,19 @@ import scp
 
 class RenpyCompiler(object):
 	def __init__(self):
-		self._indent_lev = 0
-		self.quote_spaces = 4
-		self._compiled = None
-		self._to_add = ""
-		self.background_ent = 'bg'
-		self._has_enter_trans = False
-		self._has_exit_trans = False
-		self._scene_trans = None
 		self.default_destination = 'center'
 		self.default_origin = 'center'
 		self.default_duration = 0.5
 		self.quickly_rel = 0.25
 		self.slowly_rel = 2
+		self.tab_spaces = 4
+		self.background_ent = 'bg'
+		self._indent_lev = 0
+		self._compiled = None
+		self._to_add = ""
+		self._has_enter_trans = False
+		self._has_exit_trans = False
+		self._scene_trans = None
 		self._warnings = {}
 		self._gfx_targets = {}
 		self._cur_scene_gfx = []
@@ -79,7 +79,7 @@ class RenpyCompiler(object):
 		
 	def add_line(self, text=""):
 		self.add(text)
-		indent = (' ' * self.quote_spaces * self._indent_lev)
+		indent = (' ' * self.tab_spaces * self._indent_lev)
 		self._compiled += indent + self._to_add + '\n'
 		self._to_add = ""
 		
