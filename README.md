@@ -235,3 +235,32 @@ selection of that option:
 * "Confront the problem.": GO TO problem-confrontation
 ```
 
+A CHOICE directive may include a section name as part of its options:
+
+```
+[Choice: what-to-do]
+* "Run away!": GO TO escape
+* "Confront the problem.": GO TO problem-confrontation
+```
+
+This is equivalent to writing a SECTION annotation directly before the CHOICE
+directive:
+
+```
+(Section: what-to-do)
+
+[Choice]
+* "Run away!": GO TO escape
+* "Confront the problem.": GO TO problem-confrontation
+```
+
+Immediately after the directive opens but before any choices, text can be placed
+to show the 'title' of the choice, intended to be shown before other options:
+
+```
+[Choice]
+"What should I do?"
+* "Run away!": GO TO escape
+* "Confront the problem.": GO TO problem-confrontation
+```
+
