@@ -66,6 +66,29 @@ def show_warnings(compiler):
 	warns = compiler.get_warnings()
 	for w in warns:
 		print "Compiler warning: " + w
+		
+def process_includes(ast):
+	new_ast = []
+	for s in ast:
+		if s['type'] == 'line' or s['type'] == 'comment':
+			new_ast.append(s)
+		elif s['instruction'] == 'IF':
+			if_struct = {'type': 'annotation', 'instruction': 'IF', 'branches': []}
+			for br in s['branches']:
+				if_branch = {'condition': br['condition'], 'statements': process_includes(br['statements'])}
+				if_struct['branches'].append(if_branch)
+			new_ast.append(if_struct)
+		elif s['instruction'] == 'WHILE':
+			wh_struct = {'type': 'annotation', 'instruction': 'WHILE', 'condition': s['condition'], 'statements': process_includes(s['statements'])}
+			new_ast.append(wh_struct)
+		elif s['instruction'] == 'INCLUDE':
+			with open(s['text'][1], 'r') as inc_file:
+				contents = inc_file.read()
+			inc_ast = parse_manuscript(contents)
+			new_ast += inc_ast
+		else:
+			new_ast.append(s)
+	return new_ast
 
 if __name__ == "__main__":
 	def set_word_compiler_options(args):
@@ -166,11 +189,13 @@ if __name__ == "__main__":
 				if args.output_mode == 'ast':
 					output = ast
 				elif args.output_mode == 'renpy':
+					ast = process_includes(ast)
 					set_renpy_compiler_options(args)
 					output = compile_to_renpy(ast)
 					if not args.quiet:
 						show_warnings(get_renpy_compiler())
 				elif args.output_mode == 'word':
+					ast = process_includes(ast)
 					set_word_compiler_options(args)
 					output = compile_to_word(ast)
 					if not args.quiet:

@@ -193,6 +193,8 @@ Aerith: "I heard you were feeling down."
 
 Aerith: "So I decided to stop by."
 
+(include: test/full_test_inc.scp)
+
 "The Wall": "Don't forget about me!"
 
 "The Wall": "I'm here too, you know!"

@@ -6,6 +6,7 @@ states = (
 	('descid', 'exclusive'),
 	('descescapedwords', 'exclusive'),
 	('descwords', 'exclusive'),
+	('incopen', 'exclusive'),
 	('incwords', 'exclusive')
 )
 
@@ -116,7 +117,13 @@ def t_ANNOTATIONOPEN_DESCRIPTION(t):
 	
 def t_ANNOTATIONOPEN_INCLUDE(t):
 	r'\([Ii][Nn][Cc][Ll][Uu][Dd][Ee]'
+	t.lexer.begin('incopen')
+	return t
+	
+def t_incopen_colon(t):
+	':'
 	t.lexer.begin('incwords')
+	t.type = ':'
 	return t
 	
 def t_descopen_colon(t):

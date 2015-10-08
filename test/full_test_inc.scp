@@ -1,0 +1,8 @@
+Bob: "I become the wall when I died."
+
+[scene: bobs-house]
+
+(if: have_killed_bob)
+{
+	(var: good INC)
+}
