@@ -61,6 +61,11 @@ def compile_to_renpy(manuscript_ast):
 def compile_to_word(manuscript_ast):
 	compiler = get_word_compiler()
 	return compiler.compile_script(manuscript_ast)
+	
+def show_warnings(compiler):
+	warns = compiler.get_warnings()
+	for w in warns:
+		print "Compiler warning: " + w
 
 if __name__ == "__main__":
 	import argparse
@@ -78,6 +83,7 @@ if __name__ == "__main__":
 		argparser.add_argument('--output', '-o', nargs=1, help="The file to write the compiled manuscript to. If no output file is specified, scrappy will write to stdout.")
 		argparser.add_argument('--pretty', action='store_true', help="Output pretty-print format. Only applies when output is a raw python type.")
 		argparser.add_argument('--inputformat', '-f', nargs=1, dest='input_mode', default=['scp'], choices=('scp', 'lex', 'ast'), help="The format of the input(s).")
+		argparser.add_argument('--quiet', '-q', action='store_true', help="Suppress compiler warnings. This will not suppress errors reported by the lexer and parser.")
 		modegroup = argparser.add_mutually_exclusive_group()
 		modegroup.add_argument('--renpy', '-r', dest='output_mode', action='store_const', const='renpy', help="Compile input(s) to Ren'Py-compatible .rpy format. This is the default mode.")
 		modegroup.add_argument('--word', '-w', dest='output_mode', action='store_const', const='word', help="Compile input(s) to .docx format.")
@@ -126,8 +132,12 @@ if __name__ == "__main__":
 					output = ast
 				elif args.output_mode == 'renpy':
 					output = compile_to_renpy(ast)
+					if not args.quiet:
+						show_warnings(get_renpy_compiler())
 				elif args.output_mode == 'word':
 					output = compile_to_word(ast)
+					if not args.quiet:
+						show_warnings(get_word_compiler())
 					
 			if (args.output_mode == 'lex' or args.output_mode == 'ast') and args.pretty:
 				pprint.pprint(output, output_file)
