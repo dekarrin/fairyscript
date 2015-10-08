@@ -1,4 +1,4 @@
-Context-Free Grammar for .scr Format:
+Context-Free Grammar for .scp Format:
 
 script					: block
 
@@ -31,6 +31,7 @@ annotation				: description_annotation
 						| end_annotation
 						| while_annotation
 						| if_annotation
+						| include_annotation
 						| PYTHON_BLOCK
 						
 line					: ID ':' STRING
@@ -126,6 +127,8 @@ if_annotation			: ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}'
 						| ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}' ANNOTATIONOPEN_ELSE ')' '{' block '}'
 						| ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}' else_ifs
 						| ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}' else_ifs ANNOTATIONOPEN_ELSE ')' '{' block '}'
+						
+include_annotation		: ANNOTATIONOPEN_INCLUDE ':' UNQUOTED_STRING ')'
 					
 transition_to			: ID TO
 	

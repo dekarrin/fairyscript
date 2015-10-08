@@ -5,7 +5,8 @@ states = (
 	('descscan', 'exclusive'),
 	('descid', 'exclusive'),
 	('descescapedwords', 'exclusive'),
-	('descwords', 'exclusive')
+	('descwords', 'exclusive'),
+	('incwords', 'exclusive')
 )
 
 reserved = [
@@ -58,6 +59,7 @@ tokens = [
 	'ANNOTATIONOPEN_ELSE',
 	'ANNOTATIONOPEN_ELIF',
 	'ANNOTATIONOPEN_WHILE',
+	'ANNOTATIONOPEN_INCLUDE',
 	'ID',
 	'PARAMSOPEN',
 	'STRING',
@@ -110,6 +112,11 @@ def t_ANNOTATIONOPEN_DESCRIPTION(t):
 	r"\([Dd][Ee][Ss][Cc][Rr][Ii][Pp][Tt][Ii][Oo][Nn]"
 	t.lexer.desc_id = False
 	t.lexer.begin('descopen')
+	return t
+	
+def t_ANNOTATIONOPEN_INCLUDE(t):
+	r'\([Ii][Nn][Cc][Ll][Uu][Dd][Ee]'
+	t.lexer.begin('incwords')
 	return t
 	
 def t_descopen_colon(t):
@@ -176,7 +183,7 @@ def t_descescapedwords_colon(t):
 	t.lexer.begin('descwords')
 	return t
 	
-def t_descscan_descwords_UNQUOTED_STRING(t):
+def t_descscan_descwords_incwords_UNQUOTED_STRING(t):
 	r"(?:[^)\\]*(?:\\.[^)\\]*)+|[^)\\]+(?:\\.[^)\\]*)*)"
 	if t.lexer.lexstate == 'descscan':
 		t.lexer.lexpos = t.lexer.desc_start

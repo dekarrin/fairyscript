@@ -43,6 +43,7 @@ def p_annotation_2_specific(p):
 					| execute_annotation
 					| end_annotation
 					| while_annotation
+					| include_annotation
 					| if_annotation'''
 	p[0] = p[1]
 	
@@ -339,6 +340,10 @@ def p_if_annotation_2_multi_else(p):
 	'''if_annotation : ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}' else_ifs ANNOTATIONOPEN_ELSE ')' '{' block '}' '''
 	ifs = [ {'condition': p[3], 'statements': p[6]} ] + p[8] + [ {'condition': None, 'statements': p[12]} ]
 	p[0] = make_annotation('IF', branches=ifs)
+	
+def p_include_annotation_2_unq_str(p):
+	'''include_annotation : ANNOTATIONOPEN_INCLUDE ':' UNQUOTED_STRING ')' '''
+	p[0] = make_annotation('INCLUDE', text=('string', unescape(' ' + p[3] + ' ')))
 	
 def p_transition_to_2_id_to(p):
 	'transition_to : ID TO'
