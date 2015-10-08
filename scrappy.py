@@ -85,6 +85,7 @@ if __name__ == "__main__":
 		c.slowly_rel = args.slow_speed
 		c.tab_spaces = args.tab_spaces
 		c.background_ent = args.background_ent
+		c.use_camera_system = args.enable_camera
 
 	import argparse
 	import pprint
@@ -121,7 +122,7 @@ if __name__ == "__main__":
 		renpyopts.add_argument('--r-slow-speed', metavar='SECONDS', default=2, dest='slow_speed', type=float, help="Set the number of seconds that the phrase 'SLOWLY' is interpreted as.")
 		renpyopts.add_argument('--r-tab-spaces', metavar='SPACES', default=4, dest='tab_spaces', type=int, help='Set the number of spaces that are in a single tab in the output.')
 		renpyopts.add_argument('--r-background-entity-name', metavar='NAME', default='bg', dest='background_ent', help='Set the name of the entity that is used for the background in scene statements.')
-		
+		renpyopts.add_argument('--r-enable-camera', action='store_true', dest='enable_camera', help='Use the experimental camera system instead of just outputting camera instructions as dialog.')
 		
 		argparser.set_defaults(output_mode='renpy', output=['--'])
 		args = argparser.parse_args()

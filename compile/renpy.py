@@ -9,6 +9,8 @@ class RenpyCompiler(object):
 		self.slowly_rel = 2
 		self.tab_spaces = 4
 		self.background_ent = 'bg'
+		self.use_camera_system = False
+		
 		self._indent_lev = 0
 		self._compiled = None
 		self._to_add = ""
@@ -19,7 +21,6 @@ class RenpyCompiler(object):
 		self._gfx_targets = {}
 		self._cur_scene_gfx = []
 		self._cur_img_gfx = []
-		self._use_camera_system = False
 		self._cam_zoom = 'CAM_ZOOM_NORMAL'
 		self._cam_pan = 'CAM_PAN_CENTER'
 		
@@ -226,7 +227,7 @@ class RenpyCompiler(object):
 				dissolve = "with Dissolve(" + str(time) + ")"
 			if scp.typed_check(gfx['target'], 'rel', 'ALL'):
 				self.add_line('show layer master')
-				if self._use_camera_system:
+				if self.use_camera_system:
 					self.add_line('at ' + self._get_current_camera())
 				self._cur_scene_gfx = []
 				for fx in self._cur_img_gfx:
@@ -286,7 +287,7 @@ class RenpyCompiler(object):
 		self.add_line()
 		
 	def _compile_CAMERA(self, camera):
-		if not self._use_camera_system:
+		if not self.use_camera_system:
 			for a in camera['actions']:
 				if a['type'] == 'SNAP':
 					self._compile_line({'speaker': None, 'text': ('string', "[snap camera to %s]" % a['target'][1])})
@@ -437,7 +438,7 @@ class RenpyCompiler(object):
 		effects = ""
 		for fx in self._cur_scene_gfx:
 			effects += fx + ", "
-		if self._use_camera_system:
+		if self.use_camera_system:
 			return effects + self._get_current_camera()
 		return effects[:-2]
 		
