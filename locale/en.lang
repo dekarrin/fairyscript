@@ -1,0 +1,26 @@
+Name = English
+Translator = Rebecca Nelson
+
+# Begin strings:
+
+series_separator = ","
+word_separator = " "
+
+default_script_title = "Script File #%d"
+comment_line = "(%s)"
+screenplay_continued = "(CONT'D)"
+screenplay_voiceover = "(V.O.)"
+
+# args: character, voice-over, continued:
+screenplay_actor_line_start = "%s%s%s"
+
+# args: character, line
+actor_line = %s: "%s"
+
+# args: name-of-transition
+scene_transition = %s to:
+default_transition_name = cut
+
+transitions_in_to = "%{s}s in to"
+actor_enters = "enters"
+scene_name = "the scene"
