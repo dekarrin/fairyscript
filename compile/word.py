@@ -12,26 +12,27 @@ from docx.dml.color import ColorFormat
 
 class DocxCompiler(object):
 	def __init__(self):
+		self.screenplay_mode = False
+		self.scene_metadata = None
+		self.main_character = None
+		self.paragraph_spacing = 0
+		self.include_flagsets = True
+		self.include_varsets = True
+		self.include_python = True
+		self.title = None
+		
 		self._document = None
 		self._last_paragraph = None
 		self._just_completed_line = False
 		self._last_speaker = None
 		self._num_docs = 0
-		self.screenplay_mode = False
-		self.scene_metadata = None
-		self.main_character = None
 		self._warnings = {}
 		self._screenplay_actor_margin = Inches(4)
-		self.paragraph_spacing = 0
-		self.include_flagsets = True
-		self.include_varsets = True
-		self.include_python = True
 		self._add_break = True
 		self._indent_level = 0
 		self._outer_loops_ending = 0
-		self._used_bookmarks = []
 	
-	def compile_script(self, script, inputfile=None):
+	def compile_script(self, script, inputfile=None, add_title=True):
 		self._check_screenplay_vars()
 		self._num_docs += 1
 		self._indent_level = 0
@@ -41,7 +42,11 @@ class DocxCompiler(object):
 		else:
 			self._document = Document(inputfile)
 		self._set_style_defaults()
-		self._document.add_heading("Script File #" + str(self._num_docs))
+		if add_title:
+			if self.title is None:
+				self._document.add_heading("Script File #" + str(self._num_docs))
+			else:
+				self._document.add_heading(self.title % str(self._num_docs))
 		self._last_paragraph = None
 		self._last_run = None
 		self._just_completed_line = False
@@ -679,9 +684,6 @@ class DocxCompiler(object):
 		# truncate to 40 chars:
 		if len(text) > 40:
 			text = text[:40]
-		
-		if text not in self._used_bookmarks:
-			self._used_bookmarks.append(text)
 			
 		return text
 				
