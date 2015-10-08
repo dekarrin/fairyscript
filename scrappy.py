@@ -125,7 +125,6 @@ if __name__ == "__main__":
 		
 		argparser.set_defaults(output_mode='renpy', output=['--'])
 		args = argparser.parse_args()
-		pprint.pprint(args)
 		args.input_mode = args.input_mode[0]
 		args.output = args.output[0]
 		
