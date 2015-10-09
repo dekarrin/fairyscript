@@ -231,7 +231,7 @@ in confusion.
 (Flag: have_seen_bob on)
 ```
 
-### CHOICE Directive ###
+### CHOICE Directive ### <a name="choice-dir"></a>
 The CHOICE directive allows branching storylines to take place. The viewer is
 presented with a series of options that they must select from. Upon selection of
 an option, relevant flags are set and the script jumps to the appropriate
@@ -326,5 +326,7 @@ SET have_lied ON AND GO TO bob-is-missing
 SET have_dissed_bob ON AND SET arrogance 1 AND GO TO bob-is-missing
 ```
 
-For more information, see the SECTION annotation and the VARSET annotation.
-</html>
+#### See Also ####
+* [SECTION annotation](#section-ann)
+* [VAR annotation](#var-ann)
+
