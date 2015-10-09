@@ -1,8 +1,8 @@
-## scrappy
-----------
+scrappy
+-------
 Write manuscripts in screenplay style and export them to various formats.
 
-### Description
+### Description ###
 Scrappy, the SCRipt APplication written in PYthon, provides a human-readable yet
 still regular format for writing manuscripts in plaintext. These manuscripts can
 then be compiled with scrappy to various other formats, either for consumption
@@ -16,7 +16,7 @@ when necessary.
 * The .SCP format provided by scrappy is easier to read than formats that are
 directly used by manuscript execution systems, such as Ren'py.
 
-### Supported Formats
+### Supported Formats ###
 Scrappy provides the .SCP format for files. It is capable of interpreting
 manuscripts written in this format, and compiling them to the following formats:
 * .SCP -> .RPY (Ren'py Script)
@@ -24,7 +24,7 @@ manuscripts written in this format, and compiling them to the following formats:
 
 Stay tuned for more formats in the future!
 
-### Installation
+### Installation ###
 As a python script, scrappy does not need to be installed; simply having it
 will allow it to be executed. However, scrappy does have some requirements:
 * Python 2
@@ -40,7 +40,7 @@ included as part of the distribution, and so no action is necessary in order to
 properly install it. For license information on these packages, please see the
 appropriate LICENSE files.
 
-### Compiler Usage
+### Compiler Usage ###
 The scrappy compiler is used to compile .SCP format manuscript files into other
 file types. It is invoked by execution from the command line.
 
@@ -109,6 +109,6 @@ invoke scrappy with the `-h` option:
 $ python scrappy.py -h
 ```
 
-### The Scrappy Language
-The Scrappy Language is documented in full in the file `scrappy.html` in the
-docs directory of scrappy.
+### SCP: The Scrappy Language ###
+The Scrappy Language is documented in full in the file `scrappy.md` in the docs
+directory of scrappy.

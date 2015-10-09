@@ -5,7 +5,6 @@ The Scrappy language is designed to allow users to be as expressive as they
 might be with a screenplay while still adhering to a regular language.
 
 ## Language Basics ##
-
 A manuscript written in Scrappy consists of a series of statements. These
 statement can be broken down into the following types:
 
@@ -14,7 +13,6 @@ statement can be broken down into the following types:
 * Instructions
 
 ### Whitespace ###
-
 In the Scrappy language, whitespace is unimportant. For readability,
 instructions typically group together the start and ending characters along with
 the actual instruction on a single line, but this is not necessary.
@@ -31,13 +29,11 @@ bobs-auto-shop
 ```
 
 ### Case-Sensitivity ###
-
 In general, Scrappy is a case-sensitive language. There are only a few
 exceptions to this, such as the names of instructions (which itself is excepted
 in the ACTION directive, which uses the name of a character).
 
 ### Escaping ###
-
 There may be times when a particular region of Scrappy code contains a character
 that must be escaped (such as when a double quote character is used within a
 string or a left-brace character is used within a python block). If that occurs,
@@ -46,7 +42,6 @@ in these situations requires escaping the backslash, so a double backslash is
 needed ('\\').
 
 ### Types and Expressions ###
-
 Scrappy has a system of types of parameters that are given to instructions. This
 document will often refer to parameter types, and this section of this document
 identifies exactly what is meant by each term.
@@ -133,7 +128,6 @@ ON
 ```
 
 ## Lines ##
-
 In Scrappy, a 'line' is a line of dialogue spoken by a character. It consists of
 the character's name, followed by a colon, followed by what they are saying
 enclosed within double quotes:
@@ -165,7 +159,6 @@ character in a characters file and use the mnemonic defined there to refer to
 them in the main Scrappy manuscript for lines and ACTION directives.
 
 ## Comments ##
-
 Comments are used as supplementary information to the reader of the script.
 Small notes and information about the script itself are often well-suited for
 inclusion in a comment.
@@ -182,7 +175,6 @@ machine-consumable language such as Ren'Py. They are not excluded from formats
 that are intended to be read by humans, such as DOCX.
 
 ## Instructions: Directives & Annotations ##
-
 There are two types of insructions in Scrappy: directives and annotations. The
 intent of this separation is to provide a clear distinction between instructions
 intended for the manuscript and instructions intended for the computer.
@@ -240,7 +232,6 @@ in confusion.
 ```
 
 ### CHOICE Directive ###
-
 The CHOICE directive allows branching storylines to take place. The viewer is
 presented with a series of options that they must select from. Upon selection of
 an option, relevant flags are set and the script jumps to the appropriate
