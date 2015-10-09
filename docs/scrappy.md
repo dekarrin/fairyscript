@@ -38,7 +38,7 @@ that must be escaped (such as when a double quote character is used within a
 string or a left-brace character is used within a python block). If that occurs,
 simply escape the character with a backslash ('\'). Writing a literal backslash
 in these situations requires escaping the backslash, so a double backslash is
-needed ('\\').
+needed.
 
 ### Types and Expressions ###
 Scrappy has a system of types of parameters that are given to instructions. This
