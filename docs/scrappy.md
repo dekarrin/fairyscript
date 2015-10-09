@@ -7,9 +7,9 @@ might be with a screenplay while still adhering to a regular language.
 ## Language Basics ##
 A manuscript written in Scrappy consists of a series of statements. These
 statement can be broken down into the following types:
-* Lines spoken by an actor or voiced internally
-* Comments
-* Instructions
+- Lines spoken by an actor or voiced internally
+- Comments
+- Instructions
 
 ### Whitespace ###
 In the Scrappy language, whitespace is unimportant. For readability,
@@ -230,13 +230,77 @@ in confusion.
 (Flag: have_seen_bob on)
 ```
 
+### ACTION Directive ### <a name="action-dir"></a>
+The ACTION Directive is an instruction to an actor to take some sort of action.
+The action can be to move somewhere in the scene, to change appearance, or both.
+
+This directive is unique among instructions in that it is not written by using
+its name. Instead, the name of the actor that the instruction is to is used as
+the 'name' of the instruction.
+
+```
+# This is an instruction for Bob to appear sad:
+[Bob: sad]
+
+# This is an instruction for Mary to appear sad:
+[Mary: sad]
+
+# This is only valid if there is a character named 'Action'!
+[Action: sad]
+
+To have an actor change their appearance, list all the different ways in which
+they are to change, separated by commas (','). Generally, there should not be
+more than one of a particular type of appearance. That is to say, it is valid
+Scrappy to have an actor appear sad and happy, but it certainly doesn't make any
+sense!
+
+```
+# An instruction for Bob to appear sad:
+[Bob: sad]
+
+# An instruction for Bob to appear sad with his back to the viewers:
+[Bob: sad, back-turned]
+
+# Valid Scrappy, but a bit confusing:
+[Bob: sad, happy, back-turned]
+
+# Makes a bit more sense:
+[Bob: bittersweet, back-turned]
+```
+
+An actor can also be instructed to move somewhere on the screen. To do this, use
+the `GO TO` keywords followed by an identifier for the destination.
+
+```
+# An instruction for Bob to move to the right of the screen:
+[Bob: GO TO stage-right]
+```
+
+For ACTION directives that include move instructions, an amount of time for the
+action can be specified. The duration of the action can be specified in seconds
+with the `OVER` or `FOR` keyword followed by a number of seconds and then the
+`SECONDS` keyword, or a relative duration by using `QUICKLY` or `SLOWLY`.
+
+```
+[Bob: GO TO bedroom-door OVER 5 SECONDS]
+[Bob: GO TO bed SLOWLY]
+```
+
+Appearance change instructions and movement instructions can be combined in a
+single ACTION directive. In this case, the appearance instructions are separated
+from the move instruction by a comma (',').
+
+```
+[Bob: sad, arms-crossed, GO TO bed SLOWLY]
+```
+
 ### CAMERA Directive ### <a name="camera-dir"></a>
 The CAMERA Directive gives directions to the camera of the scene. It contains
 a series of actions for the camera to do, separated by the `AND` keyword. Valid
 camera actions are:
-* Panning
-* Snapping
-* Zooming
+- Panning
+- Snapping
+- Zooming
 
 Panning is a translation of the camera to point to a particular object/location.
 To do a pan, use the `PAN TO` keywords followed by an identifier for the
@@ -376,6 +440,8 @@ SET have_dissed_bob ON AND SET arrogance 1 AND GO TO bob-is-missing
 ```
 
 #### See Also ####
-* [SECTION annotation](#section-ann)
-* [VAR annotation](#var-ann)
+- [SECTION annotation](#section-ann)
+- [VAR annotation](#var-ann)
 
+### ENTER Directive ### <a name="enter-dir"></a>
+The ENTER directive is used to instruct an actor to appear in the scene.
