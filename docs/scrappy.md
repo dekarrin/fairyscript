@@ -1,6 +1,5 @@
 The Scrappy Language Reference
 ==============================
-
 The Scrappy language is designed to allow users to be as expressive as they
 might be with a screenplay while still adhering to a regular language.
 
@@ -36,7 +35,7 @@ in the ACTION directive, which uses the name of a character).
 There may be times when a particular region of Scrappy code contains a character
 that must be escaped (such as when a double quote character is used within a
 string or a left-brace character is used within a python block). If that occurs,
-simply escape the character with a backslash ('\'). Writing a literal backslash
+simply escape the character with a backslash (`\`). Writing a literal backslash
 in these situations requires escaping the backslash, so a double backslash is
 needed.
 
@@ -51,7 +50,7 @@ fully; scientific notation numbers are not allowed. In addition, numbers must
 always be specified in decimal base; other bases are not allowed.
 
 Strings are a series of characters. They are started and ended with a double
-quote character ('"'). Any double quote characters inside the string must be
+quote character (`"`). Any double quote characters inside the string must be
 escaped.
 
 Boolean literals specify whether something is true or false. In Scrappy, by far
@@ -63,14 +62,14 @@ Identifiers reference a particular thing. They are used for the names of
 variables, flags, sections, characters, and more. Identifiers are
 case-sensitive; two identifiers with the same spelling but different case refer
 to two different things. Allowed characters in identifiers are underscores
-('_'), hyphens ('-'), the letters A-Z (either upper or lower case), and the
+(`_`), hyphens (`-`), the letters A-Z (either upper or lower case), and the
 digits 0-9; however, identifiers cannot start with a digit and they cannot be a
 reserved word. Also, though hyphens are allowed in Scrappy identifiers, they
 will be converted to underscores during compilation if the target language does
 not support them.
 
 Raw expressions are expressions that are contained between single quote
-characters ('). They exist for when Scrappy does not support the expression
+characters (`'`). They exist for when Scrappy does not support the expression
 that is desired. Raw expressions are passed directly through to other languages
 unchanged during compilation (unless Scrappy is being compiled to a
 human-readable format), and so they may consist of any expression that is valid
@@ -162,7 +161,7 @@ Comments are used as supplementary information to the reader of the script.
 Small notes and information about the script itself are often well-suited for
 inclusion in a comment.
 
-The '#' character begins a comment and it continues until the end of the line:
+The `#` character begins a comment and it continues until the end of the line:
 
 ```
 # This is a comment! This entire line is a comment!
@@ -189,12 +188,12 @@ arbitrary code, as well as ancillary functions such as marking sections of the
 script. Annotations tend to result in a non-perceptual change, but they may
 control the overall flow of the script.
 
-An instruction begins with a particular character; for directives, it is the '['
-character, and for annotations, it is the '(' character. The opening character
+An instruction begins with a particular character; for directives, it is the `[`
+character, and for annotations, it is the `(` character. The opening character
 is followed by the name of the instruction immediately, with no spaces in
 between. Most instructions require parameters; they are given after a colon 
-character (':'). The instruction is then closed with the matching symbol; ']'
-for directives and ')' for annotations. Whitespace is allowed before the closing
+character (`:`). The instruction is then closed with the matching symbol; `]`
+for directives and `)` for annotations. Whitespace is allowed before the closing
 symbol.
 
 ```
@@ -249,7 +248,7 @@ the 'name' of the instruction.
 [Action: sad]
 
 To have an actor change their appearance, list all the different ways in which
-they are to change, separated by commas (','). Generally, there should not be
+they are to change, separated by commas (`,`). Generally, there should not be
 more than one of a particular type of appearance. That is to say, it is valid
 Scrappy to have an actor appear sad and happy, but it certainly doesn't make any
 sense!
@@ -288,7 +287,7 @@ with the `OVER` or `FOR` keyword followed by a number of seconds and then the
 
 Appearance change instructions and movement instructions can be combined in a
 single ACTION directive. In this case, the appearance instructions are separated
-from the move instruction by a comma (',').
+from the move instruction by a comma (`,`).
 
 ```
 [Bob: sad, arms-crossed, GO TO bed SLOWLY]
@@ -362,8 +361,8 @@ and succinct rather than having the possibility of stretching into a very long
 block.
 
 A minimal CHOICE directive consists of `[Choice]` followed by a series of
-options. Each option begins with an asterisk ('*') character and gives the text
-of the option that is shown to the viewer, followed by a colon (':') and then
+options. Each option begins with an asterisk (`*`) character and gives the text
+of the option that is shown to the viewer, followed by a colon (`:`) and then
 the keywords `GO TO` followed by the section that the option causes the script
 to jump to upon selection.
 
@@ -410,7 +409,7 @@ itself but before any choices.
 Options in a choice can specify whether they have a condition for appearing,
 which is done by including the key words `SHOW IF` followed by a flag variable
 or other boolean expression immediately after the colon. The `SHOW IF`
-parameter is separated from the rest of the option parameters by a comma (',').
+parameter is separated from the rest of the option parameters by a comma (`,`).
 
 ```
 [Choice]
