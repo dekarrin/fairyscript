@@ -3,6 +3,23 @@ The Scrappy Language Reference
 This document is intended to be a complete reference to Scrappy language. All
 information about the usage of the language is listed here.
 
+## Table of Contents ##
+1. [Table of Contents](#table-of-contents)
+2. [Introduction](#introduction)
+3. [Language Basics](#language-basics)
+	1. [Whitespace](#whitespace)
+	2. [Case-Sensitivity](#case-sensitivity)
+	3. [Escaping](#escaping)
+	4. [Types and Expressions](#types-and-expressions)
+4. [Lines](#lines)
+5. [Comments](#comments)
+6. [Instructions](#instructions)
+	1. [ACTION Directive](#action-directive)
+	2. [CAMERA Directive](#camera-directive)
+	3. [CHOICE Directive](#choice-directive)
+	4. [ENTER Directive](#enter-directive)
+
+## Introduction ##
 The Scrappy language is an intermediate language for writing manuscripts. It is
 designed to allow users to be as expressive as they might be with a screenplay
 while still adhering to a regular language.
