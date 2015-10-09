@@ -229,7 +229,7 @@ in confusion.
 (Flag: have_seen_bob on)
 ```
 
-### ACTION Directive ### <a name="action-dir"></a>
+### ACTION Directive <a name="action-dir"></a> ###
 The ACTION Directive is an instruction to an actor to take some sort of action.
 The action can be to move somewhere in the scene, to change appearance, or both.
 
@@ -246,6 +246,7 @@ the 'name' of the instruction.
 
 # This is only valid if there is a character named 'Action'!
 [Action: sad]
+```
 
 To have an actor change their appearance, list all the different ways in which
 they are to change, separated by commas (`,`). Generally, there should not be
@@ -293,7 +294,7 @@ from the move instruction by a comma (`,`).
 [Bob: sad, arms-crossed, GO TO bed SLOWLY]
 ```
 
-### CAMERA Directive ### <a name="camera-dir"></a>
+### CAMERA Directive <a name="camera-dir"></a> ###
 The CAMERA Directive gives directions to the camera of the scene. It contains
 a series of actions for the camera to do, separated by the `AND` keyword. Valid
 camera actions are:
@@ -343,7 +344,7 @@ Actions can be chained in a single CAMERA directive by using the `AND` keyword.
 ZOOM OUT OVER 6 SECONDS AND PAN TO center SLOWLY]
 ```
 
-### CHOICE Directive ### <a name="choice-dir"></a>
+### CHOICE Directive <a name="choice-dir"></a> ###
 The CHOICE directive allows branching storylines to take place. The viewer is
 presented with a series of options that they must select from. Upon selection of
 an option, relevant flags are set and the script jumps to the appropriate
@@ -442,5 +443,5 @@ SET have_dissed_bob ON AND SET arrogance 1 AND GO TO bob-is-missing
 - [SECTION annotation](#section-ann)
 - [VAR annotation](#var-ann)
 
-### ENTER Directive ### <a name="enter-dir"></a>
+### ENTER Directive <a name="enter-dir"></a> ###
 The ENTER directive is used to instruct an actor to appear in the scene.
