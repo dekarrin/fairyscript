@@ -1,7 +1,18 @@
 The Scrappy Language Reference
 ==============================
-The Scrappy language is designed to allow users to be as expressive as they
-might be with a screenplay while still adhering to a regular language.
+This document is intended to be a complete reference to Scrappy language. All
+information about the usage of the language is listed here.
+
+The Scrappy language is an intermediate language for writing manuscripts. It is
+designed to allow users to be as expressive as they might be with a screenplay
+while still adhering to a regular language.
+
+Manuscripts that are written in Scrappy are never executed. Instead, they are
+compiled to another format using the Scrappy compiler. Because of this, it is
+possible to create structures in Scrappy that can cause odd behavior in target
+languages. However, Scrappy is designed to be as flexible as possible. It will
+not attempt to check that a manuscript makes sense in a target language; only
+the Scrappy language itself.
 
 ## Language Basics ##
 A manuscript written in Scrappy consists of a series of statements. These
@@ -172,7 +183,7 @@ Comments are completely ignored when compiling Scrappy to another
 machine-consumable language such as Ren'Py. They are not excluded from formats
 that are intended to be read by humans, such as DOCX.
 
-## Instructions: Directives & Annotations ##
+## Instructions ##
 There are two types of insructions in Scrappy: directives and annotations. The
 intent of this separation is to provide a clear distinction between instructions
 intended for the manuscript and instructions intended for the computer.
@@ -229,7 +240,7 @@ in confusion.
 (Flag: have_seen_bob on)
 ```
 
-### ACTION Directive <a name="action-dir"></a> ###
+### ACTION Directive ###
 The ACTION Directive is an instruction to an actor to take some sort of action.
 The action can be to move somewhere in the scene, to change appearance, or both.
 
@@ -294,7 +305,7 @@ from the move instruction by a comma (`,`).
 [Bob: sad, arms-crossed, GO TO bed SLOWLY]
 ```
 
-### CAMERA Directive <a name="camera-dir"></a> ###
+### CAMERA Directive ###
 The CAMERA Directive gives directions to the camera of the scene. It contains
 a series of actions for the camera to do, separated by the `AND` keyword. Valid
 camera actions are:
@@ -344,7 +355,7 @@ Actions can be chained in a single CAMERA directive by using the `AND` keyword.
 ZOOM OUT OVER 6 SECONDS AND PAN TO center SLOWLY]
 ```
 
-### CHOICE Directive <a name="choice-dir"></a> ###
+### CHOICE Directive ###
 The CHOICE directive allows branching storylines to take place. The viewer is
 presented with a series of options that they must select from. Upon selection of
 an option, relevant flags are set and the script jumps to the appropriate
@@ -440,8 +451,8 @@ SET have_dissed_bob ON AND SET arrogance 1 AND GO TO bob-is-missing
 ```
 
 #### See Also ####
-- [SECTION annotation](#section-ann)
-- [VAR annotation](#var-ann)
+- [SECTION annotation](#section-annotation)
+- [VAR annotation](#var-annotation)
 
-### ENTER Directive <a name="enter-dir"></a> ###
+### ENTER Directive ###
 The ENTER directive is used to instruct an actor to appear in the scene.
