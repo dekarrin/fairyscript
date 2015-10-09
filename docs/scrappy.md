@@ -7,7 +7,6 @@ might be with a screenplay while still adhering to a regular language.
 ## Language Basics ##
 A manuscript written in Scrappy consists of a series of statements. These
 statement can be broken down into the following types:
-
 * Lines spoken by an actor or voiced internally
 * Comments
 * Instructions
@@ -229,6 +228,56 @@ in confusion.
 # This annotation has the wrong case for a reserved-word argument, and is thus
 # not valid Scrappy:
 (Flag: have_seen_bob on)
+```
+
+### CAMERA Directive ### <a name="camera-dir"></a>
+The CAMERA Directive gives directions to the camera of the scene. It contains
+a series of actions for the camera to do, separated by the `AND` keyword. Valid
+camera actions are:
+* Panning
+* Snapping
+* Zooming
+
+Panning is a translation of the camera to point to a particular object/location.
+To do a pan, use the `PAN TO` keywords followed by an identifier for the
+location to pan to.
+
+```
+[Camera: PAN TO garage-door]
+```
+
+Snapping is similar to panning, but has no wait time; the camera jumps instantly
+to the specified location. A snap is specified with the `SNAP TO` keywords.
+
+```
+[Camera: SNAP TO garage-door]
+```
+
+Zooming moves the camera closer or farther away from the scene. A zoom is
+specified with the `ZOOM` keyword, followed by either `IN` or `OUT`.
+
+```
+[Camera: ZOOM IN]
+[Camera: ZOOM OUT]
+```
+
+For zooming and panning, an amount of time for the action can be specified. The
+duration of the action can be specified in seconds with the `OVER` or `FOR`
+keyword followed by a number of seconds and then the `SECONDS` keyword, or a
+relative duration by using `QUICKLY` or `SLOWLY`.
+
+```
+[Camera: ZOOM IN OVER 5 SECONDS]
+[Camera: PAN TO front-door FOR 2.4 SECONDS]
+[Camera: ZOOM OUT QUICKLY]
+[Camera: ZOOM IN QUICKLY]
+```
+
+Actions can be chained in a single CAMERA directive by using the `AND` keyword.
+
+```
+[Camera: SNAP TO bedroom-door AND ZOOM IN QUICKLY AND
+ZOOM OUT OVER 6 SECONDS AND PAN TO center SLOWLY]
 ```
 
 ### CHOICE Directive ### <a name="choice-dir"></a>
