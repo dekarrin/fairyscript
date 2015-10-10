@@ -17,6 +17,7 @@ information about the usage of the language is listed here.
 	2. [CAMERA Directive](#camera-directive)
 	3. [CHOICE Directive](#choice-directive)
 	4. [ENTER Directive](#enter-directive)
+	5. [EXIT Directive](#exit-directive)
 
 ## Introduction ##
 The Scrappy language is an intermediate language for writing manuscripts. It is
@@ -478,7 +479,8 @@ separated from `SET` clauses with the `AND` keyword.
 - [VAR annotation](#var-annotation)
 
 ### ENTER Directive ###
-The ENTER directive is used to instruct an actor to appear in the scene.
+The ENTER directive is used to instruct an actor to appear in the scene. There
+are several different ways that the entrance can be customized.
 
 Every ENTER directive needs an actor that it is addressing. A minimal ENTER
 consists only of the actor.
@@ -526,8 +528,8 @@ To have an actor transition in with the previous thing that used a transition
 
 An actor's entrance can be given a particular path; they can be instructed to
 come in to the scene from a particular side or at a particular location. To
-specify the origin of their entrance, use the `FROM` keyword followed by the
-identifier for the location they are to come from. Place this clause after any
+specify the origin of the entrance path, use the `FROM` keyword followed by the
+identifier for the location the path is to start at. Place this clause after any
 actor appearance states and the transition (if there is one).
 
 ```
@@ -539,16 +541,16 @@ actor appearance states and the transition (if there is one).
 
 An ENTER directive can also be given the destination of an entrance. This will
 be the final position that the actor is in after the entrance is complete. To
-specify the destination of the entrance, use the `TO` keyword followed by the
-identifier for the location they are to arrive at. Place this clause after any
-actor appearance states, the transition (if there is one), and the origin (if
-there is one).
+specify the destination of the entrance path, use the `TO` keyword followed by
+the identifier for the location the path is to end at. Place this clause after
+any actor appearance states, the transition (if there is one), and the origin
+(if there is one).
 
 ```
 # Some entrance destinations:
 [Enter: Bob TO center]
-[Enter: Mary (upset) FROM offscreenright TO stage-left]
-[Enter: Ghost (angry, arms-crossed) DISSOLVE IN FROM center TO stage-right]
+[Enter: Mary (upset) FROM offscreenright TO stage-right]
+[Enter: Ghost (angry, arms-crossed) DISSOLVE IN FROM center TO stage-left]
 ```
 
 An ENTER directive can also be given a duration for the entrance. This can be
@@ -560,9 +562,9 @@ directive.
 ```
 # Some entrance destinations with explicit duration:
 [Enter: Bob OVER 10 SECONDS]
-[Enter: Mary (upset) FROM offscreenright TO stage-left SLOWLY]
+[Enter: Mary (upset) FROM offscreenright TO stage-right SLOWLY]
 [Enter: Ghost (angry, arms-crossed) DISSOLVE IN
-	FROM center TO stage-right]
+	FROM center TO stage-left QUICKLY]
 ```
 
 It is important to ensure that the order of operations of the entrance is
@@ -580,3 +582,93 @@ viewer.
 
 #### See Also ####
 - [EXIT Directive](#exit-directive)
+
+### EXIT Directive ###
+The EXIT directive is an instruction to the actor to exit from the scene. There
+are several different ways that the exit can be customized.
+
+Every EXIT directive needs an actor that it is addressing. A minimal EXIT
+consists only of the actor.
+
+```
+[Exit: Bob]
+```
+
+An actor's exit can use a transition, such as fade or dissolve. To include a
+transition in the exit, use the name of the transition followed by the keyword
+`OUT`. Place this clause after the name of the actor.
+
+```
+[Exit: Bob FADE OUT]
+```
+
+To have an actor transition out with the previous thing that used a transition
+(such as another EXIT directive), use the keywords `WITH PREVIOUS`.
+
+```
+# This causes Mary to fade out, then Bob to fade out after her exit is complete:
+[Exit: Mary FADE OUT]
+[Exit: Bob FADE OUT]
+
+# This causes Mary and Bob to fade out at the same time:
+[Exit: Mary FADE OUT]
+[Exit: Bob WITH PREVIOUS]
+
+# This causes Mary, Bob, and John to all fade out at the same time:
+[Exit: Mary FADE OUT]
+[Exit: John WITH PREVIOUS]
+[Exit: Bob WITH PREVIOUS]
+```
+
+An actor's exit can be given a particular path; they can be instructed to exit
+from the scene at a particular side or at a particular location. To specify the
+origin of the exit path, use the `FROM` keyword followed by the identifier for
+the location the path is to start at. Place this after the transition (if there
+is one).
+
+```
+# Some exit origins:
+[Exit: Bob FROM stage-left]
+[Exit: Mary FROM stage-right]
+[Exit: Ghost DISSOLVE OUT FROM center]
+```
+
+An EXIT directive can also be given the destination of an exit. This will be the
+final position that the actor is in before the exit occurs. To specify the
+destination of the exit path, use the `TO` keyword followed by the identifier
+for the location the path is to end at. Place this clause after the transition
+(if there is one) and the origin (if there is one).
+
+```
+# Some exit destinations:
+[Exit: Bob TO offscreenleft]
+[Exit: Mary FROM stage-right TO offscreenright]
+[Exit: Ghost DISSOLVE OUT FROM center TO stage-left]
+```
+
+An EXIT directive can also be given a duration for the exit. This can be
+specified as time in seconds with the `OVER` or `FOR` keyword followed by a
+number of seconds and then the `SECONDS` keyword, or as a relative duration by
+using `QUICKLY` or `SLOWLY`. This clause must be placed after all others in the
+directive.
+
+```
+# Some exit destinations with explicit duration:
+[Exit: Bob OVER 10 SECONDS]
+[Exit: Mary FROM stage-right TO offscreenright SLOWLY]
+[Exit: Ghost DISSOLVE OUT FROM center TO stage-left QUICKLY]
+```
+
+It is important to ensure that the order of operations of the entrance is
+specified clearly. What the EXIT directive means is that the actor should first
+move to the origin of the exit path if he is not already there, and then move to
+the destination of the exit path. Finally, once there, they are to exit the
+scene, either by using the given transition or by disappearing if no transition
+is specified.
+
+Note that this means that specififying an off-screen destination or an
+off-screen origin with no destination means that any transition will not be
+visible to the viewer.
+
+#### See Also ####
+- [ENTER Directive](#enter-directive)
