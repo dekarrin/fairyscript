@@ -321,6 +321,13 @@ from the move instruction by a comma (`,`).
 [Bob: sad, arms-crossed, GO TO bed SLOWLY]
 ```
 
+Any actor can be given an ACTION directive; however, it would be very strange if
+it is given to an actor who has not yet come on to the scene with an ENTER
+directive.
+
+#### See Also ####
+- [ENTER directive](#enter-directive)
+
 ### CAMERA Directive ###
 The CAMERA Directive gives directions to the camera of the scene. It contains
 a series of actions for the camera to do, separated by the `AND` keyword. Valid
@@ -457,13 +464,13 @@ separated from `SET` clauses with the `AND` keyword.
 ```
 [Choice]
 * "Who cares about Bob, anyways?":
-SET have_dissed_bob AND GO TO bob-is-boring
+	SET have_dissed_bob AND GO TO bob-is-boring
 * "Ah, I saw him just a minute ago.": SHOW IF have_seen_bob,
-GO TO find-bob
+	GO TO find-bob
 * "(lie) Bob? No idea.": SHOW IF have_seen_bob,
-SET have_lied ON AND GO TO bob-is-missing
+	SET have_lied ON AND GO TO bob-is-missing
 * "Bob sucks. I'm the one who you should care about!":
-SET have_dissed_bob ON AND SET arrogance 1 AND GO TO bob-is-missing
+	SET have_dissed_bob ON AND SET arrogance 1 AND GO TO bob-is-missing
 ```
 
 #### See Also ####
@@ -472,3 +479,104 @@ SET have_dissed_bob ON AND SET arrogance 1 AND GO TO bob-is-missing
 
 ### ENTER Directive ###
 The ENTER directive is used to instruct an actor to appear in the scene.
+
+Every ENTER directive needs an actor that it is addressing. A minimal ENTER
+consists only of the actor.
+
+```
+[Enter: Bob]
+```
+
+In order to specify the appearance of the actor, the appearance can be given in
+parenthesis. Multiple appearance instructions are separated by commas.
+
+```
+[Enter: Bob (angry)]
+[Enter: Bob (angry, with-arms-crossed)]
+```
+
+An actor's entrance can use a transition, such as fade or dissolve. To include a
+transition in the entrance, use the name of the transition followed by the
+keyword `IN`. Place this clause after any actor appearance states.
+
+```
+[Enter: Bob FADE IN]
+[Enter: Bob (angry, with-arms-crossed) DISSOLVE IN]
+```
+
+To have an actor transition in with the previous thing that used a transition
+(such as a SCENE directive or another ENTER directive), use the keywords
+`WITH PREVIOUS`.
+
+```
+# This causes Mary to fade in, then Bob to fade in after her entrance is
+# complete:
+[Enter: Mary FADE IN]
+[Enter: Bob (angry) FADE IN]
+
+# This causes Mary and Bob to fade in at the same time:
+[Enter: Mary FADE IN]
+[Enter: Bob (angry) WITH PREVIOUS]
+
+# This causes Mary, Bob, and John to all fade in at the same time:
+[Enter: Mary FADE IN]
+[Enter: John (upset, eyes-closed) WITH PREVIOUS]
+[Enter: Bob (angry) WITH PREVIOUS]
+```
+
+An actor's entrance can be given a particular path; they can be instructed to
+come in to the scene from a particular side or at a particular location. To
+specify the origin of their entrance, use the `FROM` keyword followed by the
+identifier for the location they are to come from. Place this clause after any
+actor appearance states and the transition (if there is one).
+
+```
+# Some entrance origins:
+[Enter: Bob FROM offscreenleft]
+[Enter: Mary (upset) FROM offscreenright]
+[Enter: Ghost (angry, arms-crossed) DISSOLVE IN FROM center]
+```
+
+An ENTER directive can also be given the destination of an entrance. This will
+be the final position that the actor is in after the entrance is complete. To
+specify the destination of the entrance, use the `TO` keyword followed by the
+identifier for the location they are to arrive at. Place this clause after any
+actor appearance states, the transition (if there is one), and the origin (if
+there is one).
+
+```
+# Some entrance destinations:
+[Enter: Bob TO center]
+[Enter: Mary (upset) FROM offscreenright TO stage-left]
+[Enter: Ghost (angry, arms-crossed) DISSOLVE IN FROM center TO stage-right]
+```
+
+An ENTER directive can also be given a duration for the entrance. This can be
+specified as time in seconds with the `OVER` or `FOR` keyword followed by a
+number of seconds and then the `SECONDS` keyword, or as a relative duration by
+using `QUICKLY` or `SLOWLY`. This clause must be placed after all others in the
+directive.
+
+```
+# Some entrance destinations with explicit duration:
+[Enter: Bob OVER 10 SECONDS]
+[Enter: Mary (upset) FROM offscreenright TO stage-left SLOWLY]
+[Enter: Ghost (angry, arms-crossed) DISSOLVE IN
+	FROM center TO stage-right]
+```
+
+It is important to ensure that the order of operations of the entrance is
+specified clearly. What the ENTER directive means is that the actor should enter
+the scene with the given transition if there is one, or appear instantly if
+there is not one, at the specified origin if one is given, otherwise at an
+understood origin. After the transition in is complete, the actor then moves to
+the specified destination if there is one. If no origin is given but a
+destination is given, the actor is to appear/transition to that location and not
+move at all.
+
+Note that this means that specififying an off-screen origin or an off-screen
+destintation with no origin means that any transition will not be visible to the
+viewer.
+
+#### See Also ####
+- [EXIT Directive](#exit-directive)
