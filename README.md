@@ -110,5 +110,5 @@ $ python scrappy.py -h
 ```
 
 ### SCP: The Scrappy Language ###
-The Scrappy Language is documented in full in the file `scrappy.md` in the docs
-directory of scrappy.
+The Scrappy Language is documented in full in the file
+[scrappy.md](docs/scrappy.md) in the docs directory of scrappy.
