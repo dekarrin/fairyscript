@@ -1557,222 +1557,222 @@ For the exact grammar that is used by the parser, please see the file `cfg.txt`
 in the docs directory of Scrappy.
 
 ```
-<manuscript>                ::= <block>
+<manuscript>          ::= <block>
 
-<block>                     ::= <statement> <block>?							  
+<block>               ::= <statement> <block>?							  
 
-<statement>                 ::= <directive>
-                              | <annotation>
-                              | <comment>
-                              | <line>
+<statement>           ::= <directive>
+                        | <annotation>
+                        | <comment>
+                        | <line>
                               
-<comment>                   ::= "#" .*
+<comment>             ::= "#" .*
 
-<directive>                 ::= <scene>
-                              | <enter>
-                              | <action>
-                              | <exit>
-                              | <music>
-                              | <gfx>
-                              | <sfx>
-                              | <fmv>
-                              | <camera>
-                              | <choice>
+<directive>           ::= <scene>
+                        | <enter>
+                        | <action>
+                        | <exit>
+                        | <music>
+                        | <gfx>
+                        | <sfx>
+                        | <fmv>
+                        | <camera>
+                        | <choice>
 
-<annotation>                ::= <description>
-                              | <section>
-                              | <flag>
-                              | <var>
-                              | <dialog>
-                              | <goto>
-                              | <execute>
-                              | <end>
-                              | <while>
-                              | <if>
-                              | <include>
-                              | <characters>
-                              | <python>                              
+<annotation>          ::= <description>
+                        | <section>
+                        | <flag>
+                        | <var>
+                        | <dialog>
+                        | <goto>
+                        | <execute>
+                        | <end>
+                        | <while>
+                        | <if>
+                        | <include>
+                        | <characters>
+                        | <python>                              
 
-<line>                      ::= ( <id> | <string> )? ( "(" <appearance> ")" )? ":" <string>                             
+<line>                ::= ( <id> | <string> )? ( "(" <appearance> ")" )? ":" <string>                             
 
-<scene>                     ::= <scene-open> ":" <transition-to>? <id> "]"                            
+<scene>               ::= <scene-open> ":" <transition-to>? <id> "]"                            
 
-<enter>                     ::= <enter-open> ":" <id> ( "(" <appearance> ")" )? <transition-in>? <motion>? "]"
+<enter>               ::= <enter-open> ":" <id> ( "(" <appearance> ")" )? <transition-in>? <motion>? "]"
 
-<action>                    ::= "[" <id> ":" <appearance> "]"
-                              | "[" <id> ":" "GO" <destination> <duration>? "]"
-                              | "[" <id> ":" <appearance> "," "GO" <destination> <duration>? "]"
+<action>              ::= "[" <id> ":" <appearance> "]"
+                        | "[" <id> ":" "GO" <destination> <duration>? "]"
+                        | "[" <id> ":" <appearance> "," "GO" <destination> <duration>? "]"
 
-<exit>                      ::= <exit-open> ":" <id> <transition-out>? <motion>? "]"
+<exit>                ::= <exit-open> ":" <id> <transition-out>? <motion>? "]"
 
-<music>                     ::= <music-open> ":" "STOP" ( <name> | "ALL" )? <duration>? "]"
-                              | <music-open> ":" <name> ( "," "FADEOUT OLD" <duration>? )? "]"
+<music>               ::= <music-open> ":" "STOP" ( <name> | "ALL" )? <duration>? "]"
+                        | <music-open> ":" <name> ( "," "FADEOUT" <whitespace> "OLD" <duration>? )? "]"
 
-<gfx>                       ::= <gfx-open> ":" "LOOP"? <id> "]"
-                              | <gfx-open> ":" "STOP" ( <id> | "ALL" )? <duration>? "]"
+<gfx>                 ::= <gfx-open> ":" "LOOP"? <id> "]"
+                        | <gfx-open> ":" "STOP" ( <id> | "ALL" )? <duration>? "]"
 
-<sfx>                       ::= <sfx-open> ":" "LOOP"? <name> "]"
-                              | <sfx-open> ":" "STOP" ( <name> | "ALL" )? <duration>? "]"
+<sfx>                 ::= <sfx-open> ":" "LOOP"? <name> "]"
+                        | <sfx-open> ":" "STOP" ( <name> | "ALL" )? <duration>? "]"
 
-<fmv>                       ::= <fmv-open> ":" <name> "]"
+<fmv>                 ::= <fmv-open> ":" <name> "]"
 
-<camera>                    ::= <camera-open> ":" <camera-action> "]"
+<camera>              ::= <camera-open> ":" <camera-action> "]"
 
-<choice>                    ::= <choice-open> ( ":" <id> )? "]" <string>? <option>
+<choice>              ::= <choice-open> ( ":" <id> )? "]" <string>? <option>
 
-<option>                    ::= "*" <string> ":" ( "SHOW IF" <boolean-expression> "," )? ( <varset> "AND" )? "GO" <destination> <option>?
+<option>              ::= "*" <string> ":" ( "SHOW" <whitespace> "IF" <boolean-expression> "," )? ( <varset> "AND" )? "GO" <destination> <option>?
 
-<varset>                    ::= ( <varset> "AND" )? "SET" <id> ( <inc-dec> | <expression> )
+<varset>              ::= ( <varset> "AND" )? "SET" <id> ( <inc-dec> | <expression> )
 
-<description>               ::= <description-open> ":" ( <id>? ":" )? <unquoted-string> ")"
+<description>         ::= <description-open> ":" ( <id>? ":" )? <unquoted-string> ")"
 
-<section>                   ::= <section-open> ":" <id> ( "WITH PARAMS" <param-declaration> )? ")"
+<section>             ::= <section-open> ":" <id> ( "WITH" <whitespace> "PARAMS" <param-declaration> )? ")"
 
-<flag>                      ::= <flag-open> ":" <id> <boolean-expression>? ")"
+<flag>                ::= <flag-open> ":" <id> <boolean-expression>? ")"
 
-<var>                       ::= <var-open> ":" <id> ( <inc-dec> | <expression> )? ")"
+<var>                 ::= <var-open> ":" <id> ( <inc-dec> | <expression> )? ")"
 
-<dialog>                    ::= <dialog-open> ":" ( "HIDE" | "SHOW" | "AUTO" ) ")"
+<dialog>              ::= <dialog-open> ":" ( "HIDE" | "SHOW" | "AUTO" ) ")"
 
-<goto>                      ::= <goto-open> ":" <id> ")"
+<goto>                ::= <goto-open> ":" <id> ")"
 
-<execute>                   ::= <execute-open> ":" <id> ( "WITH PARAMS" <param-set> )? ")"
+<execute>             ::= <execute-open> ":" <id> ( "WITH" <whitespace> "PARAMS" <param-set> )? ")"
 
-<end>                       ::= <end-open> ( ":" "RETURN" <expression> )? ")"
+<end>                 ::= <end-open> ( ":" "RETURN" <expression> )? ")"
 
-<while>                     ::= <while-open> ":" <boolean-expression> ")" "{" <block> "}"
+<while>               ::= <while-open> ":" <boolean-expression> ")" "{" <block> "}"
 
-<if>                        ::= <if-open> ":" <boolean-expression> ")" "{" <block> "}" <else-if>? <else>?
+<if>                  ::= <if-open> ":" <boolean-expression> ")" "{" <block> "}" <else-if>? <else>?
 
-<else-if>                   ::= <else-if-open> ":" <boolean-expression> ")" "{" <block> "}" <else-if>?
+<else-if>             ::= <else-if-open> ":" <boolean-expression> ")" "{" <block> "}" <else-if>?
 
-<else>                      ::= <else-open> ")" "{" <block> "}"
+<else>                ::= <else-open> ")" "{" <block> "}"
 
-<include>                   ::= <include-open> ":" <string> ( "WITH PARSING" ( "ON" | "OFF" )? )? ")"
+<include>             ::= <include-open> ":" <string> ( "WITH" <whitespace> "PARSING" ( "ON" | "OFF" )? )? ")"
 
-<characters>                ::= <characters-open> ":" <string> ")"
+<characters>          ::= <characters-open> ":" <string> ")"
 
-<python>                    ::= <python-open> ")" "{" <python-block> "}"
+<python>              ::= <python-open> ")" "{" <python-block> "}"
 
-<python-block>              ::= <non-rbrace>* ( <backslash> . <non-rbrace>* )*
+<python-block>        ::= <non-rbrace>* ( <backslash> . <non-rbrace>* )*
 
-<transition-to>             ::= <id> "TO"
+<transition-to>       ::= <id> "TO"
 
-<transition-in>             ::= <id> "IN"
-                              | "WITH PREVIOUS"
+<transition-in>       ::= <id> "IN"
+                        | "WITH" <whitespace> "PREVIOUS"
 
-<transition-out>            ::= <id> "OUT"
-                              | "WITH PREVIOUS"
+<transition-out>      ::= <id> "OUT"
+                        | "WITH" <whitespace> "PREVIOUS"
                               
-<appearance>                ::= ( <appearance> "," )? <id>
+<appearance>          ::= ( <appearance> "," )? <id>
 
-<motion>                    ::= <origin> <destination>? <duration>?
-                              | <destination> <duration>?
-                              | <duration>
+<motion>              ::= <origin> <destination>? <duration>?
+                        | <destination> <duration>?
+                        | <duration>
                               
-<destination>               ::= "TO" <id>
+<destination>         ::= "TO" <id>
 
-<origin>                    ::= "FROM" <id>
+<origin>              ::= "FROM" <id>
 
-<duration>                  ::= ( "FOR" | "OVER" ) <number> "SECONDS"?
-                              | "QUICKLY"
-                              | "SLOWLY"
+<duration>            ::= ( "FOR" | "OVER" ) <number> "SECONDS"?
+                        | "QUICKLY"
+                        | "SLOWLY"
 
-<name>                      ::= <string>
-                              | <id>
+<name>                ::= <string>
+                        | <id>
 
-<camera-action>             ::= <cam-instruction> ( "AND" <camera-action> )?
+<camera-action>       ::= <cam-instruction> ( "AND" <camera-action> )?
 
-<cam-instruction>           ::= "SNAP TO" <id>
-                              | "PAN TO" <id> <duration>?
-                              | "ZOOM" ( "OUT" | "IN" ) <duration>?
+<cam-instruction>     ::= "SNAP" <whitespace> "TO" <id>
+                        | "PAN" <whitespace> "TO" <id> <duration>?
+                        | "ZOOM" ( "OUT" | "IN" ) <duration>?
 
-<param-declaration>         ::= <id> ( "=" <expression> )? ( "," <param-declaration> )?
+<param-declaration>   ::= <id> ( "=" <expression> )? ( "," <param-declaration> )?
 
-<param-set>                 ::= ( <id> "=" )? <expression> ( "," <param-set> )?
+<param-set>           ::= ( <id> "=" )? <expression> ( "," <param-set> )?
 
-<boolean-expression>        ::= "OFF"
-                              | "ON"
-                              | <raw-expression>
-                              | <id>
+<boolean-expression>  ::= "OFF"
+                        | "ON"
+                        | <raw-expression>
+                        | <id>
                               
-<expression>                ::= <boolean-expression>
-                              | <string>
-                              | <number>
+<expression>          ::= <boolean-expression>
+                        | <string>
+                        | <number>
                               
-<inc-dec>                   ::= ( "INC" | "DEC" ) ( "BY" <number> )?
+<inc-dec>             ::= ( "INC" | "DEC" ) ( "BY" <number> )?
 
-<scene-open>                ::= "[" [ "S" "s" ] [ "C" "c" ] [ "E" "e" ] [ "N" "n" ] [ "E" "e" ]
+<scene-open>          ::= "[" [ "S" "s" ] [ "C" "c" ] [ "E" "e" ] [ "N" "n" ] [ "E" "e" ]
 
-<enter-open>                ::= "[" [ "E" "e" ] [ "N" "n" ] [ "T" "t" ] [ "E" "e" ] [ "R" "r" ]
+<enter-open>          ::= "[" [ "E" "e" ] [ "N" "n" ] [ "T" "t" ] [ "E" "e" ] [ "R" "r" ]
 
-<exit-open>                 ::= "[" [ "E" "e" ] [ "X" "x" ] [ "I" "i" ] [ "T" "t" ]
+<exit-open>           ::= "[" [ "E" "e" ] [ "X" "x" ] [ "I" "i" ] [ "T" "t" ]
 
-<music-open>                ::= "[" [ "M" "m" ] [ "U" "u" ] [ "S" "s" ] [ "I" "i" ] [ "C" "c" ]
+<music-open>          ::= "[" [ "M" "m" ] [ "U" "u" ] [ "S" "s" ] [ "I" "i" ] [ "C" "c" ]
 
-<gfx-open>                  ::= "[" [ "G" "g" ] [ "F" "f" ] [ "X" "x" ]
+<gfx-open>            ::= "[" [ "G" "g" ] [ "F" "f" ] [ "X" "x" ]
 
-<sfx-open>                  ::= "[" [ "S" "s" ] [ "F" "f" ] [ "X" "x" ]
+<sfx-open>            ::= "[" [ "S" "s" ] [ "F" "f" ] [ "X" "x" ]
 
-<fmv-open>                  ::= "[" [ "F" "f" ] [ "M" "m" ] [ "V" "v" ]
+<fmv-open>            ::= "[" [ "F" "f" ] [ "M" "m" ] [ "V" "v" ]
 
-<camera-open>               ::= "[" [ "C" "c" ] [ "A" "a" ] [ "M" "m" ] [ "E" "e" ] [ "R" "r" ] [ "A" "a" ]
+<camera-open>         ::= "[" [ "C" "c" ] [ "A" "a" ] [ "M" "m" ] [ "E" "e" ] [ "R" "r" ] [ "A" "a" ]
 
-<choice-open>               ::= "[" [ "C" "c" ] [ "H" "h" ] [ "O" "o" ] [ "I" "i" ] [ "C" "c" ] [ "E" "e" ]
+<choice-open>         ::= "[" [ "C" "c" ] [ "H" "h" ] [ "O" "o" ] [ "I" "i" ] [ "C" "c" ] [ "E" "e" ]
 
-<description-open>          ::= "(" [ "D" "d" ] [ "E" "e" ] [ "S" "s" ] [ "C" "c" ] [ "R" "r" ] [ "I" "i" ] [ "P" "p" ] [ "T" "t" ] [ "I" "i" ] [ "O" "o" ] [ "N" "n" ]
+<description-open>    ::= "(" [ "D" "d" ] [ "E" "e" ] [ "S" "s" ] [ "C" "c" ] [ "R" "r" ] [ "I" "i" ] [ "P" "p" ] [ "T" "t" ] [ "I" "i" ] [ "O" "o" ] [ "N" "n" ]
 
-<section-open>              ::= "(" [ "S" "s" ] [ "E" "e" ] [ "C" "c" ] [ "T" "t" ] [ "I" "i" ] [ "O" "o" ] [ "N" "n" ]
+<section-open>        ::= "(" [ "S" "s" ] [ "E" "e" ] [ "C" "c" ] [ "T" "t" ] [ "I" "i" ] [ "O" "o" ] [ "N" "n" ]
 
-<flag-open>                 ::= "(" [ "F" "f" ] [ "L" "l" ] [ "A" "a" ] [ "G" "g" ]
+<flag-open>           ::= "(" [ "F" "f" ] [ "L" "l" ] [ "A" "a" ] [ "G" "g" ]
 
-<var-open>                  ::= "(" [ "V" "v" ] [ "A" "a" ] [ "R" "r" ]
+<var-open>            ::= "(" [ "V" "v" ] [ "A" "a" ] [ "R" "r" ]
 
-<dialog-open>               ::= "(" [ "D" "d" ] [ "I" "i" ] [ "A" "a" ] [ "L" "l" ] [ "O" "o" ] [ "G" "g" ]
+<dialog-open>         ::= "(" [ "D" "d" ] [ "I" "i" ] [ "A" "a" ] [ "L" "l" ] [ "O" "o" ] [ "G" "g" ]
 
-<goto-open>                 ::= "(" [ "G" "g" ] [ "O" "o" ] " "? [ "T" "t" ] [ "O" "o" ]
+<goto-open>           ::= "(" [ "G" "g" ] [ "O" "o" ] <whitespace>? [ "T" "t" ] [ "O" "o" ]
 
-<execute-open>              ::= "(" [ "E" "e" ] [ "X" "x" ] [ "E" "e" ] [ "C" "c" ] [ "U" "u" ] [ "T" "t" ] [ "E" "e" ]
+<execute-open>        ::= "(" [ "E" "e" ] [ "X" "x" ] [ "E" "e" ] [ "C" "c" ] [ "U" "u" ] [ "T" "t" ] [ "E" "e" ]
 
-<end-open>                  ::= "(" [ "E" "e" ] [ "N" "n" ] [ "D" "d" ]
+<end-open>            ::= "(" [ "E" "e" ] [ "N" "n" ] [ "D" "d" ]
 
-<while-open>                ::= "(" [ "W" "w" ] [ "H" "h" ] [ "I" "i" ] [ "L" "l" ] [ "E" "e" ]
+<while-open>          ::= "(" [ "W" "w" ] [ "H" "h" ] [ "I" "i" ] [ "L" "l" ] [ "E" "e" ]
 
-<if-open>                   ::= "(" [ "I" "i" ] [ "F" "f" ]
+<if-open>             ::= "(" [ "I" "i" ] [ "F" "f" ]
 
-<else-if-open>              ::= "(" [ "E" "e" ] [ "L" "l" ] ( [ "S" "s" ] " "? [ "E" "e" ] )? [ "I" "i" ] [ "F" "f" ]
+<else-if-open>        ::= "(" [ "E" "e" ] [ "L" "l" ] ( [ "S" "s" ] <whitespace>? [ "E" "e" ] )? [ "I" "i" ] [ "F" "f" ]
 
-<else-open>                 ::= "(" [ "E" "e" ] [ "L" "l" ] [ "S" "s" ] [ "E" "e" ]
+<else-open>           ::= "(" [ "E" "e" ] [ "L" "l" ] [ "S" "s" ] [ "E" "e" ]
 
-<include-open>              ::= "(" [ "I" "i" ] [ "N" "n" ] [ "C" "c" ] [ "L" "l" ] [ "U" "u" ] [ "D" "d" ] [ "E" "e" ]
+<include-open>        ::= "(" [ "I" "i" ] [ "N" "n" ] [ "C" "c" ] [ "L" "l" ] [ "U" "u" ] [ "D" "d" ] [ "E" "e" ]
 
-<characters-open>           ::= "(" [ "C" "c" ] [ "H" "h" ] [ "A" "a" ] [ "R" "r" ] [ "A" "a" ] [ "C" "c" ] [ "T" "t" ] [ "E" "e" ] [ "R" "r" ] [ "S" "s" ]
+<characters-open>     ::= "(" [ "C" "c" ] [ "H" "h" ] [ "A" "a" ] [ "R" "r" ] [ "A" "a" ] [ "C" "c" ] [ "T" "t" ] [ "E" "e" ] [ "R" "r" ] [ "S" "s" ]
 
-<id>                        ::= <alpha> ( <alphanumeric> | "-" )*
+<id>                  ::= <alpha> ( <alphanumeric> | "-" )*
 
-<string>                    ::= '"' <non-dquote>* ( <backslash> . <non-dquote>* )* '"'
+<string>              ::= '"' <non-dquote>* ( <backslash> . <non-dquote>* )* '"'
 
-<number>                    ::= ( ( "+" | "-" ) <whitespace>? )? <digit>+ ( "." <digit>* )?
+<number>              ::= ( ( "+" | "-" ) <whitespace>? )? <digit>+ ( "." <digit>* )?
 
-<unquoted-string>           ::= <non-rparen>* ( <backslash> . <non-rparen>* )*
+<unquoted-string>     ::= <non-rparen>* ( <backslash> . <non-rparen>* )*
 
-<raw-expression>            ::= "'" <non-squote>* ( <backslash> . <non-squote>* )* "'"
+<raw-expression>      ::= "'" <non-squote>* ( <backslash> . <non-squote>* )* "'"
 
-<non-rbrace>                ::= [^ "}" <backslash> ]
+<non-rbrace>          ::= [^ "}" <backslash> ]
 
-<non-rparen>                ::= [^ ")" <backslash> ]
+<non-rparen>          ::= [^ ")" <backslash> ]
 
-<non-dquote>                ::= [^ '"' <backslash> ]
+<non-dquote>          ::= [^ '"' <backslash> ]
 
-<non-squote>                ::= [^ "'" <backslash> ]
+<non-squote>          ::= [^ "'" <backslash> ]
 
-<backslash>                 ::= "\"
+<backslash>           ::= "\"
 
-<whitespace>                ::= \s
+<whitespace>          ::= \s
 
-<alphanumeric>              ::= <alpha> | <digit>
+<alphanumeric>        ::= <alpha> | <digit>
 
-<digit>                     ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+<digit>               ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 
-<alpha>                     ::= [ "A" - "Z" "a" - "z" "_" ]
+<alpha>               ::= [ "A" - "Z" "a" - "z" "_" ]
 ```
