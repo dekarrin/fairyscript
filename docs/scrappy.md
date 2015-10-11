@@ -361,6 +361,10 @@ cannot be used with ACTION directives. Instead, it is better to define the
 character in a characters file and use the mnemonic defined there to refer to
 them in the main Scrappy manuscript for lines and ACTION directives.
 
+#### See Also ####
+- [CHARACTERS Annotation](#characters-annotation)
+- [Character Files](#character-files)
+
 ## Comments ##
 Comments are used as supplementary information to the reader of the script.
 Small notes and information about the script itself are often well-suited for
@@ -1021,3 +1025,472 @@ the given amount of time to fade away.
 [SFX: STOP ALL QUICKLY]
 [SFX: STOP SLOWLY]
 ```
+
+### CHARACTERS Annotation ###
+The CHARACTERS annotation is used to give the name of a file that contains
+character definitions. This file contains information that is used for
+formatting the characters during compilation.
+
+The CHARACTERS annotation requires a single string, which contains the name of
+the character information file.
+
+```
+(Characters: "chars.csv")
+```
+
+#### See Also ####
+- [Characters Files](#characters-files)
+- [INCLUDE Annotation](#include-annotation)
+
+### DESCRIPTION Annotation ###
+The DESCRIPTION annotation is used to provide a description about something.
+Generally this is used after SCENE directives to describe to the manuscript
+reader what the scene should look like, but it can be used to describe anything.
+
+To provide a description of the last object that was introduced, give the
+description as the argument to the instruction. If the description begins with a
+colon (`:`) character, it must be escaped by putting another colon in front of
+it. If the description contains a left parenthesis (`)`), it must be escaped by
+putting a backslash character before it.
+
+```
+# A description of the current scene:
+(Description: We see the office of John, Mary, and Bob. There are several
+workstations, with a kitchen area in the corner.)
+
+# This description must have its initial colon escaped with a second one:
+(Description: ::This description starts with a colon.)
+
+# This description must have the left parenthesis escaped with a backslash:
+(Description: We see the office (of John, Mary, and Bob\). There are several
+workstations, with a kitchen area in the corner.)
+
+# This description must have its backslash escaped with a second one:
+(Description: We see the contents of the file 'C:\\accounts.txt'.)
+```
+
+To indicate that the description is for a particular object, the identifier of
+the object followed by a colon (`:`) is given before the description.
+
+```
+(Description: Bob: Bob is a larger man, about 6'2" tall. He looks to be about
+thirty years old.)
+```
+
+If the identifier is to be omitted, but the first word of the description could
+be an identifier followed by a colon, a colon can be written before the
+description to indicate that there is no identifier.
+
+```
+# This description is explicitly marked as describing 'Crying' as 'being sad.
+# laughing: being happy.', which is probably not the intent
+(Description: Crying: being sad. Laughing: being happy)
+
+# This description uses an initial colon to explitly mark the beginning of the
+# description words, which is now 'Crying: being sad. Laughing: being happy'
+(Description:: Crying: being sad. Laughing: being happy)
+```
+
+### DIALOG Annotation ###
+The DIALOG annotation controls dialog window shown to the user. This is useful
+for writing manuscripts for visual and kinetic novels.
+
+To hide the dialog window, use the `HIDE` keyword.
+
+```
+(Dialog: HIDE)
+```
+
+To show the dialog window, use the `SHOW` keyword
+
+```
+(Dialog: SHOW)
+```
+
+To set the dialog window to automatically show and hide, use the `AUTO` keyword.
+
+```
+(Dialog: AUTO)
+```
+
+### END Annotation ###
+The END annotation is used to mark the end of a section.
+
+To mark the end of the current section, use the instruction without any
+parameters.
+
+```
+(End)
+```
+
+If the current section is intended to be executed, and a value returned, use the
+`RETURN` keyword followed by an [expression](#expressions) to return.
+
+```
+# Some example END annotations with return values:
+(End: RETURN 5)
+(End: RETURN "my_name")
+(End: RETURN 'hunger + 2')
+```
+
+#### See Also ####
+- [EXECUTE Annotation](#execute-annotation)
+- [SECTION Annotation](#section-annotation)
+
+### EXECUTE Annotation ###
+The EXECUTE annotation is an instruction to go to a particular section, do
+everything in it, and then return to this point and continue once complete.
+
+The EXECUTE annotation accepts the identifier of the section to execute as a
+parameter.
+
+```
+(Execute: afterschool-club-monday)
+```
+
+If the section being executed accepts parameters, these can be specified by
+using the keywords `WITH PARAMS` after the section name, followed by the
+parameters. Each section parameter must be an [expression](#expressions), or the
+name of the argument followed by an equals (`=`) followed by an expression if
+the section parameter is a keyword argument. Multiple section parameters must be
+separated by comma characters (`,`).
+
+```
+# A single positional argument:
+(Execute: shorten-life WITH PARAMS Bob)
+
+# Multiple positional arguments:
+(Execute: shorten-life WITH PARAMS Bob, 6)
+
+# A single keyword argument:
+(Execute: shorten-life WITH PARAMS target=Bob)
+
+# Multiple keyword arguments:
+(Execute: shorten-life WITH PARAMS target=Bob, amount=6)
+
+# Mixed keyword / positional arguments:
+(Execute: shorten-life WITH PARAMS Bob, amount=6)
+```
+
+#### See Also ####
+- [SECTION Annotation](#section-annotation)
+- [END Annotation](#end-annotation)
+- [GOTO Annotation](#goto-annotation)
+
+### FLAG Annotation ###
+The FLAG annotation is used for setting and unsetting flag variables. This is
+useful in interactive stories where something needs to occur depending on
+whether a flag is set.
+
+To set a flag's state, give the name of the flag as a parameter to the
+instruction. If no other parameters are given, the flag is set to the 'on'
+state, but a [boolean expression](#boolean-expressions) can be given for the
+value of the flag instead.
+
+```
+# This statements are equivalent:
+(Flag: have_seen_bob)
+(Flag: have_seen_bob ON)
+
+# This unsets a flag:
+(Flag: have_seen_bob OFF)
+
+# Some more examples:
+(Flag: have_seen_bob 'knowledge > 10 && bob_affinity > 2')
+(Flag: have_seen_bob have_followed_bob)
+```
+
+#### See Also ####
+- [VAR Annotation](#var-annotation)
+
+### GOTO Annotation ###
+The GOTO annotation is an instruction to jump to a section.
+
+The section to jump to is given as a parameter to the instruction.
+
+```
+(Goto: afterschool-club-monday)
+```
+
+If desired, a space can be inserted in between 'go' and 'to' in the instruction
+name. Doing so may improve readability.
+
+```
+# The following two statements are equivalent:
+(Goto: afterschool-club-monday)
+(Go to: afterschool-club-monday)
+```
+
+#### See Also ####
+- [SECTION Annotation](#section-annotation)
+- [EXECUTE Annotation](#execute-annotation)
+- [END Annotation](#end-annotation)
+
+### IF Annotation ###
+The IF annotation specifies conditional branching.
+
+To use the IF annotation, give a [boolean expression](#boolean-expressions) as
+the parameter to the instruction, then after the instruction put the statements
+to execute in between braces (`{`, `}`).
+
+```
+(if: have_seen_bob)
+{
+	Bob: "This guy saw me; I'm not sure how, though."
+}
+```
+
+For either-or branching, the ELSE annotation can be used immediately after the
+closing brace of the IF annotation, followed by its own statements in braces.
+
+```
+(If: have_seen_bob)
+{
+	Bob: "This guy saw me; I'm not sure how, though."
+}
+(Else)
+{
+	Bob: "No one saw me, because I'm sneaky!"
+}
+```
+
+For multiple different cases, the ELSE IF annotation can be used. The name of
+the ELSE IF annotation can be given as 'elseif', 'else if', or 'elif'; whichever
+reads best is the one that should be used. As always, case does not matter for
+the instruction name. Besides the name, the syntax of the ELSE IF annotation is
+identical to the IF annotation.
+
+```
+(If: 'times_seen_bob > 10')
+{
+	Bob: "This guy has been stalking me like a tiger! You bet he saw me."
+}
+(Else If: 'times_seen_bob > 1')
+{
+	Bob: "This guy saw me; I'm not sure how, though."
+}
+```
+
+Multiple ELSE IF annotations can be chained for more cases.
+
+```
+(If: 'times_seen_bob > 10')
+{
+	Bob: "This guy has been stalking me like a tiger! You bet he saw me."
+}
+(Elif: 'times_seen_bob > 5') # instruction name 'elif' is valid
+{
+	Bob: "We've run into each other a few times; I'm sure he's seen me."
+}
+(Elseif: 'times_seen_bob > 1') # instruction name 'elseif' is valid
+{
+	Bob: "This guy saw me; I'm not sure how, though."
+}
+```
+
+An ELSE annotation may be placed at the end of any number of ELSE IF
+annotations.
+
+```
+(If: 'times_seen_bob > 10')
+{
+	Bob: "This guy has been stalking me like a tiger! You bet he saw me."
+}
+(Else If: 'times_seen_bob > 5')
+{
+	Bob: "We've run into each other a few times; I'm sure he's seen me."
+}
+(Else If: 'times_seen_bob > 1')
+{
+	Bob: "This guy saw me; I'm not sure how, though."
+}
+(Else)
+{
+	Bob: "No one saw me, because I'm sneaky!"
+}
+```
+
+#### See Also ####
+- [WHILE Annotation](#while-annotation)
+
+### INCLUDE Annotation ###
+The INCLUDE annotation specifies that the contents of another file should be
+included at the location of the instruction.
+
+To include a file whose contents are to be parsed as Scrappy code, give a string
+containing the path to the file as an argument to the instruction.
+
+```
+# include the file 'chapter2.scp' located in the current directory:
+(Include: "chapter2.scp")
+
+# include the file 'chapter2.scp' located in the 'files' directory of the
+# current directory:
+(Include: "files/chapter2.scp")
+```
+
+To specify whether the contents of the file are to be parsed as Scrappy code,
+use the keywords `WITH PARSING` after the name of the file, optionally followed
+by either the keyword `ON` or the keyword `OFF`. If `ON` is given, the contents
+of the included file will be parsed as Scrappy code and included in the current
+file before compilation. If `OFF` is given, the contents of the file are not
+parsed as Scrappy code and is instead placed unchanged in the output during
+compilation. If neither keyword is given, `ON` is assumed.
+
+```
+# all three statements below will include chapter2.scp, parsed as Scrappy code:
+(Include: "chapter2.scp")
+(Include: "chapter2.scp" WITH PARSING)
+(Include: "chapter2.scp" WITH PARSING ON)
+
+# include constants.rpy without modification in the compiled output:
+(Include: "constants.rpy" WITH PARSING OFF)
+```
+
+#### See Also ####
+- [CHARACTERS Annotation](#characters-annotation)
+
+### PYTHON Annotation ###
+The PYTHON annotation gives python computer code that is to be executed.
+
+This annotation is not recommended unless absolutely necessary, since it is
+specific to compilation targets that can handle the execution of python code, or
+that will display it to the reader.
+
+To use the PYTHON annotation, write the annotation followed by python code
+enclosed within braces (`{`, `}`). Any left brace character within the python
+code must be escaped with a backslash. Because the code within the braces is
+python, spacing does matter there. Any initial whitespace that the lines of
+code have in common will be stripped from each line before it is output.
+
+```
+(Python)
+{
+	for x in character:
+		print x['name']
+}
+```
+
+### SECTION Annotation ###
+The SECTION annotation marks the start of section. This section can be jumped to
+by using the GOTO and EXECUTE annotations.
+
+To mark the start of a section, give an identifier for the current section as a
+parameter to the instruction.
+
+```
+(Section: afterschool-club-monday)
+```
+
+The section can accept arguments that the EXECUTE annotation can pass in when
+calling the section. Section parameters are specified by using the keywords
+`WITH PARAMS` after the section name, followed by the parameters. Each section
+parameter must be an identifier, or an identifier followed by an equals (`=`)
+followed by an [expression](#expressions) that is the default value of the
+section parameter. Multiple section parameters must be separated by comma
+characters (`,`).
+
+```
+# A single argument:
+(Section: shorten-life WITH PARAMS target)
+
+# Multiple arguments:
+(Section: shorten-life WITH PARAMS target, amount)
+
+# A single argument with a default value:
+(Section: shorten-life WITH PARAMS target=Villain)
+
+# Multiple arguments with default values:
+(Execute: shorten-life WITH PARAMS target=Villain, amount=10)
+
+# Mixed arguments, one with a default value:
+(Execute: shorten-life WITH PARAMS target, amount=10)
+```
+
+If this section is intended to be called from an EXECUTE annotation, it is
+important to mark where the section ends with the END annotation. Otherwise, the
+section will never return.
+
+#### See Also ####
+- [END Annotation](#end-annotation)
+- [EXECUTE Annotation](#execute-annotation)
+- [GOTO Annotation](#goto-annotation)
+
+### WHILE Annotation ###
+The WHILE annotation is used to perform some actions while some condition is
+true.
+
+To use a WHILE annotation, pass a [boolean expression](#boolean-expressions) as
+a parameter to the argument for the condition. After the instruction, give the
+statements to be performed between brace characters (`{`, `}`). The statements
+between the braces will be performed as long as the conditional is true.
+
+```
+# Keep prompting the player to apologize to Bob until he feels better:
+(While: 'bob_is_angry')
+{
+	Bob: "I am really upset right now!"
+	
+	(Choice)
+	"Apologize to Bob?"
+	* "Yes": SET bob_is_angry OFF AND GO TO after-choice
+	* "No": GO TO after-choice
+	
+	(Section: after-choice)
+}
+```
+
+#### See Also ####
+- [IF Annotation](#if-annotation)
+
+### VAR Annotation ###
+The VAR annotation is used for setting the value of a variable. It can also be
+used for setting the value of a flag, but it may be better to use the FLAG
+annotation for that, as doing so may improve readability.
+
+To set the value of a variable to a default value of the number 1, give the
+identifier of the variable as a parameter to the instruction.
+
+```
+# Set the variable times_seen_bob to the default value of 1:
+(Var: times_seen_bob)
+```
+
+Variables can also be increased or decreased by using the `INC` or `DEC`
+keywords respectively after the name of the variable.
+
+```
+# Increase bobs_anger by 1:
+(Var: bobs_anger INC)
+
+# Decrease bobs_anger by 1:
+(Var: bobs_anger DEC)
+```
+
+Normally, the variable is increased or decreased by 1; however, the amount to
+change the variable by can be specified by using the `BY` keyword after `INC` or
+`DEC`, followed by the amount to change.
+
+```
+# Increase bobs_anger by 4:
+(Var: bobs_anger INC BY 4)
+
+# Decrease bobs_anger by 0.4:
+(Var: bobs_anger DEC BY 0.4)
+```
+
+To specify exactly what to set the variable to, give an [expression]
+(#expression) after the name of the variable instead of an `INC` or a `DEC`
+clause.
+
+```
+# Set the variable bobs_anger to the result of a raw expression:
+(Var: bobs_anger 'times_seen_bob / 2')
+
+# Set the variable bobs_line to "Wait, what?"
+(Var: bobs_line "Wait, what?")
+
+# Set bobs_anger directly to 5.7:
+(Var: bobs_anger 5.7)
+```
+
