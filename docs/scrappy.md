@@ -1,7 +1,7 @@
 The Scrappy Language, Version 1.0
 =================================
-This document is intended to be a complete reference to the Scrappy language. All
-information about the usage of the language is listed here.
+This document is intended to be a complete reference to the Scrappy language.
+All information about the usage of the language is listed here.
 
 ## Table of Contents ##
 1.  [Introduction](#introduction)
@@ -35,7 +35,7 @@ information about the usage of the language is listed here.
 	10. [SFX Directive](#sfx-directive)
 	11. [CHARACTERS Annotation](#characters-annotation)
 	12. [DESCRIPTION Annotation](#description-annotation)
-	13. [DIALOG Annotation](#description-dialog)
+	13. [DIALOG Annotation](#dialog-annotation)
 	14. [END Annotation](#end-annotation)
 	15. [EXECUTE Annotation](#execute-annotation)
 	16. [FLAG Annotation](#flag-annotation)
@@ -48,7 +48,7 @@ information about the usage of the language is listed here.
 	23. [VAR Annotation](#var-annotation)
 6.  [Supplemental Files](#supplemental-files)
 	1.  [Character Files](#character-files)
-7.  [Appendix: Syntax Reference](#appendix--syntax-reference)
+7.  [Appendix: Syntax Reference](#appendix-syntax-reference)
 
 ## Introduction ##
 The Scrappy language is an intermediate language for writing manuscripts. It is
@@ -260,7 +260,7 @@ ON              # boolean literals
 'health + 6'    # raw expressions that appear to result in non-boolean values
 ```
 
-#### Durataions ####
+#### Durations ####
 A duration is an amount of time. Some instructions allow a duration to be
 specified to indicate how long the instruction should take to complete. If an
 instruction accepts a duration, it will always be the last parameter.
