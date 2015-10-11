@@ -71,8 +71,8 @@ statement can be broken down into the following types:
 
 ### Whitespace ###
 In the Scrappy language, whitespace is unimportant. For readability,
-instructions typically group together the start and ending characters along with
-the actual instruction on a single line, but this is not necessary.
+instructions typically group together the opening and closing characters along
+with the name of the instruction on a single line, but this is not necessary.
 
 ```
 [Scene: bobs-auto-shop]
