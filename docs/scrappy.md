@@ -85,6 +85,19 @@ bobs-auto-shop
 ]
 ```
 
+Note that whitespace between an instruction's opening character and the word
+that identifies the instruction is not allowed.
+
+```
+# This is okay:
+[Scene: bobs-auto-shop
+]
+
+# This is not okay:
+[
+Scene: bobs-auto-shop]
+```
+
 ### Case-Sensitivity ###
 In general, Scrappy is a case-sensitive language. There are only a few
 exceptions to this, such as the names of instructions (which itself is excepted
@@ -282,6 +295,40 @@ OVER 6.5
 QUICKLY
 SLOWLY
 ```
+
+### Reserved Words ###
+Some words used as part of the Scrappy language are known as reserved words. Not
+all keywords in Scrappy are reserved; keywords that always come in sets, such as
+`WITH` and `PARAMS` are not reserved. Only the keywords that can occur as single
+units are reserved. Identifiers cannot be a reserved word, but note that they
+are not are not considered a reserved word if they contain the same letters as a
+reserved word but in with different capitalization.
+
+The following is a list of all reserved words in the Scrappy language:
+- `AND`
+- `ALL`
+- `AUTO`
+- `BY`
+- `DEC`
+- `FOR`
+- `FROM`
+- `GO`
+- `HIDE`
+- `IN`
+- `INC`
+- `LOOP`
+- `OFF`
+- `ON`
+- `OUT`
+- `QUICKLY`
+- `RETURN`
+- `SECONDS`
+- `SET`
+- `SHOW`
+- `SLOWLY`
+- `STOP`
+- `TO`
+- `ZOOM`
 
 ## Lines ##
 In Scrappy, a 'line' is a line of dialogue spoken by a character. It consists of
