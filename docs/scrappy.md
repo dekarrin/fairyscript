@@ -1,6 +1,6 @@
-The Scrappy Language Reference
-==============================
-This document is intended to be a complete reference to Scrappy language. All
+The Scrappy Language, Version 1.0
+=================================
+This document is intended to be a complete reference to the Scrappy language. All
 information about the usage of the language is listed here.
 
 ## Table of Contents ##
