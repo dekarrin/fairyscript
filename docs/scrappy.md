@@ -100,16 +100,16 @@ Scene: bobs-auto-shop]
 
 ### Case-Sensitivity ###
 In general, Scrappy is a case-sensitive language. There are only a few
-exceptions to this, such as the names of instructions (which itself is excepted
-in the ACTION directive, which uses the name of a character).
+exceptions to this, such as the names of instructions (which itself has an
+exception in the ACTION directive, which uses the name of a character).
 
 ### Escaping ###
 There may be times when a particular region of Scrappy code contains a character
 that must be escaped (such as when a double quote character is used within a
-string or a left-brace character is used within a python block). If that occurs,
-simply escape the character with a backslash (`\`). Writing a literal backslash
-in these situations requires escaping the backslash, so a double backslash is
-needed.
+string or a left-brace character is used within a PYTHON annotation). If that
+occurs, the character can be escaped with a backslash (`\`). Writing a literal
+backslash in these situations requires escaping the backslash, so a double
+backslash is needed.
 
 ### Types ###
 Scrappy has a system of types of parameters that are given to instructions. This
@@ -123,8 +123,7 @@ fully; scientific notation numbers are not allowed. In addition, numbers must
 always be specified in decimal base; other bases are not allowed.
 
 ```
-# Number examples (note: these are valid numbers, but this is NOT valid Scrappy
-# as-is):
+# Number examples:
 
 4
 5.2
@@ -138,8 +137,7 @@ quote character (`"`). Any double quote characters inside the string must be
 escaped.
 
 ```
-# String examples (note: these are valid strings, but this is NOT valid Scrappy
-# as-is):
+# String examples:
 
 "Hi! This is a string."
 "This a string with an escaped \" character."
@@ -148,19 +146,17 @@ escaped.
 #### Boolean Literals ####
 Boolean literals specify whether something is true or false. In Scrappy, by far
 the most common use for this is in setting the values of flags, and so Scrappy
-uses the literal keywords `ON` and `OFF` (which must be in all-caps) to refer to
-true and false, respectively.
+uses the keywords `ON` and `OFF` to refer to true and false, respectively.
 
 ```
-# Boolean literal examples (note: these are valid boolean literals, but this is
-# NOT valid Scrappy as-is):
+# Boolean literal examples:
 
 ON
 OFF
 ```
 
 #### Identifiers ####
-Identifiers reference a particular thing. They are used for the names of
+Identifiers reference a particular object. They are used for the names of
 variables, flags, sections, characters, and more. Identifiers are
 case-sensitive; two identifiers with the same spelling but different case refer
 to two different things. Allowed characters in identifiers are underscores
@@ -171,8 +167,7 @@ will be converted to underscores during compilation if the target language does
 not support them.
 
 ```
-# Identifier examples (note: these are valid identifiers, but this is NOT valid
-# Scrappy as-is):
+# Identifier examples:
 
 a
 times_attacked
@@ -195,8 +190,7 @@ in the target language. Because this could introduce reliance on a target
 language, it is best to only use raw expressions when necessary.
 
 ```
-# Raw expression examples (note: these are valid raw expressions, but this is
-# NOT valid Scrappy as-is):
+# Raw expression examples:
 
 'times_attacked > 6'
 'x + 9 < y'
@@ -228,18 +222,17 @@ If a raw expression is used as a boolean expression, it is the responsibility of
 the author to ensure that it actually results in a boolean value. Scrappy does
 not check the contents of raw expressions, but using a raw expression that does
 not result in a boolean value may result in incorrect syntax in a target
-language.
+language after compilation.
 
 ```
-# Boolean expression examples (note: these are valid boolean expressions, but
-# this is NOT valid Scrappy as-is):
+# Boolean expression examples:
 
 have_seen_bob          # identifiers
 OFF                    # boolean literals
 'times_attacked > 32'  # raw expressions that appear to result in boolean values
 
 # Raw expressions that appear to result in non-boolean values are considered
-# valid boolean expression by Scrappy, but using one might result in unexpected
+# valid boolean expressions in Scrappy, but using one might result in unexpected
 # behavior once it has been compiled to another format:
 'health + 6'
 ```
@@ -249,8 +242,7 @@ Expressions are the most general type format of a parameter. All types listed in
 the [Types section](#types) are considered valid expressions.
 
 ```
-# Expression examples (note: these are valid expressions, but this is NOT valid
-# Scrappy as-is):
+# Expression examples:
 
 have_seen_john  # identifiers
 ON              # boolean literals
@@ -268,20 +260,19 @@ instruction accepts a duration, it will always be the last parameter.
 Durations take on two forms. They can be an exact amount of time, given as a
 number of seconds, or they can be a relative speed.
 
-Durations that give an exact amount of time begins with either the keyword `FOR`
+Durations that give an exact amount of time begin with either the keyword `FOR`
 or the keyword `OVER`. The two keywords are interchangeable; whichever one reads
 more naturally in context is the one that should be used. After the opening
 keyword, the number of seconds is given, which can be made fractional with the
 use of a decimal point. Finally, the unit of time can be given as the keyword
 `SECONDS`, though this can be omitted if desired.
 
-Durations that give a relative speed are given by using one of the keywords
-`QUICKLY` or `SLOWLY`. The exact meaning of each may depend on the target
-language and compiler options.
+Durations that give a relative speed are given by using either one of the
+keywords `QUICKLY` or `SLOWLY`. The exact meaning of each may depend on the
+target language and compiler options.
 
 ```
-# Duration examples (note: these are valid durations, but this is NOT valid
-# Scrappy as-is):
+# Duration examples:
 
 # FOR and OVER are interchangeable, so the following two durations are the same:
 FOR 6 SECONDS
@@ -299,10 +290,10 @@ SLOWLY
 ### Reserved Words ###
 Some words used as part of the Scrappy language are known as reserved words. Not
 all keywords in Scrappy are reserved; keywords that always come in sets, such as
-`WITH` and `PARAMS` are not reserved. Only the keywords that can occur as single
-units are reserved. Identifiers cannot be a reserved word, but note that they
-are not are not considered a reserved word if they contain the same letters as a
-reserved word but in with different capitalization.
+`WITH` and `PARAMS`, are not reserved. Only the keywords that can occur as
+single units are reserved. Identifiers cannot be a reserved word, but note that
+they are not considered a reserved word if they contain the same letters as a
+reserved word but with different capitalization.
 
 The following is a list of all reserved words in the Scrappy language:
 - `AND`
@@ -333,14 +324,14 @@ The following is a list of all reserved words in the Scrappy language:
 ## Lines ##
 In Scrappy, a 'line' is a line of dialogue spoken by a character. It consists of
 the character's name, followed by a colon, followed by what they are saying
-enclosed within double quotes:
+enclosed within double quotes.
 
 ```
 Mary: "Hello, John."
 John: "Hiya, Mary. What's crackin'?"
 ```
 
-To have the line be recited as internal dialogue, leave the name blank:
+To have the line be recited as internal dialogue, leave the name blank.
 
 ```
 : "Heh-heh. No one knows I'm here!"
@@ -349,17 +340,18 @@ Mary: "I wonder where Bob has gone off to?"
 ```
 
 If an actor's name contains spaces in it, it must also be enclosed in double
-quotes:
+quotes.
 
 ```
 John: "Well, I sure hope he shows up. We need him back at the office."
 "Receptionist A": "I'm sure I saw him not too long ago!"
 ```
 
-This works, and is valid Scrappy, but characters who's name contains a space
-cannot be used with ACTION directives. Instead, it is better to define the
-character in a characters file and use the mnemonic defined there to refer to
-them in the main Scrappy manuscript for lines and ACTION directives.
+This works, and is valid Scrappy, but characters whose name contains a space
+cannot be used with ACTION directives. Instead of using the name with quotes, it
+is better to define the character in a [character file](#character-files) and
+use the identifier defined there to refer to them in lines and ACTION
+directives.
 
 If desired, the appearance states of an actor can be listed in parentheses
 before the colon that starts the actual line. Multiple states must be separated
@@ -383,7 +375,7 @@ The `#` character begins a comment and it continues until the end of the line:
 
 ```
 # This is a comment! This entire line is a comment!
-(Flag: have_eaten) # But this comment doesn't start until a bit in to the line.
+(Flag: have_eaten) # But this comment doesn't start until part way in the line.
 ```
 
 Comments are completely ignored when compiling Scrappy to another
@@ -391,7 +383,7 @@ machine-consumable language such as Ren'Py. They are not excluded from formats
 that are intended to be read by humans, such as DOCX.
 
 ## Instructions ##
-There are two types of insructions in Scrappy: directives and annotations. The
+There are two types of instructions in Scrappy: directives and annotations. The
 intent of this separation is to provide a clear distinction between instructions
 intended for the manuscript and instructions intended for the computer.
 
@@ -436,8 +428,8 @@ in confusion.
 # is the same as this one:
 (flag: have_seen_bob ON)
 
-# but this annotation uses a different case its variable, and so does not refer
-# to the same one as above:
+# but this annotation uses a different case for its variable, and so it does not
+refer to the same one as above:
 (Flag: Have_Seen_Bob ON)
 
 # Now, there are two different flags, 'have_seen_bob' and 'Have_Seen_Bob'.
