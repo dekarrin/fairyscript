@@ -4,20 +4,34 @@ This document is intended to be a complete reference to Scrappy language. All
 information about the usage of the language is listed here.
 
 ## Table of Contents ##
-1. [Introduction](#introduction)
-2. [Language Basics](#language-basics)
-	1. [Whitespace](#whitespace)
-	2. [Case-Sensitivity](#case-sensitivity)
-	3. [Escaping](#escaping)
-	4. [Types and Expressions](#types-and-expressions)
-3. [Lines](#lines)
-4. [Comments](#comments)
-5. [Instructions](#instructions)
-	1. [ACTION Directive](#action-directive)
-	2. [CAMERA Directive](#camera-directive)
-	3. [CHOICE Directive](#choice-directive)
-	4. [ENTER Directive](#enter-directive)
-	5. [EXIT Directive](#exit-directive)
+1.  [Introduction](#introduction)
+2.  [Language Basics](#language-basics)
+	1.  [Whitespace](#whitespace)
+	2.  [Case-Sensitivity](#case-sensitivity)
+	3.  [Escaping](#escaping)
+	4.  [Types](#types)
+		1.  [Numbers](#numbers)
+		2.  [Strings](#strings)
+		3.  [Boolean Literals](#boolean-literals)
+		4.  [Identifiers](#identifiers)
+		5.  [Raw Expressions](#raw-expressions)
+	5.  [Special Parameter Formats](#special-parameter-formats)
+		1.  [Boolean Expressions](#boolean-expressions)
+		2.  [Expressions](#expressions)
+		3.  [Durations](#durations)
+3.  [Lines](#lines)
+4.  [Comments](#comments)
+5.  [Instructions](#instructions)
+	1.  [ACTION Directive](#action-directive)
+	2.  [CAMERA Directive](#camera-directive)
+	3.  [CHOICE Directive](#choice-directive)
+	4.  [ENTER Directive](#enter-directive)
+	5.  [EXIT Directive](#exit-directive)
+	6.  [FMV Directive](#fmv-directive)
+	7.  [GFX Directive](#gfx-directive)
+	8.  [MUSIC Directive](#music-directive)
+	9.  [SCENE Directive](#scene-directive)
+	10. [SFX Directive](#sfx-directive)
 
 ## Introduction ##
 The Scrappy language is an intermediate language for writing manuscripts. It is
@@ -67,25 +81,55 @@ simply escape the character with a backslash (`\`). Writing a literal backslash
 in these situations requires escaping the backslash, so a double backslash is
 needed.
 
-### Types and Expressions ###
+### Types ###
 Scrappy has a system of types of parameters that are given to instructions. This
 document will often refer to parameter types, and this section of this document
 identifies exactly what is meant by each term.
 
+#### Numbers ####
 Numbers are a series of digits. They can contain a decimal point, and can be
 preceeded by a positive or negative sign. Numbers must always be written out
 fully; scientific notation numbers are not allowed. In addition, numbers must
 always be specified in decimal base; other bases are not allowed.
 
+```
+# Number examples (note: these are valid numbers, but this is NOT valid Scrappy
+# as-is):
+
+4
+5.2
++2.7
+-2234.63
+```
+
+#### Strings ####
 Strings are a series of characters. They are started and ended with a double
 quote character (`"`). Any double quote characters inside the string must be
 escaped.
 
+```
+# String examples (note: these are valid strings, but this is NOT valid Scrappy
+# as-is):
+
+"Hi! This is a string."
+"This a string with an escaped \" character."
+```
+
+#### Boolean Literals ####
 Boolean literals specify whether something is true or false. In Scrappy, by far
 the most common use for this is in setting the values of flags, and so Scrappy
 uses the literal keywords `ON` and `OFF` (which must be in all-caps) to refer to
 true and false, respectively.
 
+```
+# Boolean literal examples (note: these are valid boolean literals, but this is
+# NOT valid Scrappy as-is):
+
+ON
+OFF
+```
+
+#### Identifiers ####
 Identifiers reference a particular thing. They are used for the names of
 variables, flags, sections, characters, and more. Identifiers are
 case-sensitive; two identifiers with the same spelling but different case refer
@@ -96,6 +140,22 @@ reserved word. Also, though hyphens are allowed in Scrappy identifiers, they
 will be converted to underscores during compilation if the target language does
 not support them.
 
+```
+# Identifier examples (note: these are valid identifiers, but this is NOT valid
+# Scrappy as-is):
+
+a
+times_attacked
+bobs-house-1
+
+# These two identifiers are distinct within Scrappy itself but might become the
+# same when it is compiled:
+
+bobs_house
+bobs-house
+```
+
+#### Raw Expressions ####
 Raw expressions are expressions that are contained between single quote
 characters (`'`). They exist for when Scrappy does not support the expression
 that is desired. Raw expressions are passed directly through to other languages
@@ -104,53 +164,106 @@ human-readable format), and so they may consist of any expression that is valid
 in the target language. Because this could introduce reliance on a target
 language, it is best to only use raw expressions when necessary.
 
-Boolean expressions consist of any expression that may result in a true/false
-value. They required for parameters that state a conditional, for example in
-arguments to IF annotations or arguments to options of a CHOICE directive. In
-Scrappy, boolean literals, raw expressions, and identifiers are all considered
-valid boolean expressions.
-
-Expressions are the most general type of a parameter. All other previously
-mentioned types are considered valid expressions.
-
 ```
-# Type examples (note: this is NOT valid Scrappy; it is only a demonstration of
-# the different types!)
+# Raw expression examples (note: these are valid raw expressions, but this is
+# NOT valid Scrappy as-is):
 
-# Numbers:
-4
-5.2
-+2.7
--2234.63
-
-# Strings:
-"Hi! This is a string."
-"This a string with an escaped \" character."
-
-# Boolean literals
-ON
-OFF
-
-# Identifiers:
-a
-times_attacked
-bobs-house-1
-
-# Raw Expressions:
 'times_attacked > 6'
 'x + 9 < y'
 '3542 >= 9'
 
-# Boolean Expressions:
-'times_attacked > 32'
-have_seen_bob
-OFF
+# This raw expression contains single quotes, which must be escaped:
+'mappings[\'x\'] > 37'
 
-# Expressions:
-'hunger <= 5'
-have_seen_john
-ON
-14
+# This raw expression is noticably dependent on having a compilation target of
+# C# or a similar language. It could also be very difficult for non-coders to
+# read. This is allowed in Scrappy, but should be avoided if possible:
+'mappings.Where(x => x.Width > 2).Any(x => x.Height > 10)'
+```
+
+### Special Parameter Formats ###
+Some instructions accept parameters that are of a particular format. These are
+not strictly 'types', but rather a sequence of keywords or a set of allowable
+types. These formats may be used throughout this document as shorthand for their
+full definitions, which are listed in this section.
+
+#### Boolean Expressions ####
+A boolean expression consists of any expression that may result in a true/false
+value. They are required for parameters that state a conditional, for example in
+arguments to IF annotations or arguments to options of a CHOICE directive.
+[Boolean literals](#boolean-literals), [raw expressions](#raw-expressions), and
+[identifiers](#identifiers) are all considered valid boolean expressions.
+
+If a raw expression is used as a boolean expression, it is the responsibility of
+the author to ensure that it actually results in a boolean value. Scrappy does
+not check the contents of raw expressions, but using a raw expression that does
+not result in a boolean value may result in incorrect syntax in a target
+language.
+
+```
+# Boolean expression examples (note: these are valid boolean expressions, but
+# this is NOT valid Scrappy as-is):
+
+have_seen_bob          # identifiers
+OFF                    # boolean literals
+'times_attacked > 32'  # raw expressions that appear to result in boolean values
+
+# Raw expressions that appear to result in non-boolean values are considered
+# valid boolean expression by Scrappy, but using one might result in unexpected
+# behavior once it has been compiled to another format:
+'health + 6'
+```
+
+#### Expressions ####
+Expressions are the most general type format of a parameter. All types listed in
+the [Types section](#types) are considered valid expressions.
+
+```
+# Expression examples (note: these are valid expressions, but this is NOT valid
+# Scrappy as-is):
+
+have_seen_john  # identifiers
+ON              # boolean literals
+14              # numbers
+"Bob is lost"   # strings
+'hunger <= 5'   # raw expressions that appear to result in boolean values
+'health + 6'    # raw expressions that appear to result in non-boolean values
+```
+
+#### Durataions ####
+A duration is an amount of time. Some instructions allow a duration to be
+specified to indicate how long the instruction should take to complete. If an
+instruction accepts a duration, it will always be the last parameter.
+
+Durations take on two forms. They can be an exact amount of time, given as a
+number of seconds, or they can be a relative speed.
+
+Durations that give an exact amount of time begins with either the keyword `FOR`
+or the keyword `OVER`. The two keywords are interchangeable; whichever one reads
+more naturally in context is the one that should be used. After the opening
+keyword, the number of seconds is given, which can be made fractional with the
+use of a decimal point. Finally, the unit of time can be given as the keyword
+`SECONDS`, though this can be omitted if desired.
+
+Durations that give a relative speed are given by using one of the keywords
+`QUICKLY` or `SLOWLY`. The exact meaning of each may depend on the target
+language and compiler options.
+
+```
+# Duration examples (note: these are valid durations, but this is NOT valid
+# Scrappy as-is):
+
+# FOR and OVER are interchangeable, so the following two durations are the same:
+FOR 6 SECONDS
+OVER 6 SECONDS  
+
+# If SECONDS is omitted, it is assumed
+FOR 6.5
+OVER 6.5
+
+# The relative durations:
+QUICKLY
+SLOWLY
 ```
 
 ## Lines ##
@@ -305,9 +418,7 @@ the `GO TO` keywords followed by an identifier for the destination.
 ```
 
 For ACTION directives that include move instructions, an amount of time for the
-action can be specified. The duration of the action can be specified in seconds
-with the `OVER` or `FOR` keyword followed by a number of seconds and then the
-`SECONDS` keyword, or a relative duration by using `QUICKLY` or `SLOWLY`.
+move can be specified as a [duration](#durations).
 
 ```
 [Bob: GO TO bedroom-door OVER 5 SECONDS]
@@ -360,10 +471,8 @@ specified with the `ZOOM` keyword, followed by either `IN` or `OUT`.
 [Camera: ZOOM OUT]
 ```
 
-For zooming and panning, an amount of time for the action can be specified. The
-duration of the action can be specified in seconds with the `OVER` or `FOR`
-keyword followed by a number of seconds and then the `SECONDS` keyword, or a
-relative duration by using `QUICKLY` or `SLOWLY`.
+For zooming and panning, an amount of time for the action can be specified as a
+[duration](#durations).
 
 ```
 [Camera: ZOOM IN OVER 5 SECONDS]
@@ -498,7 +607,7 @@ parenthesis. Multiple appearance instructions are separated by commas.
 ```
 
 An actor's entrance can use a transition, such as fade or dissolve. To include a
-transition in the entrance, use the name of the transition followed by the
+transition in the entrance, use the identifier of the transition followed by the
 keyword `IN`. Place this clause after any actor appearance states.
 
 ```
@@ -506,7 +615,7 @@ keyword `IN`. Place this clause after any actor appearance states.
 [Enter: Bob (angry, with-arms-crossed) DISSOLVE IN]
 ```
 
-To have an actor transition in with the previous thing that used a transition
+To have an actor transition in with the previous object that used a transition
 (such as a SCENE directive or another ENTER directive), use the keywords
 `WITH PREVIOUS`.
 
@@ -553,11 +662,7 @@ any actor appearance states, the transition (if there is one), and the origin
 [Enter: Ghost (angry, arms-crossed) DISSOLVE IN FROM center TO stage-left]
 ```
 
-An ENTER directive can also be given a duration for the entrance. This can be
-specified as time in seconds with the `OVER` or `FOR` keyword followed by a
-number of seconds and then the `SECONDS` keyword, or as a relative duration by
-using `QUICKLY` or `SLOWLY`. This clause must be placed after all others in the
-directive.
+An ENTER directive can also be given a [duration](#durations) for the entrance.
 
 ```
 # Some entrance destinations with explicit duration:
@@ -582,6 +687,7 @@ viewer.
 
 #### See Also ####
 - [EXIT Directive](#exit-directive)
+- [SCENE Directive](#scene-directive)
 
 ### EXIT Directive ###
 The EXIT directive is an instruction to the actor to exit from the scene. There
@@ -595,14 +701,14 @@ consists only of the actor.
 ```
 
 An actor's exit can use a transition, such as fade or dissolve. To include a
-transition in the exit, use the name of the transition followed by the keyword
-`OUT`. Place this clause after the name of the actor.
+transition in the exit, use the identifier of the transition followed by the
+keyword `OUT`. Place this clause after the name of the actor.
 
 ```
 [Exit: Bob FADE OUT]
 ```
 
-To have an actor transition out with the previous thing that used a transition
+To have an actor transition out with the previous object that used a transition
 (such as another EXIT directive), use the keywords `WITH PREVIOUS`.
 
 ```
@@ -646,11 +752,7 @@ for the location the path is to end at. Place this clause after the transition
 [Exit: Ghost DISSOLVE OUT FROM center TO stage-left]
 ```
 
-An EXIT directive can also be given a duration for the exit. This can be
-specified as time in seconds with the `OVER` or `FOR` keyword followed by a
-number of seconds and then the `SECONDS` keyword, or as a relative duration by
-using `QUICKLY` or `SLOWLY`. This clause must be placed after all others in the
-directive.
+An EXIT directive can also be given a [duration](#durations) for the exit.
 
 ```
 # Some exit destinations with explicit duration:
@@ -672,3 +774,186 @@ visible to the viewer.
 
 #### See Also ####
 - [ENTER Directive](#enter-directive)
+
+### FMV Directive ###
+The FMV directive gives a full-motion video (also referred to as 'cutscene')
+that is to play. Script execution stops until the movie clip has completed
+playing.
+
+To play a full-motion video, give the name of it as a parameter to the
+directive. This can be a string containing the name of a video file or an
+identifier for the movie clip.
+
+```
+# The two forms of the FMV directive:
+[FMV: intro-movie]
+[FMV: "intro.mp4"]
+```
+
+### GFX Directive ###
+The GFX directive is used to control visual (graphical) effects.
+
+To show a visual effect that is intended to show once and then disappear
+quickly, such as a white flash on the screen, give the identifier for that
+visual effect.
+
+```
+[GFX: flash]
+```
+
+To specify that the visual effect is intended to start showing and remain
+visible indefinitely, such as a shimmer effect in a mirage, use the `LOOP`
+keyword before the effect identifier.
+
+```
+[GFX: LOOP shimmer]
+```
+
+To stop a particular effect that is looping, use the `STOP` keyword before the
+name of the effect. To stop all currently looping visual effects, use the
+keyword `ALL` instead of an effect identifer. If no target is given to the `STOP`
+keyword, it is assumed to be `ALL`.
+
+```
+# Stop a particular visual effect:
+[GFX: STOP shimmer]
+
+# Stop all continuous visual effects currently being shown:
+[GFX: STOP ALL]
+
+# This is equivalent to the above statement:
+[GFX: STOP]
+```
+
+Normally, the visual effect will disappear instantly when stopped; however, this
+can be changed by giving a [duration](#durations). The visual effect will then
+take the given amount of time to fade away.
+
+```
+[GFX: STOP shimmer OVER 5 SECONDS]
+[GFX: STOP ALL QUICKLY]
+[GFX: STOP ALL SLOWLY]
+```
+
+#### See Also ####
+- [SFX Directive](#sfx-directive)
+
+### MUSIC Directive ###
+The MUSIC directive is used to control the background music.
+
+To change to a particular track of music, give the name of the song as a
+parameter to the directive. This can be a string containing the name of the
+audio file or an identifier for the music track.
+
+```
+# The two forms for playing a particular track
+[Music: main-theme]
+[Music: "theme.mp3"]
+```
+
+To fade out any music currently playing before starting the new song, use the
+`FADEOUT OLD` keywords.
+
+```
+# Both of the below instructions start a track after fading out the old music:
+[Music: everyday-life FADEOUT OLD]
+[Music: "everyday_life.mp3" FADEOUT OLD]
+```
+
+To stop playing music, use the `STOP` keyword before the name of the track. To
+stop all music currently playing, use the keyword `ALL` instead of the name of
+the song. If no target is given to the `STOP` keyword, it is assumed to be
+`ALL`.
+
+```
+# Both of the below instructions stop a particular track:
+[Music: STOP everyday-life]
+[Music: STOP "everyday_life.mp3"]
+
+# Both of the below instructions stop all music:
+[Music: STOP ALL]
+[Music: STOP]
+```
+
+Both music-stopping instructions and music-starting instructions that fade out
+the already-playing music can be given a [duration](#durations) to specify how
+long it takes to fade out the music.
+
+```
+# Some example MUSIC directives that use durations:
+[Music: STOP everyday-life SLOWLY]
+[Music: STOP ALL OVER 9.5 SECONDS]
+[Music: STOP QUICKLY]
+[Music: "everyday_life.mp3" FADEOUT OLD OVER 2 SECONDS]
+[Music: everyday-life FADEOUT OLD SLOWLY]
+```
+
+#### See Also ####
+- [SFX Directive](#sfx-directive)
+
+### SCENE Directive ###
+The SCENE directive specifies where the current scene is taking place. Any time
+a SCENE directive is in a Scrappy manuscript, it indicates the start of a new
+location, or at least a new sub-location within the current location.
+
+To transition to a new scene, the identifier for the scene to change to is given
+as a parameter to the directive.
+
+```
+[Scene: bobs-house]
+```
+
+Noramlly, the new scene is shown immediately. This can be changed by specifying
+an identifier for a transition followed by the keyword `TO` before the name of
+the new scene.
+
+```
+[Scene: FADE TO bobs-house]
+```
+
+#### See Also ####
+- [Enter Directive](#enter-directive)
+
+### SFX Directive ###
+The SFX directive is used to control sound effects.
+
+To play a sound effect once, give the name of the sound effect. The name can be
+a string containing the audio file to play or the identifier of the effect.
+
+```
+[SFX: bang]
+[SFX: "whack.wav"]
+```
+
+To specify that the sound effect is to loop indefinitely, use the `LOOP` keyword
+before the sound name.
+
+```
+[SFX: LOOP sprinting-footsteps]
+[SFX: LOOP "heavy_breathing.mp3"]
+```
+
+To stop a particular sound that is looping, use the `STOP` keyword before the
+name of the sound. To stop all looping sound effects, use the keyword `ALL`
+instead of the name of the sound. If no target is given to the `STOP` keyword,
+it is assumed to be `ALL`.
+
+```
+[SFX: STOP sprinting-footsteps]
+[SFX: STOP "heavy_breathing.mp3"]
+
+# The following two directives are equivalent:
+[SFX: STOP ALL]
+[SFX: STOP]
+```
+
+Normally, the looping sound will stop instantly when stopped; however, this can
+be changed by giving a [duration](#durations). The sound effect will then take
+the given amount of time to fade away.
+
+```
+[SFX: STOP sprinting-footsteps OVER 5 SECONDS]
+[SFX: STOP "heavy_breathing.mp3" SLOWLY]
+[SFX: STOP ALL QUICKLY]
+[SFX: STOP SLOWLY]
+```
