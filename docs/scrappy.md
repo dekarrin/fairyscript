@@ -65,9 +65,9 @@ the Scrappy language itself.
 ## Language Basics ##
 A manuscript written in Scrappy consists of a series of statements. These
 statement can be broken down into the following types:
-- Lines spoken by an actor or voiced internally
-- Comments
-- Instructions
+- [Lines](#lines) spoken by an actor or voiced internally
+- [Comments](#comments) to the reader of the manuscript
+- [Instructions](#instructions) to the actors, crew, or engine
 
 ### Whitespace ###
 In the Scrappy language, whitespace is unimportant. For readability,
