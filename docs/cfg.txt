@@ -156,6 +156,8 @@ any_element_id			: element_id
 					
 duration				: FOR NUMBER
 						| FOR NUMBER SECONDS
+						| OVER NUMBER
+						| OVER NUMBER SECONDS
 						| QUICKLY
 						| SLOWLY
 					
