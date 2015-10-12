@@ -23,6 +23,20 @@ class RenpyCompiler(object):
 		self._cur_img_gfx = []
 		self._cam_zoom = 'CAM_ZOOM_NORMAL'
 		self._cam_pan = 'CAM_PAN_CENTER'
+		self._chars = None
+		
+	def set_options(self, options):
+		self.default_destination = options.default_destination
+		self.default_origin = options.default_origin
+		self.default_duration = options.default_duration
+		self.quickly_rel = options.quick_speed
+		self.slowly_rel = options.slow_speed
+		self.tab_spaces = options.tab_spaces
+		self.background_ent = options.background_ent
+		self.use_camera_system = options.enable_camera
+		
+	def set_characters(self, chars):
+		self._chars = chars
 		
 	def add_gfx_target(self, effect, target):
 		if target.upper() != 'SCENE' and target.upper() != 'IMAGE' and target.upper() != 'DISPLAYABLE':
@@ -53,6 +67,9 @@ class RenpyCompiler(object):
 		self.last_line = False
 		
 		if script is not None:
+			if self._chars is not None:
+				self._write_chars()
+		
 			for statement in script:
 				self.compile_statement(statement)
 		return self._compiled
@@ -83,6 +100,14 @@ class RenpyCompiler(object):
 		indent = (' ' * self.tab_spaces * self._indent_lev)
 		self._compiled += indent + self._to_add + '\n'
 		self._to_add = ""
+	
+	def _inc_indent(self):
+		self._indent_lev += 1
+		
+	def _dec_indent(self):
+		self._indent_lev -= 1
+		if self._indent_lev < 0:
+			self._indent_lev = 0
 		
 	def _compile_line(self, line):
 		text = scp.quote(line['text'][1])
@@ -187,7 +212,7 @@ class RenpyCompiler(object):
 				explicit_all = True
 			self.add('stop music')
 			if not explicit_all:
-				self._warnings['targeted_music_stop'] = ["Ren'py does not support targeted music stop; any such directives will be compiled as if they were STOP ALL"]
+				self._warnings['targeted_music_stop'] = ["Ren'Py does not support targeted music stop; any such directives will be compiled as if they were STOP ALL"]
 			if music['duration'] is not None:
 				time = scp.get_duration(music['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
 				self.add(' fadeout ' + str(time))
@@ -272,7 +297,7 @@ class RenpyCompiler(object):
 				explicit_all = True
 			self.add('stop sound')
 			if not explicit_all:
-				self._warnings['targeted_sfx_stop'] = ["Ren'py does not support targeted sound stop; any such directives will be compiled as if they were STOP ALL"]
+				self._warnings['targeted_sfx_stop'] = ["Ren'Py does not support targeted sound stop; any such directives will be compiled as if they were STOP ALL"]
 			if sfx['duration'] is not None:
 				time = scp.get_duration(sfx['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
 				self.add(' fadeout ' + str(time))
@@ -321,7 +346,7 @@ class RenpyCompiler(object):
 		if scp.typed_check(choice['label'], 'id'):
 			label = " " + choice['label'][1]
 		self.add_line("menu" + label + ":")
-		self._indent_lev += 1
+		self._inc_indent()
 		if scp.typed_check(choice['title'], 'string'):
 			self.add_line(scp.quote(choice['title'][1]))
 			self.add_line()
@@ -330,13 +355,13 @@ class RenpyCompiler(object):
 			if c['condition'] is not None:
 				cond = " if " + str(c['condition'][1])
 			self.add_line(scp.quote(c['text'][1]) + cond + ":")
-			self._indent_lev += 1
+			self._inc_indent()
 			for v in c['sets']:
 				self._compile_VARSET(v, noline=True)
 			self.add_line('jump ' + c['target'][1])
 			self.add_line()
-			self._indent_lev -= 1
-		self._indent_lev -= 1
+			self._dec_indent()
+		self._dec_indent()
 			
 	def _compile_DESCRIPTION(self, desc):
 		# ren'py does not use descriptions, so we throw this out
@@ -352,7 +377,7 @@ class RenpyCompiler(object):
 		if len(params) > 0:
 			params = '(' + params[:-2] + ')'
 		self.add_line('label ' + section['section'][1] + params + ":")
-		self._indent_lev += 1
+		self._inc_indent()
 		
 	def _compile_FLAGSET(self, flagset):
 		self.add_line('$ ' + flagset['name'][1] + ' = ' + scp.get_expr(flagset['value']))
@@ -391,15 +416,15 @@ class RenpyCompiler(object):
 	def _compile_END(self, end):
 		if 'retval' in end:
 			self.add_line('return ' + scp.get_expr(end['retval']))
-		self._indent_lev -= 1
+		self._dec_indent()
 		self.add_line()
 		
 	def _compile_WHILE(self, whilestmt):
 		self.add_line('while ' + scp.get_expr(whilestmt['condition']) + ':')
-		self._indent_lev += 1
+		self._inc_indent()
 		for st in whilestmt['statements']:
 			self.compile_statement(st)
-		self._indent_lev -= 1
+		self._dec_indent()
 		self.add_line()
 		
 	def _compile_IF(self, ifstmt):
@@ -414,24 +439,27 @@ class RenpyCompiler(object):
 					firstbr = False
 				else:
 					self.add_line('elif ' + scp.get_expr(br['condition']) + ':')
-				self._indent_lev += 1
+				self._inc_indent()
 				for st in br['statements']:
 					self.compile_statement(st)
-				self._indent_lev -= 1
+				self._dec_indent()
 		if elsebr is not None:
 			self.add_line('else:')
-			self._indent_lev += 1
+			self._inc_indent()
 			for st in elsebr['statements']:
 				self.compile_statement(st)
-			self._indent_lev -= 1
+			self._dec_indent()
+			
+	def _compile_CHARACTERS(self, characters):
+		pass
 			
 	def _compile_PYTHON(self, python):
 		self.add_line('python:')
-		self._indent_lev += 1
+		self._inc_indent()
 		lines = python['body'].split('\n')
 		for line in lines:
 			self.add_line(line.strip())
-		self._indent_lev -= 1
+		self._dec_indent()
 		self.add_line()
 	
 	def _get_current_scene_transforms(self):
@@ -449,6 +477,15 @@ class RenpyCompiler(object):
 		self.add_line("with " + self._scene_trans)
 		self._has_enter_trans = False
 		self._has_exit_trans = False
+		self.add_line()
+		
+	def _write_chars(self):
+		for cid in self._chars:
+			c = self._chars[cid]
+			color = c['color']
+			if color is None:
+				color = '#000000'
+			self.add_line("define %s = Character(%s, color=%s)" % (c['id'], scp.quote(c['name']), scp.quote(color)))
 		self.add_line()
 		
 def build_show(target, states):

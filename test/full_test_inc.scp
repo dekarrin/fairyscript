@@ -6,3 +6,5 @@ Bob: "I become the wall when I died."
 {
 	(var: good INC)
 }
+
+(Characters: "test/chars.csv")

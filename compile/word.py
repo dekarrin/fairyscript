@@ -31,6 +31,17 @@ class DocxCompiler(object):
 		self._add_break = True
 		self._indent_level = 0
 		self._outer_loops_ending = 0
+		self._chars = None
+		
+	def set_options(self, options):
+		self.paragraph_spacing = options.paragraph_spacing
+		self.title = options.title
+		self.include_flagsets = options.include_flags
+		self.include_varsets = options.include_vars
+		self.include_python = options.include_python
+		
+	def set_characters(self, chars):
+		self._chars = chars
 	
 	def compile_script(self, script, inputfile=None, add_title=True):
 		self._check_screenplay_vars()
@@ -82,6 +93,24 @@ class DocxCompiler(object):
 		fmt = self._last_run.font
 		for k in kwargs:
 			setattr(fmt, k, kwargs[k])
+			
+	def set_text_color(self, r, g, b):
+		c = self._last_run.font.color
+		c.rgb = RGBColor(r, g, b)
+	
+	def add_actor_run(self, actor, fmt_str=None):
+		if fmt_str is None:
+			fmt_str = "%s"
+		if actor in self._chars:
+			c = self._chars[actor]
+			self.add_run(fmt_str % c['name'])
+			if c['color'] is not None:
+				r = int(c['color'][1:3], 16)
+				g = int(c['color'][3:5], 16)
+				b = int(c['color'][5:7], 16)
+				self.set_text_color(r, g, b)
+		else:
+			self.add_run(fmt_str % actor)
 			
 	def _set_style_defaults(self):
 		styles = self._document.styles
@@ -234,7 +263,9 @@ class DocxCompiler(object):
 			if sp is None:
 				self.add_paragraph(line['text'][1])
 			else:
-				self.add_paragraph(sp + ': "' + line['text'][1] + '"')
+				self.add_paragraph()
+				self.add_actor_run(sp, "%s:")
+				self.add_run(' "' + line['text'][1] + '"')
 		self._just_completed_line = True
 		self._last_speaker = sp
 		
@@ -585,6 +616,9 @@ class DocxCompiler(object):
 			self.compile_block(elsebr['statements'])
 		if not had_output:
 			self._add_break = False
+			
+	def _compile_CHARACTERS(self, characters):
+		pass
 			
 	def _compile_PYTHON(self, python):
 		if self.include_python:

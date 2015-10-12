@@ -1052,6 +1052,10 @@ to the file as a parameter to the instruction.
 (Characters: "chars.csv")
 ```
 
+The CHARACTERS annotation is a pre-processed annotation; all such annotations
+are found and their character files read before compilation takes place. Then,
+the list of character definitions is given to the compiler.
+
 #### See Also ####
 - [Character Files](#character-files)
 - [INCLUDE Annotation](#include-annotation)
@@ -1545,17 +1549,16 @@ being specified.
 
 ### Character Files ###
 Character files contain information for characters in the manuscript. The
-information is in CSV format, with one character per line, and one character
-attribute per field.
+information is in a modified CSV format, with one character per line, and one
+character attribute per field. Fields are separated by commas, and the values
+of fields must be quoted.
 
 Character files are included in a manuscript by using the
 [CHARACTERS annotation](#characters-annotation). Multiple character files can be
 included with multiple CHARACTERS annotations; any character that is defined
 more than once across all included character files will be defined only by the
-last definition. Placement of CHARACTERS annotation within the manuscript
-depends on the target format; see the documentation for the individual formats
-for information on how placement of the annotation within the manuscript affects
-definitions.
+last definition. Placement of CHARACTERS annotation within the manuscript is
+irrelevant; CHARACTERS annotations are pre-scanned before compilation.
 
 Inside the character file, each character must have a field for the following
 attributes, though it can have an empty field to specify the default value:

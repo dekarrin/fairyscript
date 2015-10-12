@@ -1,4 +1,6 @@
 import os.path
+import re
+
 import parse.scp_lex
 import parse.scp_yacc
 from compile.renpy import RenpyCompiler
@@ -21,13 +23,13 @@ def get_lexer():
 		_lexer = parse.scp_lex.lexer
 	return _lexer
 	
-def get_renpy_compiler():
+def renpy_compiler():
 	global _comp_renpy
 	if _comp_renpy is None:
 		_comp_renpy = RenpyCompiler()
 	return _comp_renpy
 	
-def get_word_compiler():
+def word_compiler():
 	global _comp_word
 	if _comp_word is None:
 		_comp_word = DocxCompiler()
@@ -55,11 +57,11 @@ def parse_symbols(symbols):
 	return script_ast
 	
 def compile_to_renpy(manuscript_ast):
-	compiler = get_renpy_compiler()
+	compiler = renpy_compiler()
 	return compiler.compile_script(manuscript_ast)
 	
 def compile_to_word(manuscript_ast):
-	compiler = get_word_compiler()
+	compiler = word_compiler()
 	return compiler.compile_script(manuscript_ast)
 	
 def show_warnings(compiler):
@@ -67,48 +69,119 @@ def show_warnings(compiler):
 	for w in warns:
 		print "Compiler warning: " + w
 		
-def process_includes(ast):
-	new_ast = []
-	for s in ast:
-		if s['type'] == 'line' or s['type'] == 'comment':
-			new_ast.append(s)
-		elif s['instruction'] == 'IF':
-			if_struct = {'type': 'annotation', 'instruction': 'IF', 'branches': []}
-			for br in s['branches']:
-				if_branch = {'condition': br['condition'], 'statements': process_includes(br['statements'])}
-				if_struct['branches'].append(if_branch)
-			new_ast.append(if_struct)
-		elif s['instruction'] == 'WHILE':
-			wh_struct = {'type': 'annotation', 'instruction': 'WHILE', 'condition': s['condition'], 'statements': process_includes(s['statements'])}
-			new_ast.append(wh_struct)
-		elif s['instruction'] == 'INCLUDE':
-			with open(s['file'][1], 'r') as inc_file:
-				contents = inc_file.read()
-			inc_ast = parse_manuscript(contents)
-			new_ast += inc_ast
-		else:
-			new_ast.append(s)
-	return new_ast
+def preprocess(script_ast, quiet=False):
+	def preproc_includes(ast):
+		new_ast = []
+		for s in ast:
+			if s['type'] == 'line' or s['type'] == 'comment':
+				new_ast.append(s)
+			elif s['instruction'] == 'IF':
+				if_struct = {'type': 'annotation', 'instruction': 'IF', 'branches': []}
+				for br in s['branches']:
+					if_branch = {'condition': br['condition'], 'statements': preproc_includes(br['statements'])}
+					if_struct['branches'].append(if_branch)
+				new_ast.append(if_struct)
+			elif s['instruction'] == 'WHILE':
+				wh_struct = {'type': 'annotation', 'instruction': 'WHILE', 'condition': s['condition'], 'statements': preproc_includes(s['statements'])}
+				new_ast.append(wh_struct)
+			elif s['instruction'] == 'INCLUDE':
+				with open(s['file'][1], 'r') as inc_file:
+					contents = inc_file.read()
+				inc_ast = parse_manuscript(contents)
+				new_ast += preproc_includes(inc_ast)
+			else:
+				new_ast.append(s)
+		return new_ast
+	
+	def preproc_chars(ast):
+		chars_dict = {}
+		for s in ast:
+			if s['type'] != 'line' and s['type'] != 'comment':
+				if s['instruction'] == 'IF':
+					for br in s['branches']:
+						preproc_chars(br['statements'])
+				elif s['instruction'] == 'WHILE':
+					preproc_chars(s['statements'])
+				elif s['instruction'] == 'CHARACTERS':
+					filename = s['file'][1]
+					new_chars = {}
+					try:
+						new_chars = read_chars_file(filename)
+					except (IOError, FileFormatError) as e:
+						if not quiet:
+							print "Preprocessor warning: could not process characters file '%s':" % filename
+							print "\t" + str(e)
+					chars_dict.update(new_chars)
+		return chars_dict
+	
+	new_script_ast = []
+	new_script_ast = preproc_includes(script_ast)
+	chars = preproc_chars(new_script_ast)
+	return new_script_ast, chars
+
+class FileFormatError(Exception):
+	pass
+	
+def read_chars_file(file_path):
+	field_names = ('id', 'name', 'color')
+	rows = {}
+	with open(file_path, 'r') as f:
+		ln = 0
+		for line in f:
+			ln += 1
+			fields = []
+			line = line.strip()
+			r = {}
+			while len(line) > 0:
+				ended_with_comma = False
+				if line[0] == ',':
+					if len(fields) == 0:
+						raise FileFormatException("Line %d: identifier field cannot be empty" % ln)
+					fields.append(None)
+					ended_with_comma = True
+					line = line[1:].strip()
+					
+				else:
+					m = re.match(r"\"[^\"\\]*(?:\\.[^\"\\]*)*\"", line)
+					if m is None:
+						raise FileFormatException("Line %d: bad format" % ln)
+					stripped = ''
+					escaping = False
+					s = line[m.start():m.end()]
+					s = s[1:-1]
+					for c in s:
+						if c == '\\' and not escaping:
+							escaping = True
+						else:
+							stripped += c
+							escaping = False
+					fields.append(stripped)
+					line = line[m.end():].strip()
+					if len(line) > 0 and line[0] == ',':
+						ended_with_comma = True
+						line = line[1:].strip()
+			if ended_with_comma:
+				fields.append(None)
+			if len(fields) < len(field_names):
+				raise FileFormatException("Line %d: bad format" % ln)
+			fn = 0
+			for name, value in zip(field_names, fields):
+				r[name] = value
+			r['other'] = fields[len(field_names):]
+			rows[r['id']] = r
+			if r['name'] is None:
+				r['name'] = r['id']
+	return rows
 
 if __name__ == "__main__":
-	def set_word_compiler_options(args):
-		c = get_word_compiler()
-		c.paragraph_spacing = args.paragraph_spacing
-		c.title = args.title
-		c.include_flagsets = args.include_flags
-		c.include_varsets = args.include_vars
-		c.include_python = args.include_python
+	def precompile(ast, args, compiler):
+		ast, chars = preprocess(ast, quiet=args.quiet)
+		compiler.set_options(args)
+		compiler.set_characters(chars)
+		return ast
 		
 	def set_renpy_compiler_options(args):
-		c = get_renpy_compiler()
-		c.default_destination = args.default_destination
-		c.default_origin = args.default_origin
-		c.default_duration = args.default_duration
-		c.quickly_rel = args.quick_speed
-		c.slowly_rel = args.slow_speed
-		c.tab_spaces = args.tab_spaces
-		c.background_ent = args.background_ent
-		c.use_camera_system = args.enable_camera
+		c = renpy_compiler()
 
 	import argparse
 	import pprint
@@ -189,17 +262,15 @@ if __name__ == "__main__":
 				if args.output_mode == 'ast':
 					output = ast
 				elif args.output_mode == 'renpy':
-					ast = process_includes(ast)
-					set_renpy_compiler_options(args)
+					ast = precompile(ast, args, renpy_compiler())
 					output = compile_to_renpy(ast)
 					if not args.quiet:
-						show_warnings(get_renpy_compiler())
+						show_warnings(renpy_compiler())
 				elif args.output_mode == 'word':
-					ast = process_includes(ast)
-					set_word_compiler_options(args)
+					ast = precompile(ast, args, word_compiler())
 					output = compile_to_word(ast)
 					if not args.quiet:
-						show_warnings(get_word_compiler())
+						show_warnings(word_compiler())
 					
 			if (args.output_mode == 'lex' or args.output_mode == 'ast') and args.pretty:
 				pprint.pprint(output, output_file)
