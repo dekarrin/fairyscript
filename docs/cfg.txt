@@ -129,7 +129,7 @@ if_annotation			: ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}'
 						| ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}' else_ifs
 						| ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}' else_ifs ANNOTATIONOPEN_ELSE ')' '{' block '}'
 						
-include_annotation		: ANNOTATIONOPEN_INCLUDE ':' UNQUOTED_STRING ')'
+include_annotation		: ANNOTATIONOPEN_INCLUDE ':' STRING ')'
 
 characters_annotation   : ANNOTATIONOPEN_CHARACTERS ':' STRING ')'
 					

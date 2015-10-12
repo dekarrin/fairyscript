@@ -6,8 +6,6 @@ states = (
 	('descid', 'exclusive'),
 	('descescapedwords', 'exclusive'),
 	('descwords', 'exclusive'),
-	('incopen', 'exclusive'),
-	('incwords', 'exclusive')
 )
 
 reserved = [
@@ -101,6 +99,7 @@ t_ANNOTATIONOPEN_ELSE = r"\([Ee][Ll][Ss][Ee]"
 t_ANNOTATIONOPEN_ELIF = r"\([Ee][Ll](?:[Ss][Ee]\s?)?[Ii][Ff]"
 t_ANNOTATIONOPEN_WHILE = r"\([Ww][Hh][Ii][Ll][Ee]"
 t_ANNOTATIONOPEN_CHARACTERS = r"\([Cc][Hh][Aa][Rr][Aa][Cc][Tt][Ee][Rr][Ss]"
+t_ANNOTATIONOPEN_INCLUDE = r"\([Ii][Nn][Cc][Ll][Uu][Dd][Ee]"
 t_STRING = r"\"[^\"\\]*(?:\\.[^\"\\]*)*\""
 t_NUMBER = r"(?:(?:\+|-)\s*)?\d+(\.\d*)?"
 t_PYTHON_BLOCK = r"\([Pp][Yy][Tt][Hh][Oo][Nn]\)\s*\{[^}\\]*(?:\\.[^}\\]*)*\}"
@@ -115,17 +114,6 @@ def t_ANNOTATIONOPEN_DESCRIPTION(t):
 	r"\([Dd][Ee][Ss][Cc][Rr][Ii][Pp][Tt][Ii][Oo][Nn]"
 	t.lexer.desc_id = False
 	t.lexer.begin('descopen')
-	return t
-	
-def t_ANNOTATIONOPEN_INCLUDE(t):
-	r'\([Ii][Nn][Cc][Ll][Uu][Dd][Ee]'
-	t.lexer.begin('incopen')
-	return t
-	
-def t_incopen_colon(t):
-	':'
-	t.lexer.begin('incwords')
-	t.type = ':'
 	return t
 	
 def t_descopen_colon(t):
@@ -192,7 +180,7 @@ def t_descescapedwords_colon(t):
 	t.lexer.begin('descwords')
 	return t
 	
-def t_descscan_descwords_incwords_UNQUOTED_STRING(t):
+def t_descscan_descwords_UNQUOTED_STRING(t):
 	r"(?:[^)\\]*(?:\\.[^)\\]*)+|[^)\\]+(?:\\.[^)\\]*)*)"
 	if t.lexer.lexstate == 'descscan':
 		t.lexer.lexpos = t.lexer.desc_start
@@ -206,8 +194,7 @@ def t_ANY_newline(t):
 	t.lexer.lineno += len(t.value)
 	
 def t_ANY_error(t):
-	print("Warning:")
-	print("Line %d: Illegal character '%s'; skipping" % (t.lexer.lineno, t.value[0]))
+	print("Illegal character '%s' on line %d" % (t.value[0], t.lexer.lineno))
 	t.lexer.skip(1)
 
 lexer = lex.lex()

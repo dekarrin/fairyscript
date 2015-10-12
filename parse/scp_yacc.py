@@ -343,8 +343,8 @@ def p_if_annotation_2_multi_else(p):
 	p[0] = make_annotation('IF', branches=ifs)
 	
 def p_include_annotation_2_unq_str(p):
-	'''include_annotation : ANNOTATIONOPEN_INCLUDE ':' UNQUOTED_STRING ')' '''
-	p[0] = make_annotation('INCLUDE', file=('string', unescape(' ' + p[3] + ' ')))
+	'''include_annotation : ANNOTATIONOPEN_INCLUDE ':' STRING ')' '''
+	p[0] = make_annotation('INCLUDE', file=('string', unescape(p[3])))
     
 def p_characters_annotation_2_str(p):
     '''characters_annotation : ANNOTATIONOPEN_CHARACTERS ':' STRING ')' '''
