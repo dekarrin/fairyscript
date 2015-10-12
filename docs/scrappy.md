@@ -426,8 +426,8 @@ The names of the instructions are not case-sensitive, with the exception of the
 ACTION directive. This directive must be case-sensitive, as it uses the name of
 the character for its 'name'. Note that case-insensitivity does not apply to the
 parameters of instructions; reserved-word parameters must always be upper-case,
-and mixing the cases of parameters that contain the names of things could result
-in confusion.
+and mixing the cases of parameters that are [identifiers](#identifiers) could
+result in confusion.
 
 ```
 # This annotation:
@@ -437,7 +437,7 @@ in confusion.
 (flag: have_seen_bob ON)
 
 # but this annotation uses a different case for its variable, and so it does not
-refer to the same one as above:
+# refer to the same one as above:
 (Flag: Have_Seen_Bob ON)
 
 # Now, there are two different flags, 'have_seen_bob' and 'Have_Seen_Bob'.
@@ -452,8 +452,8 @@ The ACTION Directive is an instruction to an actor to take some sort of action.
 The action can be to move somewhere in the scene, to change appearance, or both.
 
 This directive is unique among instructions in that it is not written by using
-its name. Instead, the name of the actor that the instruction is to is used as
-the 'name' of the instruction.
+its name. Instead, the [identifier](#identifiers) of the actor that the
+instruction is to is used as the 'name' of the instruction.
 
 ```
 # This is an instruction for Bob to appear sad:
@@ -466,11 +466,11 @@ the 'name' of the instruction.
 [Action: sad]
 ```
 
-To have an actor change their appearance, list all the different ways in which
-they are to change, separated by commas (`,`). Generally, there should not be
-more than one of a particular type of appearance. That is to say, it is valid
-Scrappy to have an actor appear sad and happy, but it certainly doesn't make any
-sense!
+To have an actor change their appearance, list the [identifiers](#identifiers)
+for all the different ways in which they are to change, separated by commas
+(`,`). Generally, there should not be more than one of a particular type of
+appearance. That is to say, it is valid Scrappy to have an actor appear sad and
+happy, but it certainly doesn't make any sense!
 
 ```
 # An instruction for Bob to appear sad:
@@ -487,7 +487,8 @@ sense!
 ```
 
 An actor can also be instructed to move somewhere on the screen. To do this, use
-the `GO TO` keywords followed by an identifier for the destination.
+the `GO TO` keywords followed by an [identifier](#identifiers) for the
+destination.
 
 ```
 # An instruction for Bob to move to the right of the screen:
@@ -526,8 +527,8 @@ camera actions are:
 - Zooming
 
 Panning is a translation of the camera to point to a particular object/location.
-To do a pan, use the `PAN TO` keywords followed by an identifier for the
-location to pan to.
+To do a pan, use the `PAN TO` keywords followed by an [identifier](#identifiers)
+for the location to pan to.
 
 ```
 [Camera: PAN TO garage-door]
@@ -585,8 +586,8 @@ block.
 A minimal CHOICE directive consists of `[Choice]` followed by a series of
 options. Each option begins with an asterisk (`*`) character and gives the text
 of the option that is shown to the viewer, followed by a colon (`:`) and then
-the keywords `GO TO` followed by the section that the option causes the script
-to jump to upon selection.
+the keywords `GO TO` followed by the [identifier](#identifiers) for the section
+that the option causes the script to jump to upon selection.
 
 ```
 [Choice]
@@ -595,7 +596,8 @@ to jump to upon selection.
 ```
 
 A CHOICE directive may also mark the beginning of a new section. This is
-accomplished by including a section name as part of the directive parameters.
+accomplished by including an [identifier](#identifiers) for a section name as
+part of the instruction parameters.
 
 ```
 [Choice: what-to-do]
