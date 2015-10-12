@@ -128,6 +128,8 @@
 
 (End: RETURN 5)
 
+(include: "test/quickstart.rpy" WITH PARSING OFF)
+
 (while: staff) {
 	(var: runs INC)
 }

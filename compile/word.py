@@ -543,7 +543,10 @@ class DocxCompiler(object):
 		bookmark = self.to_bookmark(section_name)
 		self.add_paragraph("Execute ", style='Reader Instruction')
 		self.add_internal_link(section_name, bookmark)
-		
+	
+	def _compile_INCLUDE(self, include):
+		pass
+	
 	def _compile_END(self, end):
 		if 'retval' in end:
 			self.add_paragraph('Return from this section', style='Reader Instruction')

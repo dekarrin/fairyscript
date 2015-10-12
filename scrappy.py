@@ -85,10 +85,13 @@ def preprocess(script_ast, quiet=False):
 				wh_struct = {'type': 'annotation', 'instruction': 'WHILE', 'condition': s['condition'], 'statements': preproc_includes(s['statements'])}
 				new_ast.append(wh_struct)
 			elif s['instruction'] == 'INCLUDE':
-				with open(s['file'][1], 'r') as inc_file:
-					contents = inc_file.read()
-				inc_ast = parse_manuscript(contents)
-				new_ast += preproc_includes(inc_ast)
+				if s['parsing'][1]:
+					with open(s['file'][1], 'r') as inc_file:
+						contents = inc_file.read()
+					inc_ast = parse_manuscript(contents)
+					new_ast += preproc_includes(inc_ast)
+				else:
+					new_ast.append(s)
 			else:
 				new_ast.append(s)
 		return new_ast

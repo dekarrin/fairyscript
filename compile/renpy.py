@@ -450,6 +450,20 @@ class RenpyCompiler(object):
 				self.compile_statement(st)
 			self._dec_indent()
 			
+	def _compile_INCLUDE(self, include):
+		if not include['parsing'][1]:
+			old_indent = self._indent_lev
+			self._indent_lev = 0
+			try:
+				with open(include['file'][1]) as file:
+					for line in file:
+						self.add(line)
+				self.add_line()
+				self.add_line()
+			except IOError as e:
+				self.add_warning("file_inclusion", "can't include '%s': %s" % (include['file'][1], str(e))
+			self._indent_lev = old_indent
+			
 	def _compile_CHARACTERS(self, characters):
 		pass
 			
