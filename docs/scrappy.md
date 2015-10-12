@@ -587,7 +587,7 @@ to jump to upon selection.
 ```
 
 A CHOICE directive may also mark the beginning of a new section. This is
-accomplished by including a section name as part of the directive parameters:
+accomplished by including a section name as part of the directive parameters.
 
 ```
 [Choice: what-to-do]
@@ -609,8 +609,8 @@ directive.
 ```
 
 CHIOCE directives may also give a title for the choice, which is shown before
-the options. This can be useful for displaying the question at the same time as
-the options. The title is given as as string immediately after the directive
+the options. This can be useful for displaying a question at the same time as
+the options. The title is given as a string immediately after the directive
 itself but before any choices.
 
 ```
@@ -621,9 +621,10 @@ itself but before any choices.
 ```
 
 Options in a choice can specify whether they have a condition for appearing,
-which is done by including the key words `SHOW IF` followed by a flag variable
-or other boolean expression immediately after the colon. The `SHOW IF`
-parameter is separated from the rest of the option parameters by a comma (`,`).
+which is done by including the keywords `SHOW IF` followed by a flag variable or
+other [boolean expression](#boolean-expressions) immediately after the colon.
+The `SHOW IF` clause is separated from the rest of the option parameters by a
+comma (`,`).
 
 ```
 [Choice]
@@ -634,11 +635,12 @@ parameter is separated from the rest of the option parameters by a comma (`,`).
 
 Options may also specify flags and variables to set before jumping to their
 associated section. This is done with the `SET` keyword, which is followed by
-the variable/flag to set and then by what to set it to, which has the same rules
-as in VAR annotations. Any number of flags/variables may be set by including
-multiple `SET` clauses, separated by the keyword `AND`. `SET` clauses come after
-the `SHOW IF` clause (if there is one) but before the `GO TO` clause, which is
-separated from `SET` clauses with the `AND` keyword.
+the variable/flag to set and then by what to set it to, which has nearly the
+same rules as in VAR annotations; unlike a VAR annotation, a value is required.
+Any number of flags/variables may be set by including multiple `SET` clauses,
+separated by the keyword `AND`. `SET` clauses come after the `SHOW IF` clause
+(if there is one) but before the `GO TO` clause, which is separated from `SET`
+clauses with the `AND` keyword.
 
 ```
 [Choice]
@@ -660,15 +662,15 @@ separated from `SET` clauses with the `AND` keyword.
 The ENTER directive is used to instruct an actor to appear in the scene. There
 are several different ways that the entrance can be customized.
 
-Every ENTER directive needs an actor that it is addressing. A minimal ENTER
-consists only of the actor.
+To instuct an actor to appear on the scene, give the identifier of the actor as
+a parameter to the instruction.
 
 ```
 [Enter: Bob]
 ```
 
-In order to specify the appearance of the actor, the appearance can be given in
-parenthesis. Multiple appearance instructions are separated by commas.
+In order to specify the appearance of the actor, the appearance states can be
+given in parentheses. Multiple appearance states are separated by commas (`,`).
 
 ```
 [Enter: Bob (angry)]
@@ -734,7 +736,7 @@ any actor appearance states, the transition (if there is one), and the origin
 An ENTER directive can also be given a [duration](#durations) for the entrance.
 
 ```
-# Some entrance destinations with explicit duration:
+# Some entrance destinations with explicit durations:
 [Enter: Bob OVER 10 SECONDS]
 [Enter: Mary (upset) FROM offscreenright TO stage-right SLOWLY]
 [Enter: Ghost (angry, arms-crossed) DISSOLVE IN
@@ -743,12 +745,12 @@ An ENTER directive can also be given a [duration](#durations) for the entrance.
 
 It is important to ensure that the order of operations of the entrance is
 specified clearly. What the ENTER directive means is that the actor should enter
-the scene with the given transition if there is one, or appear instantly if
-there is not one, at the specified origin if one is given, otherwise at an
-understood origin. After the transition in is complete, the actor then moves to
-the specified destination if there is one. If no origin is given but a
-destination is given, the actor is to appear/transition to that location and not
-move at all.
+the scene with the given transition if there is one or appear instantly if there
+is not one, at the specified origin if one is given, otherwise at an understood
+origin. After the transition in is complete, the actor then moves to the
+specified destination if there is one. If no origin is given but a destination
+is given, the actor is to appear/transition to that location and not move at
+all.
 
 Note that this means that specififying an off-screen origin or an off-screen
 destintation with no origin means that any transition will not be visible to the
@@ -762,8 +764,8 @@ viewer.
 The EXIT directive is an instruction to the actor to exit from the scene. There
 are several different ways that the exit can be customized.
 
-Every EXIT directive needs an actor that it is addressing. A minimal EXIT
-consists only of the actor.
+To instuct an actor to exit from the scene, give the identifier of the actor as
+a parameter to the instruction.
 
 ```
 [Exit: Bob]
@@ -830,12 +832,12 @@ An EXIT directive can also be given a [duration](#durations) for the exit.
 [Exit: Ghost DISSOLVE OUT FROM center TO stage-left QUICKLY]
 ```
 
-It is important to ensure that the order of operations of the entrance is
-specified clearly. What the EXIT directive means is that the actor should first
-move to the origin of the exit path if he is not already there, and then move to
-the destination of the exit path. Finally, once there, they are to exit the
-scene, either by using the given transition or by disappearing if no transition
-is specified.
+It is important to ensure that the order of operations of the exit is specified
+clearly. What the EXIT directive means is that the actor should first appear
+instantly at the origin of the exit path if he is not already there, and then
+move to the destination of the exit path. Finally, once there, they are to exit
+the scene, either by using the given transition or by disappearing if no
+transition is specified.
 
 Note that this means that specififying an off-screen destination or an
 off-screen origin with no destination means that any transition will not be
@@ -850,7 +852,7 @@ that is to play. Script execution stops until the movie clip has completed
 playing.
 
 To play a full-motion video, give the name of it as a parameter to the
-directive. This can be a string containing the name of a video file or an
+directive. This can be a string containing the name of the video file or the
 identifier for the movie clip.
 
 ```
@@ -864,7 +866,7 @@ The GFX directive is used to control visual (graphical) effects.
 
 To show a visual effect that is intended to show once and then disappear
 quickly, such as a white flash on the screen, give the identifier for that
-visual effect.
+visual effect as a parameter to the instruction.
 
 ```
 [GFX: flash]
@@ -894,9 +896,9 @@ keyword, it is assumed to be `ALL`.
 [GFX: STOP]
 ```
 
-Normally, the visual effect will disappear instantly when stopped; however, this
-can be changed by giving a [duration](#durations). The visual effect will then
-take the given amount of time to fade away.
+Normally, the visual effect will disappear instantly when instructed to stop;
+however, this can be changed by giving a [duration](#durations). The visual
+effect will then take the given amount of time to fade away.
 
 ```
 [GFX: STOP shimmer OVER 5 SECONDS]
@@ -911,11 +913,11 @@ take the given amount of time to fade away.
 The MUSIC directive is used to control the background music.
 
 To change to a particular track of music, give the name of the song as a
-parameter to the directive. This can be a string containing the name of the
-audio file or an identifier for the music track.
+parameter to the instruction. This can be a string containing the name of the
+audio file or the identifier for the music track.
 
 ```
-# The two forms for playing a particular track
+# The two forms of the MUSIC directive for playing a particular track:
 [Music: main-theme]
 [Music: "theme.mp3"]
 ```
@@ -965,8 +967,8 @@ The SCENE directive specifies where the current scene is taking place. Any time
 a SCENE directive is in a Scrappy manuscript, it indicates the start of a new
 location, or at least a new sub-location within the current location.
 
-To transition to a new scene, the identifier for the scene to change to is given
-as a parameter to the directive.
+To switch to a new scene, give the identifier for the scene to change to as a
+parameter to the instruction.
 
 ```
 [Scene: bobs-house]
@@ -981,13 +983,14 @@ the new scene.
 ```
 
 #### See Also ####
-- [Enter Directive](#enter-directive)
+- [ENTER Directive](#enter-directive)
 
 ### SFX Directive ###
 The SFX directive is used to control sound effects.
 
-To play a sound effect once, give the name of the sound effect. The name can be
-a string containing the audio file to play or the identifier of the effect.
+To play a sound effect once, give the name of the sound effect as a parameter to
+the instruction. The name can be a string containing the audio file to play or
+the identifier of the sound effect.
 
 ```
 [SFX: bang]
@@ -1016,9 +1019,9 @@ it is assumed to be `ALL`.
 [SFX: STOP]
 ```
 
-Normally, the looping sound will stop instantly when stopped; however, this can
-be changed by giving a [duration](#durations). The sound effect will then take
-the given amount of time to fade away.
+Normally, the looping sound will stop instantly when instructed to stop;
+however, this can be changed by giving a [duration](#durations). The sound
+effect will then take the given amount of time to fade away.
 
 ```
 [SFX: STOP sprinting-footsteps OVER 5 SECONDS]
@@ -1032,15 +1035,15 @@ The CHARACTERS annotation is used to give the name of a file that contains
 character definitions. This file contains information that is used for
 formatting the characters during compilation.
 
-The CHARACTERS annotation requires a single string, which contains the name of
-the character information file.
+To include a character file in the manuscript, give a string containing the path
+to the file as a parameter to the instruction.
 
 ```
 (Characters: "chars.csv")
 ```
 
 #### See Also ####
-- [Characters Files](#characters-files)
+- [Character Files](#character-files)
 - [INCLUDE Annotation](#include-annotation)
 
 ### DESCRIPTION Annotation ###
@@ -1049,10 +1052,11 @@ Generally this is used after SCENE directives to describe to the manuscript
 reader what the scene should look like, but it can be used to describe anything.
 
 To provide a description of the last object that was introduced, give the
-description as the argument to the instruction. If the description begins with a
+description as a parameter to the instruction. If the description begins with a
 colon (`:`) character, it must be escaped by putting another colon in front of
-it. If the description contains a left parenthesis (`)`), it must be escaped by
-putting a backslash character before it.
+it, or else the initial colon will not be displayed after compilation. If the
+description contains a left parenthesis (`)`), it must be escaped by putting a
+backslash character before it.
 
 ```
 # A description of the current scene:
@@ -1083,17 +1087,17 @@ be an identifier followed by a colon, a colon can be written before the
 description to indicate that there is no identifier.
 
 ```
-# This description is explicitly marked as describing 'Crying' as 'being sad.
-# laughing: being happy.', which is probably not the intent
+# This describes 'Crying' as 'being sad. Laughing: being happy.', which is
+# probably not the intent:
 (Description: Crying: being sad. Laughing: being happy)
 
-# This description uses an initial colon to explitly mark the beginning of the
-# description words, which is now 'Crying: being sad. Laughing: being happy'
-(Description:: Crying: being sad. Laughing: being happy)
+# Because an initial colon explitly marks the beginning of the description
+# words, the description is now 'Crying: being sad. Laughing: being happy'
+(Description: : Crying: being sad. Laughing: being happy)
 ```
 
 ### DIALOG Annotation ###
-The DIALOG annotation controls dialog window shown to the user. This is useful
+The DIALOG annotation controls the dialog window shown to the user. This is useful
 for writing manuscripts for visual and kinetic novels.
 
 To hide the dialog window, use the `HIDE` keyword.
@@ -1140,21 +1144,21 @@ If the current section is intended to be executed, and a value returned, use the
 
 ### EXECUTE Annotation ###
 The EXECUTE annotation is an instruction to go to a particular section, do
-everything in it, and then return to this point and continue once complete.
+everything in it, and to then return to the instruction once complete.
 
-The EXECUTE annotation accepts the identifier of the section to execute as a
-parameter.
+To execute a section, give the identifier of the section as a parameter to the
+instruction.
 
 ```
 (Execute: afterschool-club-monday)
 ```
 
-If the section being executed accepts parameters, these can be specified by
-using the keywords `WITH PARAMS` after the section name, followed by the
-parameters. Each section parameter must be an [expression](#expressions), or the
-name of the argument followed by an equals (`=`) followed by an expression if
-the section parameter is a keyword argument. Multiple section parameters must be
-separated by comma characters (`,`).
+If the section being executed accepts arguments, these can be specified by using
+the keywords `WITH PARAMS` after the section name, followed by the arguments.
+Each section argument must be an [expression](#expressions), or, if the section
+argument is a keyword argument, the name of the argument followed by an equals
+(`=`) followed by an expression. Multiple section arguments must be separated by
+comma characters (`,`).
 
 ```
 # A single positional argument:
@@ -1189,7 +1193,7 @@ state, but a [boolean expression](#boolean-expressions) can be given for the
 value of the flag instead.
 
 ```
-# This statements are equivalent:
+# These statements are equivalent:
 (Flag: have_seen_bob)
 (Flag: have_seen_bob ON)
 
@@ -1207,7 +1211,8 @@ value of the flag instead.
 ### GOTO Annotation ###
 The GOTO annotation is an instruction to jump to a section.
 
-The section to jump to is given as a parameter to the instruction.
+To jump to a section, give the identifier of the section as a parameter to the
+instruction.
 
 ```
 (Goto: afterschool-club-monday)
@@ -1228,11 +1233,13 @@ name. Doing so may improve readability.
 - [END Annotation](#end-annotation)
 
 ### IF Annotation ###
-The IF annotation specifies conditional branching.
+The IF annotation is used to perform actions only if a particular condition is
+true. Multiple alternatives can be specified, each with their own conditions
+and actions to perform.
 
 To use the IF annotation, give a [boolean expression](#boolean-expressions) as
-the parameter to the instruction, then after the instruction put the statements
-to execute in between braces (`{`, `}`).
+a parameter to the instruction, then after the instruction put the statements to
+execute between braces (`{`, `}`).
 
 ```
 (if: have_seen_bob)
@@ -1241,72 +1248,93 @@ to execute in between braces (`{`, `}`).
 }
 ```
 
-For either-or branching, the ELSE annotation can be used immediately after the
-closing brace of the IF annotation, followed by its own statements in braces.
+To specify an alternative set of actions to perform when the condition is not
+true, the ELSE annotation can be used immediately after the closing brace of the
+IF annotation, followed by its own actions in braces.
 
 ```
 (If: have_seen_bob)
 {
+	(Var: bobs_happiness DEC)
 	Bob: "This guy saw me; I'm not sure how, though."
 }
 (Else)
 {
+	(Var: bobs_happiness INC)
 	Bob: "No one saw me, because I'm sneaky!"
 }
 ```
 
-For multiple different cases, the ELSE IF annotation can be used. The name of
-the ELSE IF annotation can be given as 'elseif', 'else if', or 'elif'; whichever
-reads best is the one that should be used. As always, case does not matter for
-the instruction name. Besides the name, the syntax of the ELSE IF annotation is
-identical to the IF annotation.
+To specify an alternative set of actions to perform when the initial condition
+is not true, but which has a different condition that must be true, the ELSE IF
+annotation can be used. The name of the ELSE IF annotation can be given as
+`elseif`, `else if` or `elif`; whichever one reads more naturally is the one
+that should be used. As always, case does not matter for the instruction name.
+Besides the name, the syntax of the ELSE IF annotation is identical to the IF
+annotation.
 
 ```
 (If: 'times_seen_bob > 10')
 {
+	(Var: bobs_happiness DEC BY 2)
+	(Flag: have_super_stealth)
 	Bob: "This guy has been stalking me like a tiger! You bet he saw me."
 }
 (Else If: 'times_seen_bob > 1')
 {
+	(Var: bobs_happiness DEC BY 2)
 	Bob: "This guy saw me; I'm not sure how, though."
 }
 ```
 
-Multiple ELSE IF annotations can be chained for more cases.
+Multiple ELSE IF annotations can be chained for more cases. Each annotation's
+actions will only be performed if its condition is checked and found to be true,
+and its condition will only be checked if the previous annotation's condition is
+not true.
 
 ```
 (If: 'times_seen_bob > 10')
 {
+	(Var: bobs_happiness DEC BY 3)
+	(Flag: have_super_stealth)
 	Bob: "This guy has been stalking me like a tiger! You bet he saw me."
 }
-(Elif: 'times_seen_bob > 5') # instruction name 'elif' is valid
+(Elif: 'times_seen_bob > 5') # 'elif' is the same as 'else if'
 {
+	(Var: bobs_happiness DEC BY 2)
 	Bob: "We've run into each other a few times; I'm sure he's seen me."
 }
-(Elseif: 'times_seen_bob > 1') # instruction name 'elseif' is valid
+(Elseif: 'times_seen_bob > 1') # 'elseif' is the same as 'else if'
 {
+	(Var: bobs_happiness DEC)
 	Bob: "This guy saw me; I'm not sure how, though."
 }
 ```
 
 An ELSE annotation may be placed at the end of any number of ELSE IF
-annotations.
+annotations. Its actions are performed only if all previous conditions are
+false.
 
 ```
 (If: 'times_seen_bob > 10')
 {
+	(Var: bobs_happiness DEC BY 3)
+	(Flag: have_super_stealth)
 	Bob: "This guy has been stalking me like a tiger! You bet he saw me."
 }
 (Else If: 'times_seen_bob > 5')
 {
+	(Var: bobs_happiness DEC BY 2)
 	Bob: "We've run into each other a few times; I'm sure he's seen me."
 }
 (Else If: 'times_seen_bob > 1')
 {
+	(Var: bobs_happiness DEC)
 	Bob: "This guy saw me; I'm not sure how, though."
 }
 (Else)
 {
+	(Var: bobs_happiness INC)
 	Bob: "No one saw me, because I'm sneaky!"
 }
 ```
