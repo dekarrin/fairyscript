@@ -1244,6 +1244,7 @@ execute between braces (`{`, `}`).
 ```
 (if: have_seen_bob)
 {
+	(Var: bobs_happiness DEC)
 	Bob: "This guy saw me; I'm not sure how, though."
 }
 ```
@@ -1266,9 +1267,9 @@ IF annotation, followed by its own actions in braces.
 ```
 
 To specify an alternative set of actions to perform when the initial condition
-is not true, but which has a different condition that must be true, the ELSE IF
-annotation can be used. The name of the ELSE IF annotation can be given as
-`elseif`, `else if` or `elif`; whichever one reads more naturally is the one
+is not true, but which also has a different condition that must be true, the
+ELSE IF annotation can be used. The name of the ELSE IF annotation can be given
+as `elseif`, `else if` or `elif`; whichever one reads more naturally is the one
 that should be used. As always, case does not matter for the instruction name.
 Besides the name, the syntax of the ELSE IF annotation is identical to the IF
 annotation.
@@ -1290,7 +1291,8 @@ annotation.
 Multiple ELSE IF annotations can be chained for more cases. Each annotation's
 actions will only be performed if its condition is checked and found to be true,
 and its condition will only be checked if the previous annotation's condition is
-not true.
+not true. The first alternative whose condition is true is the one and only
+alternative whose actions will be performed.
 
 ```
 (If: 'times_seen_bob > 10')
@@ -1299,12 +1301,12 @@ not true.
 	(Flag: have_super_stealth)
 	Bob: "This guy has been stalking me like a tiger! You bet he saw me."
 }
-(Elif: 'times_seen_bob > 5') # 'elif' is the same as 'else if'
+(Elif: 'times_seen_bob > 5')       # 'elif' is the same as 'else if'
 {
 	(Var: bobs_happiness DEC BY 2)
 	Bob: "We've run into each other a few times; I'm sure he's seen me."
 }
-(Elseif: 'times_seen_bob > 1') # 'elseif' is the same as 'else if'
+(Elseif: 'times_seen_bob > 1')     # 'elseif' is the same as 'else if'
 {
 	(Var: bobs_happiness DEC)
 	Bob: "This guy saw me; I'm not sure how, though."
@@ -1347,7 +1349,7 @@ The INCLUDE annotation specifies that the contents of another file should be
 included at the location of the instruction.
 
 To include a file whose contents are to be parsed as Scrappy code, give a string
-containing the path to the file as an argument to the instruction.
+containing the path to the file as a parameter to the instruction.
 
 ```
 # include the file 'chapter2.scp' located in the current directory:
@@ -1363,7 +1365,7 @@ use the keywords `WITH PARSING` after the name of the file, optionally followed
 by either the keyword `ON` or the keyword `OFF`. If `ON` is given, the contents
 of the included file will be parsed as Scrappy code and included in the current
 file before compilation. If `OFF` is given, the contents of the file are not
-parsed as Scrappy code and is instead placed unchanged in the output during
+parsed as Scrappy code and are instead placed unchanged in the output during
 compilation. If neither keyword is given, `ON` is assumed.
 
 ```
@@ -1380,16 +1382,16 @@ compilation. If neither keyword is given, `ON` is assumed.
 - [CHARACTERS Annotation](#characters-annotation)
 
 ### PYTHON Annotation ###
-The PYTHON annotation gives python computer code that is to be executed.
+The PYTHON annotation gives python code that is to be executed.
 
 This annotation is not recommended unless absolutely necessary, since it is
 specific to compilation targets that can handle the execution of python code, or
 that will display it to the reader.
 
 To use the PYTHON annotation, write the annotation followed by python code
-enclosed within braces (`{`, `}`). Any left brace character within the python
-code must be escaped with a backslash. Because the code within the braces is
-python, spacing does matter there. Any initial whitespace that the lines of
+enclosed within braces (`{`, `}`). Any left brace character (`{`) within the
+python code must be escaped with a backslash. Because the code within the braces
+is python, spacing does matter there. Any initial whitespace that the lines of
 code have in common will be stripped from each line before it is output.
 
 ```
@@ -1412,12 +1414,11 @@ parameter to the instruction.
 ```
 
 The section can accept arguments that the EXECUTE annotation can pass in when
-calling the section. Section parameters are specified by using the keywords
-`WITH PARAMS` after the section name, followed by the parameters. Each section
-parameter must be an identifier, or an identifier followed by an equals (`=`)
-followed by an [expression](#expressions) that is the default value of the
-section parameter. Multiple section parameters must be separated by comma
-characters (`,`).
+calling the section. Section arguments are specified by using the keywords `WITH
+PARAMS` after the section name, followed by the arguments. Each section
+argument must be an identifier, optionally followed by an equals (`=`) followed
+by an [expression](#expressions) that is the default value of the section
+argument. Multiple section parameters must be separated by commas (`,`).
 
 ```
 # A single argument:
@@ -1430,10 +1431,10 @@ characters (`,`).
 (Section: shorten-life WITH PARAMS target=Villain)
 
 # Multiple arguments with default values:
-(Execute: shorten-life WITH PARAMS target=Villain, amount=10)
+(Section: shorten-life WITH PARAMS target=Villain, amount=10)
 
 # Mixed arguments, one with a default value:
-(Execute: shorten-life WITH PARAMS target, amount=10)
+(Section: shorten-life WITH PARAMS target, amount=10)
 ```
 
 If this section is intended to be called from an EXECUTE annotation, it is
@@ -1446,13 +1447,14 @@ section will never return.
 - [GOTO Annotation](#goto-annotation)
 
 ### WHILE Annotation ###
-The WHILE annotation is used to perform some actions while some condition is
+The WHILE annotation is used to perform actions for as long as some condition is
 true.
 
 To use a WHILE annotation, pass a [boolean expression](#boolean-expressions) as
-a parameter to the argument for the condition. After the instruction, give the
-statements to be performed between brace characters (`{`, `}`). The statements
-between the braces will be performed as long as the conditional is true.
+a parameter to the instruction for the condition. After the instruction, give
+the statements to be performed between brace characters (`{`, `}`). The
+statements between the braces will be performed as long as the conditional is
+true (which will be never if the conditional is never true).
 
 ```
 # Keep prompting the player to apologize to Bob until he feels better:
@@ -1498,7 +1500,7 @@ keywords respectively after the name of the variable.
 
 Normally, the variable is increased or decreased by 1; however, the amount to
 change the variable by can be specified by using the `BY` keyword after `INC` or
-`DEC`, followed by the amount to change.
+`DEC`, followed by the amount.
 
 ```
 # Increase bobs_anger by 4:
@@ -1509,7 +1511,7 @@ change the variable by can be specified by using the `BY` keyword after `INC` or
 ```
 
 To specify exactly what to set the variable to, give an [expression]
-(#expression) after the name of the variable instead of an `INC` or a `DEC`
+(#expressions) after the name of the variable instead of an `INC` or a `DEC`
 clause.
 
 ```
@@ -1533,8 +1535,8 @@ being specified.
 
 ### Character Files ###
 Character files contain information for characters in the manuscript. The
-information is in CSV format, with one character per line, and one field per
-character attribute.
+information is in CSV format, with one character per line, and one character
+attribute per field.
 
 Character files are included in a manuscript by using the
 [CHARACTERS annotation](#characters-annotation). Multiple character files can be
@@ -1547,9 +1549,10 @@ definitions.
 
 Inside the character file, each character must have a field for the following
 attributes, though it can have an empty field to specify the default value:
-- Identifier of the character in the manuscript. This cannot be blank.
-- Name of the character; this is how the character will appear after
-compilation. The default is the identifier.
+- The [identifier](#identifiers) of the character as it is used in the
+manuscript. This cannot be blank.
+- The name of the character; this is how the character will appear after
+compilation. The default is the same as the identifier.
 - A hex code that is the color of the character's label. This is what color
 their name is after compilation. The default is black (#000000).
 
@@ -1613,26 +1616,33 @@ in the docs directory of Scrappy.
                         | <characters>
                         | <python>                              
 
-<line>                ::= ( <id> | <string> )? ( "(" <appearance> ")" )? ":" <string>                             
+<line>                ::= ( <id> | <string> )? ( "(" <appearance> ")" )? ":"
+                            <string>                             
 
 <scene>               ::= <scene-open> ":" <transition-to>? <id> "]"                            
 
-<enter>               ::= <enter-open> ":" <id> ( "(" <appearance> ")" )? <transition-in>? <motion>? "]"
+<enter>               ::= <enter-open> ":" <id> ( "(" <appearance> ")" )?
+                            <transition-in>? <motion>? "]"
 
 <action>              ::= "[" <id> ":" <appearance> "]"
                         | "[" <id> ":" "GO" <destination> <duration>? "]"
-                        | "[" <id> ":" <appearance> "," "GO" <destination> <duration>? "]"
+                        | "[" <id> ":" <appearance> "," "GO" <destination>
+                            <duration>? "]"
 
 <exit>                ::= <exit-open> ":" <id> <transition-out>? <motion>? "]"
 
-<music>               ::= <music-open> ":" "STOP" ( <name> | "ALL" )? <duration>? "]"
-                        | <music-open> ":" <name> ( "," "FADEOUT" <whitespace> "OLD" <duration>? )? "]"
+<music>               ::= <music-open> ":" "STOP" ( <name> | "ALL" )?
+                            <duration>? "]"
+                        | <music-open> ":" <name> ( "," "FADEOUT" <whitespace>
+                            "OLD" <duration>? )? "]"
 
 <gfx>                 ::= <gfx-open> ":" "LOOP"? <id> "]"
-                        | <gfx-open> ":" "STOP" ( <id> | "ALL" )? <duration>? "]"
+                        | <gfx-open> ":" "STOP" ( <id> | "ALL" )? <duration>?
+                            "]"
 
 <sfx>                 ::= <sfx-open> ":" "LOOP"? <name> "]"
-                        | <sfx-open> ":" "STOP" ( <name> | "ALL" )? <duration>? "]"
+                        | <sfx-open> ":" "STOP" ( <name> | "ALL" )? <duration>?
+                            "]"
 
 <fmv>                 ::= <fmv-open> ":" <name> "]"
 
@@ -1640,13 +1650,18 @@ in the docs directory of Scrappy.
 
 <choice>              ::= <choice-open> ( ":" <id> )? "]" <string>? <option>
 
-<option>              ::= "*" <string> ":" ( "SHOW" <whitespace> "IF" <boolean-expression> "," )? ( <varset> "AND" )? "GO" <destination> <option>?
+<option>              ::= "*" <string> ":" ( "SHOW" <whitespace> "IF"
+                            <boolean-expression> "," )? ( <varset> "AND" )? "GO"
+                            <destination> <option>?
 
-<varset>              ::= ( <varset> "AND" )? "SET" <id> ( <inc-dec> | <expression> )
+<varset>              ::= ( <varset> "AND" )? "SET" <id> ( <inc-dec> |
+                            <expression> )
 
-<description>         ::= <description-open> ":" ( <id>? ":" )? <unquoted-string> ")"
+<description>         ::= <description-open> ":" ( <id>? ":" )?
+                            <unquoted-string> ")"
 
-<section>             ::= <section-open> ":" <id> ( "WITH" <whitespace> "PARAMS" <param-declaration> )? ")"
+<section>             ::= <section-open> ":" <id> ( "WITH" <whitespace> "PARAMS"
+                            <param-declaration> )? ")"
 
 <flag>                ::= <flag-open> ":" <id> <boolean-expression>? ")"
 
@@ -1656,19 +1671,24 @@ in the docs directory of Scrappy.
 
 <goto>                ::= <goto-open> ":" <id> ")"
 
-<execute>             ::= <execute-open> ":" <id> ( "WITH" <whitespace> "PARAMS" <param-set> )? ")"
+<execute>             ::= <execute-open> ":" <id> ( "WITH" <whitespace> "PARAMS"
+                            <param-set> )? ")"
 
 <end>                 ::= <end-open> ( ":" "RETURN" <expression> )? ")"
 
-<while>               ::= <while-open> ":" <boolean-expression> ")" "{" <block> "}"
+<while>               ::= <while-open> ":" <boolean-expression> ")" "{" <block>
+                            "}"
 
-<if>                  ::= <if-open> ":" <boolean-expression> ")" "{" <block> "}" <else-if>? <else>?
+<if>                  ::= <if-open> ":" <boolean-expression> ")" "{" <block> "}"
+                            <else-if>? <else>?
 
-<else-if>             ::= <else-if-open> ":" <boolean-expression> ")" "{" <block> "}" <else-if>?
+<else-if>             ::= <else-if-open> ":" <boolean-expression> ")" "{"
+                            <block> "}" <else-if>?
 
 <else>                ::= <else-open> ")" "{" <block> "}"
 
-<include>             ::= <include-open> ":" <string> ( "WITH" <whitespace> "PARSING" ( "ON" | "OFF" )? )? ")"
+<include>             ::= <include-open> ":" <string> ( "WITH" <whitespace>
+                            "PARSING" ( "ON" | "OFF" )? )? ")"
 
 <characters>          ::= <characters-open> ":" <string> ")"
 
@@ -1707,7 +1727,8 @@ in the docs directory of Scrappy.
                         | "PAN" <whitespace> "TO" <id> <duration>?
                         | "ZOOM" ( "OUT" | "IN" ) <duration>?
 
-<param-declaration>   ::= <id> ( "=" <expression> )? ( "," <param-declaration> )?
+<param-declaration>   ::= <id> ( "=" <expression> )? ( "," <param-declaration>
+                            )?
 
 <param-set>           ::= ( <id> "=" )? <expression> ( "," <param-set> )?
 
@@ -1722,57 +1743,78 @@ in the docs directory of Scrappy.
                               
 <inc-dec>             ::= ( "INC" | "DEC" ) ( "BY" <number> )?
 
-<scene-open>          ::= "[" [ "S" "s" ] [ "C" "c" ] [ "E" "e" ] [ "N" "n" ] [ "E" "e" ]
+<scene-open>          ::= "[" ( "S" | "s" ) ( "C" | "c" ) ( "E" | "e" ) ( "N" |
+                            "n" ) ( "E" | "e" )
 
-<enter-open>          ::= "[" [ "E" "e" ] [ "N" "n" ] [ "T" "t" ] [ "E" "e" ] [ "R" "r" ]
+<enter-open>          ::= "[" ( "E" | "e" ) ( "N" | "n" ) ( "T" | "t" ) ( "E" |
+                            "e" ) ( "R" | "r" )
 
-<exit-open>           ::= "[" [ "E" "e" ] [ "X" "x" ] [ "I" "i" ] [ "T" "t" ]
+<exit-open>           ::= "[" ( "E" | "e" ) ( "X" | "x" ) ( "I" | "i" ) ( "T" |
+                            "t" )
 
-<music-open>          ::= "[" [ "M" "m" ] [ "U" "u" ] [ "S" "s" ] [ "I" "i" ] [ "C" "c" ]
+<music-open>          ::= "[" ( "M" | "m" ) ( "U" | "u" ) ( "S" | "s" ) ( "I" |
+                            "i" ) ( "C" | "c" )
 
-<gfx-open>            ::= "[" [ "G" "g" ] [ "F" "f" ] [ "X" "x" ]
+<gfx-open>            ::= "[" ( "G" | "g" ) ( "F" | "f" ) ( "X" | "x" )
 
-<sfx-open>            ::= "[" [ "S" "s" ] [ "F" "f" ] [ "X" "x" ]
+<sfx-open>            ::= "[" ( "S" | "s" ) ( "F" | "f" ) ( "X" | "x" )
 
-<fmv-open>            ::= "[" [ "F" "f" ] [ "M" "m" ] [ "V" "v" ]
+<fmv-open>            ::= "[" ( "F" | "f" ) ( "M" | "m" ) ( "V" | "v" )
 
-<camera-open>         ::= "[" [ "C" "c" ] [ "A" "a" ] [ "M" "m" ] [ "E" "e" ] [ "R" "r" ] [ "A" "a" ]
+<camera-open>         ::= "[" ( "C" | "c" ) ( "A" | "a" ) ( "M" | "m" ) ( "E" |
+                            "e" ) ( "R" | "r" ) ( "A" | "a" )
 
-<choice-open>         ::= "[" [ "C" "c" ] [ "H" "h" ] [ "O" "o" ] [ "I" "i" ] [ "C" "c" ] [ "E" "e" ]
+<choice-open>         ::= "[" ( "C" | "c" ) ( "H" | "h" ) ( "O" | "o" ) ( "I" |
+                            "i" ) ( "C" | "c" ) ( "E" | "e" )
 
-<description-open>    ::= "(" [ "D" "d" ] [ "E" "e" ] [ "S" "s" ] [ "C" "c" ] [ "R" "r" ] [ "I" "i" ] [ "P" "p" ] [ "T" "t" ] [ "I" "i" ] [ "O" "o" ] [ "N" "n" ]
+<description-open>    ::= "(" ( "D" | "d" ) ( "E" | "e" ) ( "S" | "s" ) ( "C" |
+                            "c" ) ( "R" | "r" ) ( "I" | "i" ) ( "P" | "p" ) (
+                            "T" | "t" ) ( "I" | "i" ) ( "O" | "o" ) ( "N" | "n" )
 
-<section-open>        ::= "(" [ "S" "s" ] [ "E" "e" ] [ "C" "c" ] [ "T" "t" ] [ "I" "i" ] [ "O" "o" ] [ "N" "n" ]
+<section-open>        ::= "(" ( "S" | "s" ) ( "E" | "e" ) ( "C" | "c" ) ( "T" |
+                            "t" ) ( "I" | "i" ) ( "O" | "o" ) ( "N" | "n" )
 
-<flag-open>           ::= "(" [ "F" "f" ] [ "L" "l" ] [ "A" "a" ] [ "G" "g" ]
+<flag-open>           ::= "(" ( "F" | "f" ) ( "L" | "l" ) ( "A" | "a" ) ( "G" |
+                            "g" )
 
-<var-open>            ::= "(" [ "V" "v" ] [ "A" "a" ] [ "R" "r" ]
+<var-open>            ::= "(" ( "V" | "v" ) ( "A" | "a" ) ( "R" | "r" )
 
-<dialog-open>         ::= "(" [ "D" "d" ] [ "I" "i" ] [ "A" "a" ] [ "L" "l" ] [ "O" "o" ] [ "G" "g" ]
+<dialog-open>         ::= "(" ( "D" | "d" ) ( "I" | "i" ) ( "A" | "a" ) ( "L" |
+                            "l" ) ( "O" | "o" ) ( "G" | "g" )
 
-<goto-open>           ::= "(" [ "G" "g" ] [ "O" "o" ] <whitespace>? [ "T" "t" ] [ "O" "o" ]
+<goto-open>           ::= "(" ( "G" | "g" ) ( "O" | "o" ) <whitespace>? ( "T" |
+                            "t" ) ( "O" | "o" )
 
-<execute-open>        ::= "(" [ "E" "e" ] [ "X" "x" ] [ "E" "e" ] [ "C" "c" ] [ "U" "u" ] [ "T" "t" ] [ "E" "e" ]
+<execute-open>        ::= "(" ( "E" | "e" ) ( "X" | "x" ) ( "E" | "e" ) ( "C" |
+                            "c" ) ( "U" | "u" ) ( "T" | "t" ) ( "E" | "e" )
 
-<end-open>            ::= "(" [ "E" "e" ] [ "N" "n" ] [ "D" "d" ]
+<end-open>            ::= "(" ( "E" | "e" ) ( "N" | "n" ) ( "D" | "d" )
 
-<while-open>          ::= "(" [ "W" "w" ] [ "H" "h" ] [ "I" "i" ] [ "L" "l" ] [ "E" "e" ]
+<while-open>          ::= "(" ( "W" | "w" ) ( "H" | "h" ) ( "I" | "i" ) ( "L" |
+                            "l" ) ( "E" | "e" )
 
-<if-open>             ::= "(" [ "I" "i" ] [ "F" "f" ]
+<if-open>             ::= "(" ( "I" | "i" ) ( "F" | "f" )
 
-<else-if-open>        ::= "(" [ "E" "e" ] [ "L" "l" ] ( [ "S" "s" ] <whitespace>? [ "E" "e" ] )? [ "I" "i" ] [ "F" "f" ]
+<else-if-open>        ::= "(" ( "E" | "e" ) ( "L" | "l" ) ( ( "S" | "s" )
+                            <whitespace>? ( "E" | "e" ) )? ( "I" | "i" ) ( "F" |
+                            "f" )
 
-<else-open>           ::= "(" [ "E" "e" ] [ "L" "l" ] [ "S" "s" ] [ "E" "e" ]
+<else-open>           ::= "(" ( "E" | "e" ) ( "L" | "l" ) ( "S" | "s" ) ( "E" |
+                            "e" )
 
-<include-open>        ::= "(" [ "I" "i" ] [ "N" "n" ] [ "C" "c" ] [ "L" "l" ] [ "U" "u" ] [ "D" "d" ] [ "E" "e" ]
+<include-open>        ::= "(" ( "I" | "i" ) ( "N" | "n" ) ( "C" | "c" ) ( "L" |
+                            "l" ) ( "U" | "u" ) ( "D" | "d" ) ( "E" | "e" )
 
-<characters-open>     ::= "(" [ "C" "c" ] [ "H" "h" ] [ "A" "a" ] [ "R" "r" ] [ "A" "a" ] [ "C" "c" ] [ "T" "t" ] [ "E" "e" ] [ "R" "r" ] [ "S" "s" ]
+<characters-open>     ::= "(" ( "C" | "c" ) ( "H" | "h" ) ( "A" | "a" ) ( "R" |
+                            "r" ) ( "A" | "a" ) ( "C" | "c" ) ( "T" | "t" ) (
+                            "E" | "e" ) ( "R" | "r" ) ( "S" | "s" )
 
 <id>                  ::= <alpha> ( <alphanumeric> | "-" )*
 
 <string>              ::= '"' <non-dquote>* ( <backslash> . <non-dquote>* )* '"'
 
-<number>              ::= ( ( "+" | "-" ) <whitespace>? )? <digit>+ ( "." <digit>* )?
+<number>              ::= ( ( "+" | "-" ) <whitespace>? )? <digit>+ ( "."
+                            <digit>* )?
 
 <unquoted-string>     ::= <non-rparen>* ( <backslash> . <non-rparen>* )*
 
@@ -1792,7 +1834,16 @@ in the docs directory of Scrappy.
 
 <alphanumeric>        ::= <alpha> | <digit>
 
-<digit>               ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+<digit>               ::= "0"
+                        | "1"
+                        | "2"
+                        | "3"
+                        | "4"
+                        | "5"
+                        | "6"
+                        | "7"
+                        | "8"
+                        | "9"
 
 <alpha>               ::= [ "A" - "Z" "a" - "z" "_" ]
 ```
