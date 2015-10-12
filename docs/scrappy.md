@@ -157,14 +157,22 @@ OFF
 
 #### Identifiers ####
 Identifiers reference a particular object. They are used for the names of
-variables, flags, sections, characters, and more. Identifiers are
-case-sensitive; two identifiers with the same spelling but different case refer
-to two different things. Allowed characters in identifiers are underscores
-(`_`), hyphens (`-`), the letters A-Z (either upper or lower case), and the
-digits 0-9; however, identifiers cannot start with a digit and they cannot be a
-reserved word. Also, though hyphens are allowed in Scrappy identifiers, they
-will be converted to underscores during compilation if the target language does
-not support them.
+variables, flags, sections, characters, and more.
+
+In Scrappy, identifiers do not need to be defined before they are used. It is
+possible that they will need to be defined before compiled output will be valid
+(usually the case with a program-consumed output), but this can be solved by
+[including](#include-annotation) a file in the target language that contains the
+definitions. For information on which identifiers a target output format
+requires to be defined, see the compiler notes for that output format.
+
+Identifiers are case-sensitive; two identifiers with the same spelling but
+different case refer to two different objects. Allowed characters in identifiers
+are underscores (`_`), hyphens (`-`), the letters A-Z (either upper or lower
+case), and the digits 0-9; however, identifiers cannot start with a digit and
+they cannot be a reserved word. Also, though hyphens are allowed in Scrappy
+identifiers, they will be converted to underscores during compilation if the
+target language does not support them.
 
 ```
 # Identifier examples:
