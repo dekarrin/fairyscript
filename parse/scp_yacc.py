@@ -342,10 +342,15 @@ def p_if_annotation_2_multi_else(p):
 	ifs = [ {'condition': p[3], 'statements': p[6]} ] + p[8] + [ {'condition': None, 'statements': p[12]} ]
 	p[0] = make_annotation('IF', branches=ifs)
 	
-def p_include_annotation_2_unq_str(p):
-	'''include_annotation : ANNOTATIONOPEN_INCLUDE ':' STRING ')' '''
-	p[0] = make_annotation('INCLUDE', file=('string', unescape(p[3])))
-    
+def p_include_annotation_2_str(p):
+	'''include_annotation : ANNOTATIONOPEN_INCLUDE ':' STRING ')'
+						  | ANNOTATIONOPEN_INCLUDE ':' STRING WITH_PARSING ')' '''
+	p[0] = make_annotation('INCLUDE', file=('string', unescape(p[3])), parsing=('boolean', True))
+	
+def p_include_annotation_2_str_parsing_onoff(p):
+	'''include_annotation : ANNOTATIONOPEN_INCLUDE ':' STRING WITH_PARSING bool_literal ')' '''
+	p[0] = make_annotation('INCLUDE', file=('string', unescape(p[3])), parsing=p[5])
+	
 def p_characters_annotation_2_str(p):
     '''characters_annotation : ANNOTATIONOPEN_CHARACTERS ':' STRING ')' '''
     p[0] = make_annotation('CHARACTERS', file=('string', unescape(p[3])))
@@ -468,13 +473,17 @@ def p_params_declaration_2_id_expr_params(p):
 	'''params_declaration : ID '=' expression ',' params_declaration'''
 	p[0] = [ {'name': ('id', p[1]), 'default': p[3] } ] + p[5]
 	
-def p_bool_expression_2_off(p):
-	'bool_expression : OFF'
+def p_bool_literal_2_off(p):
+	'bool_literal : OFF'
 	p[0] = ('boolean', False)
 	
-def p_bool_expression_2_on(p):
-	'bool_expression : ON'
+def p_bool_literal_2_on(p):
+	'bool_literal : ON'
 	p[0] = ('boolean', True)
+	
+def p_bool_expression_2_bool_literal(p):
+	'bool_expression : bool_literal'
+	p[0] = p[1]
 	
 def p_bool_expression_2_bare(p):
 	'bool_expression : BARE_EXPRESSION'

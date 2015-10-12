@@ -72,7 +72,8 @@ tokens = [
 	'SHOW_IF',
 	'COMMENT',
 	'UNQUOTED_STRING',
-	'WITH_PREVIOUS'
+	'WITH_PREVIOUS',
+	'WITH_PARSING'
 ] + reserved
 
 literals = [',', '=', ':', '*', '}', '{', '(', ')', ']']
@@ -121,6 +122,10 @@ def t_descopen_colon(t):
 	t.lexer.desc_start = t.lexer.lexpos
 	t.lexer.begin('descscan')
 	t.type = ':'
+	return t
+	
+def t_WITH_PARSING(t):
+	r'WITH\sPARSING'
 	return t
 
 def t_FADEOUT_OLD(t):

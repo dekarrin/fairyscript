@@ -1701,7 +1701,7 @@ in the docs directory of Scrappy.
 <else>                ::= <else-open> ")" "{" <block> "}"
 
 <include>             ::= <include-open> ":" <string> ( "WITH" <whitespace>
-                            "PARSING" ( "ON" | "OFF" )? )? ")"
+                            "PARSING" <boolean-literal>? )? ")"
 
 <characters>          ::= <characters-open> ":" <string> ")"
 
@@ -1745,8 +1745,10 @@ in the docs directory of Scrappy.
 
 <param-set>           ::= ( <id> "=" )? <expression> ( "," <param-set> )?
 
-<boolean-expression>  ::= "OFF"
+<boolean-literal>     ::= "OFF"
                         | "ON"
+
+<boolean-expression>  ::= <boolean-literal>
                         | <raw-expression>
                         | <id>
                               
