@@ -61,6 +61,7 @@ tokens = [
 	'ANNOTATIONOPEN_ELIF',
 	'ANNOTATIONOPEN_WHILE',
 	'ANNOTATIONOPEN_INCLUDE',
+    'ANNOTATIONOPEN_CHARACTERS',
 	'ID',
 	'PARAMSOPEN',
 	'STRING',
@@ -99,6 +100,7 @@ t_ANNOTATIONOPEN_IF = r"\([Ii][Ff]"
 t_ANNOTATIONOPEN_ELSE = r"\([Ee][Ll][Ss][Ee]"
 t_ANNOTATIONOPEN_ELIF = r"\([Ee][Ll](?:[Ss][Ee]\s?)?[Ii][Ff]"
 t_ANNOTATIONOPEN_WHILE = r"\([Ww][Hh][Ii][Ll][Ee]"
+t_ANNOTATIONOPEN_CHARACTERS = r"\([Cc][Hh][Aa][Rr][Aa][Cc][Tt][Ee][Rr][Ss]"
 t_STRING = r"\"[^\"\\]*(?:\\.[^\"\\]*)*\""
 t_NUMBER = r"(?:(?:\+|-)\s*)?\d+(\.\d*)?"
 t_PYTHON_BLOCK = r"\([Pp][Yy][Tt][Hh][Oo][Nn]\)\s*\{[^}\\]*(?:\\.[^}\\]*)*\}"

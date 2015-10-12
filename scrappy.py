@@ -82,7 +82,7 @@ def process_includes(ast):
 			wh_struct = {'type': 'annotation', 'instruction': 'WHILE', 'condition': s['condition'], 'statements': process_includes(s['statements'])}
 			new_ast.append(wh_struct)
 		elif s['instruction'] == 'INCLUDE':
-			with open(s['text'][1], 'r') as inc_file:
+			with open(s['file'][1], 'r') as inc_file:
 				contents = inc_file.read()
 			inc_ast = parse_manuscript(contents)
 			new_ast += inc_ast

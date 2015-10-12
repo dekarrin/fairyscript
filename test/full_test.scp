@@ -2,6 +2,8 @@
 
 (goto: choice-section)
 
+(Characters: "chars.csv")
+
 [scene: Bobs-garage-2]
 [scene: FADE TO my-house]
 

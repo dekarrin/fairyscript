@@ -44,6 +44,7 @@ def p_annotation_2_specific(p):
 					| end_annotation
 					| while_annotation
 					| include_annotation
+                    | characters_annotation
 					| if_annotation'''
 	p[0] = p[1]
 	
@@ -343,7 +344,11 @@ def p_if_annotation_2_multi_else(p):
 	
 def p_include_annotation_2_unq_str(p):
 	'''include_annotation : ANNOTATIONOPEN_INCLUDE ':' UNQUOTED_STRING ')' '''
-	p[0] = make_annotation('INCLUDE', text=('string', unescape(' ' + p[3] + ' ')))
+	p[0] = make_annotation('INCLUDE', file=('string', unescape(' ' + p[3] + ' ')))
+    
+def p_characters_annotation_2_str(p):
+    '''characters_annotation : ANNOTATIONOPEN_CHARACTERS ':' STRING ')' '''
+    p[0] = make_annotation('CHARACTERS', file=('string', unescape(p[3])))
 	
 def p_transition_to_2_id_to(p):
 	'transition_to : ID TO'

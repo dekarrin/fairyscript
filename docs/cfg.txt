@@ -32,6 +32,7 @@ annotation				: description_annotation
 						| while_annotation
 						| if_annotation
 						| include_annotation
+                        | characters_annotation
 						| PYTHON_BLOCK
 						
 line					: ID ':' STRING
@@ -129,6 +130,8 @@ if_annotation			: ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}'
 						| ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}' else_ifs ANNOTATIONOPEN_ELSE ')' '{' block '}'
 						
 include_annotation		: ANNOTATIONOPEN_INCLUDE ':' UNQUOTED_STRING ')'
+
+characters_annotation   : ANNOTATIONOPEN_CHARACTERS ':' STRING ')'
 					
 transition_to			: ID TO
 	
