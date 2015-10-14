@@ -5,4 +5,4 @@ python:
 
 install: "pip install lxml"
 
-script: "test/run_tests.sh"
+script: "bash test/run_tests.sh"
