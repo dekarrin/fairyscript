@@ -461,7 +461,7 @@ class RenpyCompiler(object):
 				self.add_line()
 				self.add_line()
 			except IOError as e:
-				self.add_warning("file_inclusion", "can't include '%s': %s" % (include['file'][1], str(e))
+				self.add_warning("file_inclusion", "can't include '%s': %s" % (include['file'][1], str(e)))
 			self._indent_lev = old_indent
 			
 	def _compile_CHARACTERS(self, characters):
