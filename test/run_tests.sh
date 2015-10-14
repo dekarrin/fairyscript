@@ -1,5 +1,3 @@
 #!/bin/bash
 
-python scrappy.py -i test/full_test.scp
-
-exit 1
+python scrappy.py -i test/full_test.scp -o test.rpy
