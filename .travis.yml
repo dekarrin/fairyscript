@@ -9,6 +9,6 @@ python:
   - "3.5-dev"
   - "nightly"
 
-install: "pip install -r lxml"
+install: "pip install lxml"
 
 script: "python test/run_tests.py"
