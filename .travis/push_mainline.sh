@@ -9,7 +9,7 @@ short_commit=$(git rev-parse --short HEAD)
 # get entire repo
 repo_temp="$(mktemp -d)"
 
-GIT_MERGE_AUTOEDIT=no
+export GIT_MERGE_AUTOEDIT=no
 git clone "https://github.com/$TRAVIS_REPO_SLUG" "$repo_temp"
 cd "$repo_temp"
 git checkout dev
