@@ -2,9 +2,9 @@
 
 [ "$TRAVIS_BRANCH" != "dev" ] && return 0
 
+short_commit=$(git rev-parse --short HEAD)
 git config --global user.email "builds@travis-ci.com"
 git config --global user.name "Travis CI"
-short_commit=$(git rev-parse --short HEAD)
 git fetch
 git reset --hard
 git checkout master --force
