@@ -13,5 +13,6 @@ git clone "https://github.com/$TRAVIS_REPO_SLUG" "$repo_temp"
 cd "$repo_temp"
 git checkout dev
 git checkout master
-git merge --no-ff -m "Merged commit $short_commit of dev into master after successful build" dev
+git merge --no-ff -m "Merged commit $short_commit of dev into master after successful build
+[ci skip]" dev
 git push -q "https://$GH_TOKEN@github.com/$TRAVIS_REPO_SLUG.git" master
