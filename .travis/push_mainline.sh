@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo $TRAVIS_BRANCH
+[ "$GH_TOKEN" != "" ] && echo "fine"
+echo $TRAVIS_REPO_SLUG
 [ "$TRAVIS_BRANCH" != "dev" ] && return 0
 
 short_commit=$(git rev-parse --short HEAD)
