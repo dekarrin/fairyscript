@@ -12,7 +12,9 @@ repo_temp="$(mktemp -d)"
 export GIT_MERGE_AUTOEDIT=no
 git clone "https://github.com/$TRAVIS_REPO_SLUG" "$repo_temp"
 cd "$repo_temp"
+git checkout master
 git checkout dev
+git rebase master
 git checkout master
 git merge dev
 git push -q "https://$GH_TOKEN@github.com/$TRAVIS_REPO_SLUG.git" master
