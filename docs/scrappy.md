@@ -1720,7 +1720,8 @@ in the docs directory of Scrappy.
 
 <else>                ::= <else-open> ")" "{" <block> "}"
 
-<include>             ::= <include-open> ":" <string> ( "WITH" <whitespace>
+<include>             ::= <include-open> ":" <string> ( "FOR" <whitespace>
+                            "TARGET" <id-list> )? ( "WITH" <whitespace>
                             "PARSING" <boolean-literal>? )? ")"
 
 <characters>          ::= <characters-open> ":" <string> ")"
@@ -1845,6 +1846,8 @@ in the docs directory of Scrappy.
                             "E" | "e" ) ( "R" | "r" ) ( "S" | "s" )
 
 <id>                  ::= <alpha> ( <alphanumeric> | "-" )*
+
+<id-list>             ::= ( <id-list> "AND" )? <id>
 
 <string>              ::= '"' <non-dquote>* ( <backslash> . <non-dquote>* )* '"'
 
