@@ -93,12 +93,12 @@ t_ANNOTATIONOPEN_DIALOG = r"\([Dd][Ii][Aa][Ll][Oo][Gg]"
 t_ANNOTATIONOPEN_SECTION = r"\([Ss][Ee][Cc][Tt][Ii][Oo][Nn]"
 t_ANNOTATIONOPEN_FLAGSET = r"\([Ff][Ll][Aa][Gg]"
 t_ANNOTATIONOPEN_VARSET = r"\([Vv][Aa][Rr]"
-t_ANNOTATIONOPEN_GOTO = r"\([Gg][Oo]\s?[Tt][Oo]"
+t_ANNOTATIONOPEN_GOTO = r"\([Gg][Oo]\s*[Tt][Oo]"
 t_ANNOTATIONOPEN_EXECUTE = r"\([Ee][Xx][Ee][Cc][Uu][Tt][Ee]"
 t_ANNOTATIONOPEN_END = r"\([Ee][Nn][Dd]"
 t_ANNOTATIONOPEN_IF = r"\([Ii][Ff]"
 t_ANNOTATIONOPEN_ELSE = r"\([Ee][Ll][Ss][Ee]"
-t_ANNOTATIONOPEN_ELIF = r"\([Ee][Ll](?:[Ss][Ee]\s?)?[Ii][Ff]"
+t_ANNOTATIONOPEN_ELIF = r"\([Ee][Ll](?:[Ss][Ee]\s*)?[Ii][Ff]"
 t_ANNOTATIONOPEN_WHILE = r"\([Ww][Hh][Ii][Ll][Ee]"
 t_ANNOTATIONOPEN_CHARACTERS = r"\([Cc][Hh][Aa][Rr][Aa][Cc][Tt][Ee][Rr][Ss]"
 t_ANNOTATIONOPEN_INCLUDE = r"\([Ii][Nn][Cc][Ll][Uu][Dd][Ee]"
@@ -126,35 +126,35 @@ def t_descopen_colon(t):
 	return t
 	
 def t_FOR_TARGET(t):
-	r'FOR\sTARGET'
+	r'FOR\s+TARGET'
 	return t
 	
 def t_WITH_PARSING(t):
-	r'WITH\sPARSING'
+	r'WITH\s+PARSING'
 	return t
 
 def t_FADEOUT_OLD(t):
-	r"FADEOUT\sOLD"
+	r"FADEOUT\s+OLD"
 	return t
 	
 def t_WITH_PREVIOUS(t):
-	r"WITH\sPREVIOUS"
+	r"WITH\s+PREVIOUS"
 	return t
 	
 def t_SNAP_TO(t):
-	r"SNAP\sTO"
+	r"SNAP\s+TO"
 	return t
 
 def t_PAN_TO(t):
-	r"PAN\sTO"
+	r"PAN\s+TO"
 	return t
 	
 def t_SHOW_IF(t):
-	r"SHOW\sIF"
+	r"SHOW\s+IF"
 	return t
 
 def t_PARAMSOPEN(t):
-	r"WITH\sPARAMS"
+	r"WITH\s+PARAMS"
 	return t
 
 def t_INITIAL_descscan_descid_ID(t):

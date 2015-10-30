@@ -1,6 +1,6 @@
 # Test combinations of the grammar
 
-(include: "test/quickstart.rpy" WITH PARSING OFF)
+(include: "test/quickstart.rpy" WITH  PARSING OFF)
 (include: "test/quickstart.rpy" FOR TARGET renpy WITH PARSING OFF)
 
 (goto: choice-section)
