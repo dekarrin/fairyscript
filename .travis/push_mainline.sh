@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# This script rebases dev on the latest master and then merges dev to master.
+# The new master is then pushed to GitHub.
+#
+# This will keep master and dev even with each other, assuming that dev diverged
+
 [ "$TRAVIS_BRANCH" != "dev" ] && return 0
 
 git config --global user.email "builds@travis-ci.com"
