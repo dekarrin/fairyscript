@@ -38,6 +38,7 @@ def word_compiler():
 def lex_manuscript(script_text):
 	symbols = []
 	lexer = parse.scp_lex.lexer
+	lexer.successful = True
 	lexer.input(script_text)
 	for tok in lexer:
 		symbols.append(tok)
@@ -45,6 +46,7 @@ def lex_manuscript(script_text):
 
 def parse_manuscript(script_text):
 	parser = parse.scp_yacc.parser
+	parser.successful = True
 	script_ast = parser.parse(script_text)
 	return script_ast
 	
@@ -53,6 +55,7 @@ def parse_symbols(symbols):
 		for s in symbols:
 			yield s
 	parser = parse.scp_yacc.parser
+	parser.successful = True
 	script_ast = parser.parse(tokenfunc=grab_token)
 	return script_ast
 	
@@ -232,12 +235,11 @@ if __name__ == "__main__":
 		if args.input is None:
 			args.input = ['--'] # don't pass into set_defaults() or else '--' will always be present
 		
+		output_file = None
 		if args.output == '--':
 			if args.output_mode == 'word':
 				raise InvalidOutputFormatException("cannot output DOCX file to stdout")
 			output_file = sys.stdout
-		elif args.output_mode != 'word':
-			output_file = open(args.output, 'w')
 		
 		for filename in args.input:
 			success = True
@@ -250,6 +252,7 @@ if __name__ == "__main__":
 			if args.output_mode == 'lex':
 				if args.input_mode == 'scp':
 					output = lex_manuscript(file_contents)
+					success = get_lexer().successful
 				elif args.input_mode == 'lex':
 					output = eval(file_contents)
 				else:
@@ -257,13 +260,15 @@ if __name__ == "__main__":
 			else:
 				if args.input_mode == 'scp':
 					ast = parse_manuscript(file_contents)
+					success = get_parser().successful
 				elif args.input_mode == 'lex':
 					ast = parse_symbols(eval(file_contents))
+					success = get_parser().successful
 				elif args.input_mode == 'ast':
 					ast = eval(file_contents)
 				else:
 					raise InvalidInputFormatException("to output AST or compiled formats, input format must be scp, lex, or ast")
-				if get_parser().successful:
+				if success:
 					if args.output_mode == 'ast':
 						output = ast
 					elif args.output_mode == 'renpy':
@@ -276,10 +281,11 @@ if __name__ == "__main__":
 						output = compile_to_word(ast)
 						if not args.quiet:
 							show_warnings(word_compiler())
-				else:
-					success = False
 			
 			if success:
+				if output_file == None and args.output_mode != 'word':
+					output_file = open(args.output, 'w')
+					
 				if (args.output_mode == 'lex' or args.output_mode == 'ast') and args.pretty:
 					pprint.pprint(output, output_file)
 				elif args.output_mode == 'word':
@@ -291,7 +297,7 @@ if __name__ == "__main__":
 							print "Make sure that '" + args.output + "' is not open in another application"
 				else:
 					output_file.write(str(output))
-		if args.output != '--' and args.output_mode != 'word':
+		if args.output != '--' and output_file is not None:
 			output_file.close()
 	except (InvalidInputFormatException, InvalidOutputFormatException), e:
 		print("Fatal error: " + e.message)

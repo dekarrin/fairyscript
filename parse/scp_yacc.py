@@ -683,4 +683,3 @@ def make_choice(text, jump_target, varsets=None, condition=None):
 	return {'text': text, 'target': jump_target, 'sets': varsets, 'condition': condition}
 	
 parser = yacc.yacc()
-parser.successful = True

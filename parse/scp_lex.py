@@ -205,6 +205,7 @@ def t_ANY_newline(t):
 	
 def t_ANY_error(t):
 	print("Illegal character '%s' on line %d" % (t.value[0], t.lexer.lineno))
+	t.lexer.successful = False
 	t.lexer.skip(1)
 
 lexer = lex.lex()
