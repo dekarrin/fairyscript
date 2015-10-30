@@ -22,8 +22,6 @@ manuscripts written in this format, and compiling them to the following formats:
 * .SCP -> .RPY (Ren'py Script)
 * .SCP -> .DOCX (Word Office)
 
-Stay tuned for more formats in the future!
-
 ### Installation ###
 As a python script, scrappy does not need to be installed; simply having it
 will allow it to be executed. However, scrappy does have some requirements:
