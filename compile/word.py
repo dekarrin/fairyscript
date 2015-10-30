@@ -545,7 +545,7 @@ class DocxCompiler(object):
 		self.add_internal_link(section_name, bookmark)
 	
 	def _compile_INCLUDE(self, include):
-		if include['langs'] is None or 'word' in [x[1] for x in include['langs']]:
+		if not include['parsing'][1]:
 			try:
 				with open(include['file'][1]) as file:
 					for line in file:

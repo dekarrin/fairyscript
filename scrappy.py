@@ -69,8 +69,8 @@ def show_warnings(compiler):
 	for w in warns:
 		print "Compiler warning: " + w
 		
-def preprocess(script_ast, quiet=False):
-	def preproc_includes(ast):
+def preprocess(script_ast, target_lang, quiet=False):
+	def preproc_includes(ast, lang):
 		new_ast = []
 		for s in ast:
 			if s['type'] == 'line' or s['type'] == 'comment':
@@ -90,7 +90,7 @@ def preprocess(script_ast, quiet=False):
 						contents = inc_file.read()
 					inc_ast = parse_manuscript(contents)
 					new_ast += preproc_includes(inc_ast)
-				else:
+				elif s['langs'] is None or lang in [x[1] for x in s['langs']]:
 					new_ast.append(s)
 			else:
 				new_ast.append(s)
@@ -178,7 +178,7 @@ def read_chars_file(file_path):
 
 if __name__ == "__main__":
 	def precompile(ast, args, compiler):
-		ast, chars = preprocess(ast, quiet=args.quiet)
+		ast, chars = preprocess(ast, args.output_mode, quiet=args.quiet)
 		compiler.set_options(args)
 		compiler.set_characters(chars)
 		return ast
