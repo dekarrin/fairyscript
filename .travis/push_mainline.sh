@@ -7,10 +7,6 @@
 # only by changes that can be fast-forwarded (which should be the case if
 # master is never committed to directly).
 
-mail -s "A test" "testingtravis@mailinator.com" <<EOF
-I wonder if this email will be sent.
-EOF
-
 [ "$TRAVIS_BRANCH" != "dev" ] && return 0
 
 git config --global user.email "builds@travis-ci.com"
