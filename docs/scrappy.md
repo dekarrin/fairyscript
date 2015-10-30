@@ -1374,8 +1374,25 @@ containing the path to the file as a parameter to the instruction.
 (Include: "files/chapter2.scp")
 ```
 
+To specify that the file should only be included when compiling to a particular
+format, use the keywords `FOR TARGET` followed by the identifier for the target
+format. Multiple formats are separated with the `AND` keyword. The target
+identifier is the same as the command line option required to compile to that
+format; please see [compiler.md](compiler.md) for a complete list of target
+formats supported by the Scrappy compiler.
+
+```
+# include the file 'chapter2.scp' when the script is compiled to DOCX format:
+(Include: "chapter2.scp" FOR TARGET word)
+
+# include the file 'chapter2.scp' when the script is compiled to DOCX format and
+# when the script is compiled to Ren'Py format:
+(Include: "chapter2.scp" FOR TARGET word AND renpy)
+```
+
 To specify whether the contents of the file are to be parsed as Scrappy code,
-use the keywords `WITH PARSING` after the name of the file, optionally followed
+use the keywords `WITH PARSING` after the name of the file and after the `FOR
+TARGET` clause if it exists. The `WITH PARSING` keywords are optionally followed
 by either the keyword `ON` or the keyword `OFF`. If `ON` is given, the contents
 of the included file will be parsed as Scrappy code and included in the current
 file before compilation. If `OFF` is given, the contents of the file are not
@@ -1390,6 +1407,9 @@ compilation. If neither keyword is given, `ON` is assumed.
 
 # include constants.rpy without modification in the compiled output:
 (Include: "constants.rpy" WITH PARSING OFF)
+
+# include constants.rpy without modification only when compiling to Ren'Py:
+(Include: "constants.rpy" FOR TARGET renpy WITH PARSING OFF)
 ```
 
 #### See Also ####
