@@ -85,13 +85,14 @@ def preprocess(script_ast, target_lang, quiet=False):
 				wh_struct = {'type': 'annotation', 'instruction': 'WHILE', 'condition': s['condition'], 'statements': preproc_includes(s['statements'], lang)}
 				new_ast.append(wh_struct)
 			elif s['instruction'] == 'INCLUDE':
-				if s['parsing'][1]:
-					with open(s['file'][1], 'r') as inc_file:
-						contents = inc_file.read()
-					inc_ast = parse_manuscript(contents)
-					new_ast += preproc_includes(inc_ast, lang)
-				elif s['langs'] is None or lang in [x[1] for x in s['langs']]:
-					new_ast.append(s)
+				if s['langs'] is None or lang in [x[1] for x in s['langs']]:
+					if s['parsing'][1]:
+						with open(s['file'][1], 'r') as inc_file:
+							contents = inc_file.read()
+						inc_ast = parse_manuscript(contents)
+						new_ast += preproc_includes(inc_ast, lang)
+					else:
+						new_ast.append(s)
 			else:
 				new_ast.append(s)
 		return new_ast
