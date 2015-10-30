@@ -1,4 +1,6 @@
-# This script is specifically designed to hit every possible combination of the grammar.
+# Test combinations of the grammar
+
+(include: "test/quickstart.rpy" WITH PARSING OFF)
 
 (goto: choice-section)
 

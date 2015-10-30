@@ -545,7 +545,13 @@ class DocxCompiler(object):
 		self.add_internal_link(section_name, bookmark)
 	
 	def _compile_INCLUDE(self, include):
-		pass
+		if include['langs'] is None or 'word' in [x[1] for x in include['langs']]:
+			try:
+				with open(include['file'][1]) as file:
+					for line in file:
+						self.add_paragraph(line)
+			except IOError as e:
+				self.add_warning("file_inclusion", "can't include '%s': %s" % (include['file'][1], str(e)))
 	
 	def _compile_END(self, end):
 		if 'retval' in end:
