@@ -130,8 +130,11 @@ if_annotation			: ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}'
 						| ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}' else_ifs ANNOTATIONOPEN_ELSE ')' '{' block '}'
 						
 include_annotation		: ANNOTATIONOPEN_INCLUDE ':' STRING ')'
+						| ANNOTATIONOPEN_INCLUDE ':' STRING FOR_TARGET id_list ')'
 						| ANNOTATIONOPEN_INCLUDE ':' STRING WITH_PARSING ')'
 						| ANNOTATIONOPEN_INCLUDE ':' STRING WITH_PARSING bool_literal ')'
+						| ANNOTATIONOPEN_INCLUDE ':' STRING FOR_TARGET id_list WITH_PARSING ')'
+						| ANNOTATIONOPEN_INCLUDE ':' STRING FOR_TARGET id_list WITH_PARSING bool_literal ')'
 
 characters_annotation   : ANNOTATIONOPEN_CHARACTERS ':' STRING ')'
 					
@@ -228,3 +231,6 @@ varsets					: SET ID inc_dec
 						
 id_or_all				: ID
 						| ALL
+						
+id_list					: ID
+						| id_list AND ID
