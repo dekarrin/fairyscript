@@ -2,6 +2,7 @@
 
 (include: "test/quickstart.rpy" WITH   PARSING OFF)
 (include: "test/quickstart.rpy" FOR TARGET renpy WITH PARSING OFF)
+(include: "test/bindings.rpy" FOR TARGET renpy WITH PARSING OFF)
 
 (goto: choice-section)
 

@@ -1,4 +1,5 @@
 import scp
+import re
 
 class RenpyCompiler(object):
 	def __init__(self):
@@ -456,8 +457,19 @@ class RenpyCompiler(object):
 			self._indent_lev = 0
 			try:
 				with open(include['file'][1]) as file:
+					lineno = 0
 					for line in file:
+						lineno += 1
 						self.add(line)
+						if (include['file'][1].endswith('.rpy')):
+							if (re.match(r'^#:\s*[Ss][Cc][Rr][Aa][Pp][Pp][Yy]-[Gg][Ff][Xx](?:\s|$)', line.strip())):
+								m = re.match(r'^#:\s*[Ss][Cc][Rr][Aa][Pp][Pp][Yy]-[Gg][Ff][Xx]\s+(\S+)\s+(\S+)', line.strip())
+								if m:
+									effect = m.group(1)
+									target = m.group(2)
+									self.add_gfx_target(effect, target)
+								else:
+									self.add_warning("scrappy_directive", "malformed scrappy directive in included file '%s' on line %d" % (include['file'][1], lineno))
 				self.add_line()
 				self.add_line()
 			except IOError as e:
