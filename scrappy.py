@@ -78,18 +78,18 @@ def preprocess(script_ast, target_lang, quiet=False):
 			elif s['instruction'] == 'IF':
 				if_struct = {'type': 'annotation', 'instruction': 'IF', 'branches': []}
 				for br in s['branches']:
-					if_branch = {'condition': br['condition'], 'statements': preproc_includes(br['statements'])}
+					if_branch = {'condition': br['condition'], 'statements': preproc_includes(br['statements'], lang)}
 					if_struct['branches'].append(if_branch)
 				new_ast.append(if_struct)
 			elif s['instruction'] == 'WHILE':
-				wh_struct = {'type': 'annotation', 'instruction': 'WHILE', 'condition': s['condition'], 'statements': preproc_includes(s['statements'])}
+				wh_struct = {'type': 'annotation', 'instruction': 'WHILE', 'condition': s['condition'], 'statements': preproc_includes(s['statements'], lang)}
 				new_ast.append(wh_struct)
 			elif s['instruction'] == 'INCLUDE':
 				if s['parsing'][1]:
 					with open(s['file'][1], 'r') as inc_file:
 						contents = inc_file.read()
 					inc_ast = parse_manuscript(contents)
-					new_ast += preproc_includes(inc_ast)
+					new_ast += preproc_includes(inc_ast, lang)
 				elif s['langs'] is None or lang in [x[1] for x in s['langs']]:
 					new_ast.append(s)
 			else:
@@ -118,7 +118,7 @@ def preprocess(script_ast, target_lang, quiet=False):
 		return chars_dict
 	
 	new_script_ast = []
-	new_script_ast = preproc_includes(script_ast)
+	new_script_ast = preproc_includes(script_ast, target_lang)
 	chars = preproc_chars(new_script_ast)
 	return new_script_ast, chars
 
