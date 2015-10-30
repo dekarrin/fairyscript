@@ -3,7 +3,9 @@
 # This script rebases dev on the latest master and then merges dev to master.
 # The new master is then pushed to GitHub.
 #
-# This will keep master and dev even with each other, assuming that dev diverged
+# Master and dev will be kept even with each other, assuming that dev diverges
+# only by changes that can be fast-forwarded (which should be the case if
+# master is never committed to directly).
 
 [ "$TRAVIS_BRANCH" != "dev" ] && return 0
 
