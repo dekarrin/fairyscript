@@ -12,3 +12,6 @@ notes on compiling to particular output formats.
 	1. [DOCX](#docx)
 	2. [Ren'Py](#ren-py)
 	
+## Introduction ##
+The Scrappy compiler is used for converting Scrappy manuscripts into other
+formats.
