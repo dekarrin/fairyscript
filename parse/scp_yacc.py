@@ -621,6 +621,7 @@ def p_id_list_2_id_list_and_id(p):
 	p[0] = p[1] + [ ('id', p[3]) ]
 	
 def p_error(p):
+	parser.successful = False
 	if not p:
 		print "Error parsing script: unexpected end-of-file"
 	else:
@@ -682,3 +683,4 @@ def make_choice(text, jump_target, varsets=None, condition=None):
 	return {'text': text, 'target': jump_target, 'sets': varsets, 'condition': condition}
 	
 parser = yacc.yacc()
+parser.successful = True

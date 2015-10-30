@@ -240,6 +240,7 @@ if __name__ == "__main__":
 			output_file = open(args.output, 'w')
 		
 		for filename in args.input:
+			success = True
 			if filename == '--':
 				file_contents = sys.stdin.read()
 			else:
@@ -262,31 +263,34 @@ if __name__ == "__main__":
 					ast = eval(file_contents)
 				else:
 					raise InvalidInputFormatException("to output AST or compiled formats, input format must be scp, lex, or ast")
-					
-				if args.output_mode == 'ast':
-					output = ast
-				elif args.output_mode == 'renpy':
-					ast = precompile(ast, args, renpy_compiler())
-					output = compile_to_renpy(ast)
-					if not args.quiet:
-						show_warnings(renpy_compiler())
+				if get_parser().successful:
+					if args.output_mode == 'ast':
+						output = ast
+					elif args.output_mode == 'renpy':
+						ast = precompile(ast, args, renpy_compiler())
+						output = compile_to_renpy(ast)
+						if not args.quiet:
+							show_warnings(renpy_compiler())
+					elif args.output_mode == 'word':
+						ast = precompile(ast, args, word_compiler())
+						output = compile_to_word(ast)
+						if not args.quiet:
+							show_warnings(word_compiler())
+				else:
+					success = False
+			
+			if success:
+				if (args.output_mode == 'lex' or args.output_mode == 'ast') and args.pretty:
+					pprint.pprint(output, output_file)
 				elif args.output_mode == 'word':
-					ast = precompile(ast, args, word_compiler())
-					output = compile_to_word(ast)
-					if not args.quiet:
-						show_warnings(word_compiler())
-					
-			if (args.output_mode == 'lex' or args.output_mode == 'ast') and args.pretty:
-				pprint.pprint(output, output_file)
-			elif args.output_mode == 'word':
-				try:
-					output.save(args.output)
-				except IOError, e:
-					if e.errno == 13:
-						print "Error writing file: permission denied"
-						print "Make sure that '" + args.output + "' is not open in another application"
-			else:
-				output_file.write(str(output))
+					try:
+						output.save(args.output)
+					except IOError, e:
+						if e.errno == 13:
+							print "Error writing file: permission denied"
+							print "Make sure that '" + args.output + "' is not open in another application"
+				else:
+					output_file.write(str(output))
 		if args.output != '--' and args.output_mode != 'word':
 			output_file.close()
 	except (InvalidInputFormatException, InvalidOutputFormatException), e:
