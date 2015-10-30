@@ -73,7 +73,8 @@ tokens = [
 	'COMMENT',
 	'UNQUOTED_STRING',
 	'WITH_PREVIOUS',
-	'WITH_PARSING'
+	'WITH_PARSING',
+	'FOR_TARGET'
 ] + reserved
 
 literals = [',', '=', ':', '*', '}', '{', '(', ')', ']']
@@ -122,6 +123,10 @@ def t_descopen_colon(t):
 	t.lexer.desc_start = t.lexer.lexpos
 	t.lexer.begin('descscan')
 	t.type = ':'
+	return t
+	
+def t_FOR_TARGET(t):
+	r'FOR\sTARGET'
 	return t
 	
 def t_WITH_PARSING(t):

@@ -345,11 +345,20 @@ def p_if_annotation_2_multi_else(p):
 def p_include_annotation_2_str(p):
 	'''include_annotation : ANNOTATIONOPEN_INCLUDE ':' STRING ')'
 						  | ANNOTATIONOPEN_INCLUDE ':' STRING WITH_PARSING ')' '''
-	p[0] = make_annotation('INCLUDE', file=('string', unescape(p[3])), parsing=('boolean', True))
+	p[0] = make_annotation('INCLUDE', file=('string', unescape(p[3])), langs=None, parsing=('boolean', True))
+	
+def p_include_annotation_2_str_fortarget(p):
+	'''include_annotation : ANNOTATIONOPEN_INCLUDE ':' STRING FOR_TARGET id_list ')'
+						  | ANNOTATIONOPEN_INCLUDE ':' STRING FOR_TARGET id_list WITH_PARSING ')' '''
+	p[0] = make_annotation('INCLUDE', file=('string', unescape(p[3])), langs=p[5], parsing=('boolean', True))
 	
 def p_include_annotation_2_str_parsing_onoff(p):
 	'''include_annotation : ANNOTATIONOPEN_INCLUDE ':' STRING WITH_PARSING bool_literal ')' '''
-	p[0] = make_annotation('INCLUDE', file=('string', unescape(p[3])), parsing=p[5])
+	p[0] = make_annotation('INCLUDE', file=('string', unescape(p[3])), langs=None, parsing=p[5])
+	
+def p_include_annotation_2_str_fortarget_parsing_onoff(p):
+	'''include_annotation : ANNOTATIONOPEN_INCLUDE ':' STRING FOR_TARGET id_list WITH_PARSING bool_literal ')' '''
+	p[0] = make_annotation('INCLUDE', file=('string', unescape(p[3])), langs=p[5], parsing=p[7])
 	
 def p_characters_annotation_2_str(p):
     '''characters_annotation : ANNOTATIONOPEN_CHARACTERS ':' STRING ')' '''
@@ -602,6 +611,14 @@ def p_id_or_all_2_id(p):
 def p_id_or_all_2_all(p):
 	'id_or_all : ALL'
 	p[0] = ('rel', p[1])
+	
+def p_id_list_2_id(p):
+	'id_list : ID'
+	p[0] = [ ('id', p[1]) ]
+	
+def p_id_list_2_id_list_and_id(p):
+	'id_list : id_list AND ID'
+	p[0] = p[1] + [ ('id', p[3]) ]
 	
 def p_error(p):
 	if not p:
