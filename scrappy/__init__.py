@@ -180,67 +180,93 @@ def read_chars_file(file_path):
 				r['name'] = r['id']
 	return rows
 
-if __name__ == "__main__":
+
+def run():
 	def precompile(ast, args, compiler):
 		ast, chars = preprocess(ast, args.output_mode, quiet=args.quiet)
 		compiler.set_options(args)
 		compiler.set_characters(chars)
 		return ast
-		
+
 	def set_renpy_compiler_options(args):
 		c = renpy_compiler()
 
 	import argparse
 	import pprint
 	import sys
-	
+
 	class InvalidInputFormatException(Exception):
 		pass
-		
+
 	class InvalidOutputFormatException(Exception):
 		pass
+
 	try:
 		argparser = argparse.ArgumentParser(description="Compiles manuscripts to other formats")
-		argparser.add_argument('--input', '-i', action='append', help="The file(s) to be compiled. Will be compiled in order. If no input files are specified, scrappy will read from stdin.")
-		argparser.add_argument('--output', '-o', nargs=1, help="The file to write the compiled manuscript to. If no output file is specified, scrappy will write to stdout.")
-		argparser.add_argument('--pretty', action='store_true', help="Output pretty-print format. Only applies when output is a raw python type.")
-		argparser.add_argument('--inputformat', '-f', nargs=1, dest='input_mode', default=['scp'], choices=('scp', 'lex', 'ast'), help="The format of the input(s).")
-		argparser.add_argument('--quiet', '-q', action='store_true', help="Suppress compiler warnings. This will not suppress errors reported by the lexer and parser.")
+		argparser.add_argument('--input', '-i', action='append',
+							   help="The file(s) to be compiled. Will be compiled in order. If no input files are specified, scrappy will read from stdin.")
+		argparser.add_argument('--output', '-o', nargs=1,
+							   help="The file to write the compiled manuscript to. If no output file is specified, scrappy will write to stdout.")
+		argparser.add_argument('--pretty', action='store_true',
+							   help="Output pretty-print format. Only applies when output is a raw python type.")
+		argparser.add_argument('--inputformat', '-f', nargs=1, dest='input_mode', default=['scp'],
+							   choices=('scp', 'lex', 'ast'), help="The format of the input(s).")
+		argparser.add_argument('--quiet', '-q', action='store_true',
+							   help="Suppress compiler warnings. This will not suppress errors reported by the lexer and parser.")
 		modegroup = argparser.add_mutually_exclusive_group()
-		modegroup.add_argument('--renpy', '-r', dest='output_mode', action='store_const', const='renpy', help="Compile input(s) to Ren'Py-compatible .rpy format. This is the default mode.")
-		modegroup.add_argument('--word', '-w', dest='output_mode', action='store_const', const='word', help="Compile input(s) to .docx format.")
-		modegroup.add_argument('--lex', '-l', dest='output_mode', action='store_const', const='lex', help="Perform lexical analysis on the input(s) without parsing or compiling.")
-		modegroup.add_argument('--ast', dest='output_mode', action='store_const', const='ast', help="Parse the input(s) into an abstract syntax tree without compiling.")
+		modegroup.add_argument('--renpy', '-r', dest='output_mode', action='store_const', const='renpy',
+							   help="Compile input(s) to Ren'Py-compatible .rpy format. This is the default mode.")
+		modegroup.add_argument('--word', '-w', dest='output_mode', action='store_const', const='word',
+							   help="Compile input(s) to .docx format.")
+		modegroup.add_argument('--lex', '-l', dest='output_mode', action='store_const', const='lex',
+							   help="Perform lexical analysis on the input(s) without parsing or compiling.")
+		modegroup.add_argument('--ast', dest='output_mode', action='store_const', const='ast',
+							   help="Parse the input(s) into an abstract syntax tree without compiling.")
 		wordopts = argparser.add_argument_group('human-readable (DOCX) compiler options')
-		wordopts.add_argument('--h-paragraph-spacing', metavar='PTS_SPACING', dest='paragraph_spacing', type=int, default=0, help='Set the spacing in pts between each paragraph in the output.')
-		wordopts.add_argument('--h-exclude-flags', dest='include_flags', action='store_false', help='Do not produce any output for FLAG statements in the input file.')
-		wordopts.add_argument('--h-exclude-vars', dest='include_vars', action='store_false', help='Do not produce any output for VAR statements in the input file.')
-		wordopts.add_argument('--h-exclude-python', dest='include_python', action='store_false', help='Produce minimal output for PYTHON statements in the input file.')
-		wordopts.add_argument('--h-title', dest='title', default=None, help='Set the title for the script. This will be at the top of all output files.')
+		wordopts.add_argument('--h-paragraph-spacing', metavar='PTS_SPACING', dest='paragraph_spacing', type=int,
+							  default=0, help='Set the spacing in pts between each paragraph in the output.')
+		wordopts.add_argument('--h-exclude-flags', dest='include_flags', action='store_false',
+							  help='Do not produce any output for FLAG statements in the input file.')
+		wordopts.add_argument('--h-exclude-vars', dest='include_vars', action='store_false',
+							  help='Do not produce any output for VAR statements in the input file.')
+		wordopts.add_argument('--h-exclude-python', dest='include_python', action='store_false',
+							  help='Produce minimal output for PYTHON statements in the input file.')
+		wordopts.add_argument('--h-title', dest='title', default=None,
+							  help='Set the title for the script. This will be at the top of all output files.')
 		renpyopts = argparser.add_argument_group("ren'py compiler options")
-		renpyopts.add_argument('--r-default-destination', metavar='LOCATION', default='center', dest='default_destination', help='Set the destination for motion statements that do not explicitly include one.')
-		renpyopts.add_argument('--r-default-origin', metavar='LOCATION', default='center', dest='default_origin', help='Set the origin for motion statements that do not explicitly include one.')
-		renpyopts.add_argument('--r-default-duration', metavar='SECONDS', default=0.5, type=float, dest='default_duration', help='Set the default time for statements that use a duration but do not explicitly include one.')
-		renpyopts.add_argument('--r-quick-speed', metavar='SECONDS', default=0.25, dest='quick_speed', type=float, help="Set the number of seconds that the phrase 'QUICKLY' is interpreted as.")
-		renpyopts.add_argument('--r-slow-speed', metavar='SECONDS', default=2, dest='slow_speed', type=float, help="Set the number of seconds that the phrase 'SLOWLY' is interpreted as.")
-		renpyopts.add_argument('--r-tab-spaces', metavar='SPACES', default=4, dest='tab_spaces', type=int, help='Set the number of spaces that are in a single tab in the output.')
-		renpyopts.add_argument('--r-background-entity-name', metavar='NAME', default='bg', dest='background_ent', help='Set the name of the entity that is used for the background in scene statements.')
-		renpyopts.add_argument('--r-enable-camera', action='store_true', dest='enable_camera', help='Use the experimental camera system instead of just outputting camera instructions as dialog.')
-		
+		renpyopts.add_argument('--r-default-destination', metavar='LOCATION', default='center',
+							   dest='default_destination',
+							   help='Set the destination for motion statements that do not explicitly include one.')
+		renpyopts.add_argument('--r-default-origin', metavar='LOCATION', default='center', dest='default_origin',
+							   help='Set the origin for motion statements that do not explicitly include one.')
+		renpyopts.add_argument('--r-default-duration', metavar='SECONDS', default=0.5, type=float,
+							   dest='default_duration',
+							   help='Set the default time for statements that use a duration but do not explicitly include one.')
+		renpyopts.add_argument('--r-quick-speed', metavar='SECONDS', default=0.25, dest='quick_speed', type=float,
+							   help="Set the number of seconds that the phrase 'QUICKLY' is interpreted as.")
+		renpyopts.add_argument('--r-slow-speed', metavar='SECONDS', default=2, dest='slow_speed', type=float,
+							   help="Set the number of seconds that the phrase 'SLOWLY' is interpreted as.")
+		renpyopts.add_argument('--r-tab-spaces', metavar='SPACES', default=4, dest='tab_spaces', type=int,
+							   help='Set the number of spaces that are in a single tab in the output.')
+		renpyopts.add_argument('--r-background-entity-name', metavar='NAME', default='bg', dest='background_ent',
+							   help='Set the name of the entity that is used for the background in scene statements.')
+		renpyopts.add_argument('--r-enable-camera', action='store_true', dest='enable_camera',
+							   help='Use the experimental camera system instead of just outputting camera instructions as dialog.')
+
 		argparser.set_defaults(output_mode='renpy', output=['--'])
 		args = argparser.parse_args()
 		args.input_mode = args.input_mode[0]
 		args.output = args.output[0]
-		
+
 		if args.input is None:
-			args.input = ['--'] # don't pass into set_defaults() or else '--' will always be present
-		
+			args.input = ['--']  # don't pass into set_defaults() or else '--' will always be present
+
 		output_file = None
 		if args.output == '--':
 			if args.output_mode == 'word':
 				raise InvalidOutputFormatException("cannot output DOCX file to stdout")
 			output_file = sys.stdout
-		
+
 		for filename in args.input:
 			success = True
 			if filename == '--':
@@ -248,7 +274,7 @@ if __name__ == "__main__":
 			else:
 				with open(filename, 'r') as file:
 					file_contents = file.read()
-				
+
 			if args.output_mode == 'lex':
 				if args.input_mode == 'scp':
 					output = lex_manuscript(file_contents)
@@ -267,7 +293,8 @@ if __name__ == "__main__":
 				elif args.input_mode == 'ast':
 					ast = eval(file_contents)
 				else:
-					raise InvalidInputFormatException("to output AST or compiled formats, input format must be scp, lex, or ast")
+					raise InvalidInputFormatException(
+						"to output AST or compiled formats, input format must be scp, lex, or ast")
 				if success:
 					if args.output_mode == 'ast':
 						output = ast
@@ -281,11 +308,11 @@ if __name__ == "__main__":
 						output = compile_to_word(ast)
 						if not args.quiet:
 							show_warnings(word_compiler())
-			
+
 			if success:
 				if output_file == None and args.output_mode != 'word':
 					output_file = open(args.output, 'w')
-					
+
 				if (args.output_mode == 'lex' or args.output_mode == 'ast') and args.pretty:
 					pprint.pprint(output, output_file)
 				elif args.output_mode == 'word':
@@ -301,3 +328,7 @@ if __name__ == "__main__":
 			output_file.close()
 	except (InvalidInputFormatException, InvalidOutputFormatException), e:
 		print("Fatal error: " + e.message)
+
+
+if __name__ == "__main__":
+	run()
