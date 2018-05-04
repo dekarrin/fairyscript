@@ -1,8 +1,8 @@
 language: python
 
 branches:
-  except:
-    - master
+  only:
+    - dev
 
 python:
   - "2.6"

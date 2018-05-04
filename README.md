@@ -2,6 +2,8 @@ scrappy
 -------
 Write manuscripts in screenplay style and export them to various formats.
 
+![build-status](https://travis-ci.org/dekarrin/scrappy.svg?branch=master)
+
 ### Description ###
 Scrappy, the SCRipt APplication written in PYthon, provides a human-readable yet
 still regular format for writing manuscripts in plaintext. These manuscripts can
