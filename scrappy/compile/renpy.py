@@ -1,4 +1,4 @@
-import scp
+from . import scp
 import re
 
 class RenpyCompiler(object):

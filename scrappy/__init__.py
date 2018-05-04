@@ -1,9 +1,9 @@
 import re
 
-import parse.scp_lex
-import parse.scp_yacc
-from compile.renpy import RenpyCompiler
-from compile.word import DocxCompiler
+from .parse import scp_lex
+from .parse import scp_yacc
+from .compile.renpy import RenpyCompiler
+from .compile.word import DocxCompiler
 
 _parser = None
 _lexer = None
@@ -310,7 +310,7 @@ def run():
 				elif args.output_mode == 'word':
 					try:
 						output.save(args.output)
-					except IOError, e:
+					except IOError as e:
 						if e.errno == 13:
 							print("Error writing file: permission denied")
 							print("Make sure that '" + args.output + "' is not open in another application")
@@ -318,7 +318,7 @@ def run():
 					output_file.write(str(output))
 		if args.output != '--' and output_file is not None:
 			output_file.close()
-	except (InvalidInputFormatException, InvalidOutputFormatException), e:
+	except (InvalidInputFormatException, InvalidOutputFormatException) as e:
 		print("Fatal error: " + e.message)
 
 

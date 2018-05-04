@@ -1,6 +1,6 @@
 from ply import yacc
 
-from scp_lex import tokens
+from .scp_lex import tokens
 
 def p_block_2_stmt(p):
 	'''block : statement'''
@@ -623,7 +623,7 @@ def p_id_list_2_id_list_and_id(p):
 def p_error(p):
 	parser.successful = False
 	if not p:
-		print "Error parsing script: unexpected end-of-file"
+		print("Error parsing script: unexpected end-of-file")
 	else:
 		t = None
 		v = None
@@ -640,7 +640,7 @@ def p_error(p):
 			problem = "unexpected " + t + " \"" + v + "\""
 		else:
 			problem = "unexpected " + p.value
-		print "Error parsing script: " + problem + " on line " + str(p.lineno)
+		print("Error parsing script: " + problem + " on line " + str(p.lineno))
 	
 def to_number(s):
 	if '.' in s:

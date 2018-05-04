@@ -1,4 +1,4 @@
-import scp
+from . import scp
 import copy
 import re
 
