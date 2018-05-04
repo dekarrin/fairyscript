@@ -3,6 +3,7 @@ language: python
 branches:
   only:
     - dev
+    - master
 
 python:
   - "2.6"
@@ -11,8 +12,6 @@ python:
 install: "pip install lxml"
 
 script: "bash test/run_tests.sh"
-
-after_success: "bash .travis/push_mainline.sh"
 
 env:
   global:
