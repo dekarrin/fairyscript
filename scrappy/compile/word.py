@@ -3,12 +3,12 @@ import copy
 import re
 
 from ..docx import Document
-from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_UNDERLINE
-from docx.enum.style import WD_STYLE_TYPE
-from docx.shared import Inches
-from docx.shared import Pt
-from docx.shared import RGBColor
-from docx.dml.color import ColorFormat
+from ..docx.enum.text import WD_ALIGN_PARAGRAPH, WD_UNDERLINE
+from ..docx.enum.style import WD_STYLE_TYPE
+from ..docx.shared import Inches
+from ..docx.shared import Pt
+from ..docx.shared import RGBColor
+from ..docx.dml.color import ColorFormat
 
 class DocxCompiler(object):
 	def __init__(self):

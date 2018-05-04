@@ -6,12 +6,12 @@ WordprocessingML Package class and related objects
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from docx.image.image import Image
-from docx.opc.constants import RELATIONSHIP_TYPE as RT
-from docx.opc.package import OpcPackage
-from docx.opc.packuri import PackURI
-from docx.parts.image import ImagePart
-from docx.shared import lazyproperty
+from .image.image import Image
+from .opc.constants import RELATIONSHIP_TYPE as RT
+from .opc.package import OpcPackage
+from .opc.packuri import PackURI
+from .parts.image import ImagePart
+from .shared import lazyproperty
 
 
 class Package(OpcPackage):

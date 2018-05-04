@@ -10,8 +10,8 @@ from __future__ import absolute_import, division, print_function
 
 import os
 
-from docx.opc.constants import CONTENT_TYPE as CT
-from docx.package import Package
+from .opc.constants import CONTENT_TYPE as CT
+from .package import Package
 
 
 def Document(docx=None):

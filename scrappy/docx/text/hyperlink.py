@@ -9,7 +9,7 @@ from __future__ import (
 )
 from .run import Run
 from ..shared import Parented
-from docx.opc.constants import RELATIONSHIP_TYPE as RT
+from ..opc.constants import RELATIONSHIP_TYPE as RT
 
 
 class Hyperlink(Parented):
