@@ -79,7 +79,7 @@ def compile_to_word(manuscript_ast):
 def show_warnings(compiler):
 	warns = compiler.get_warnings()
 	for w in warns:
-		print "Compiler warning: " + w
+		print("Compiler warning: " + w)
 
 
 def preprocess(script_ast, target_lang, quiet=False):
@@ -131,8 +131,8 @@ def preprocess(script_ast, target_lang, quiet=False):
 						new_chars = read_chars_file(filename)
 					except (IOError, FileFormatError) as e:
 						if not quiet:
-							print "Preprocessor warning: could not process characters file '%s':" % filename
-							print "\t" + str(e)
+							print("Preprocessor warning: could not process characters file '%s':" % filename)
+							print("\t" + str(e))
 					chars_dict.update(new_chars)
 		return chars_dict
 
@@ -312,8 +312,8 @@ def run():
 						output.save(args.output)
 					except IOError, e:
 						if e.errno == 13:
-							print "Error writing file: permission denied"
-							print "Make sure that '" + args.output + "' is not open in another application"
+							print("Error writing file: permission denied")
+							print("Make sure that '" + args.output + "' is not open in another application")
 				else:
 					output_file.write(str(output))
 		if args.output != '--' and output_file is not None:
