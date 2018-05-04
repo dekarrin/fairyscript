@@ -33,5 +33,9 @@ setup(
 		'console_scripts': [
 			'scpcompile=scrappy:run'
 		]
-	}
+	},
+	package_data={
+		'': ['docx/templates/*.docx', 'docx/templates/*.xml']
+	},
+	include_package_data=True
 )
