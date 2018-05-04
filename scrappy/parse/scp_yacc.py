@@ -1,4 +1,4 @@
-import ply.yacc as yacc
+from ..ply import yacc
 
 from scp_lex import tokens
 

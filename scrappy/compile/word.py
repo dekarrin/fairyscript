@@ -2,7 +2,7 @@ import scp
 import copy
 import re
 
-from docx import Document
+from ..docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_UNDERLINE
 from docx.enum.style import WD_STYLE_TYPE
 from docx.shared import Inches
