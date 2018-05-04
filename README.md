@@ -31,21 +31,17 @@ To install scrappy to the system, do `python setup.py install`. This will make t
 As a python script, scrappy does not need to be installed; simply having it
 will allow it to be executed. However, scrappy does have some requirements:
 * Python 2
-* lxml, which can often be installed from repositories on Unix-based systems and
-can be installed from binaries on Windows.
+* lxml, which can be installed from pip.
+* ply, which can be installed from pip.
 
 To execute it this way, without installing, run the local `scpcompile.py` (and
 substitute executing this file with the `scpcompile` command found in the
 documentation). Note that the above dependencies must first be resolved.
 
-Scrappy also requires PLY (for parsing files) and python-docx (for writing to
-Word documents). However, both of these packages have been included in the
-scrappy distribution for convenience. In the case of python-docx, the original
-codebase has been modified to support additional features that scrappy requires,
-and so it is necessary even if python-docx is already installed. Again, it is
-included as part of the distribution, and so no action is necessary in order to
-properly install it. For license information on these packages, please see the
-appropriate LICENSE files.
+Scrappy also requires python-docx (for writing to Word documents). However, the
+original codebase has been modified to support additional features that scrappy
+requires, and so it is included in the scrappy codebase. For license information
+on this package, please see the appropriate LICENSE file.
 
 ### Compiler Usage ###
 The scrappy compiler is used to compile .SCP format manuscript files into other

@@ -22,7 +22,7 @@ setup(
 	],
 	keywords='renpy visual novel screenplay script word office',
 	packages=['scrappy'],
-	install_requires=['lxml'],
+	install_requires=['lxml', 'ply'],
 	tests_require=[],
 	python_requires='>=2.7',
 	entry_points={

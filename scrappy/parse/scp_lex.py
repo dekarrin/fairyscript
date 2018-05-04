@@ -1,4 +1,4 @@
-from ..ply import lex
+from ply import lex
 
 states = (
 	('descopen', 'exclusive'),
