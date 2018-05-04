@@ -1,9 +1,9 @@
 import re
 
-from .parse import scp_lex
-from .parse import scp_yacc
-from .compile.renpy import RenpyCompiler
-from .compile.word import DocxCompiler
+from scrappy.parse import scp_lex
+from scrappy.parse import scp_yacc
+from scrappy.compile.renpy import RenpyCompiler
+from scrappy.compile.word import DocxCompiler
 
 _parser = None
 _lexer = None
