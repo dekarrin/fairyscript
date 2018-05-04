@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
@@ -9,7 +9,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
 	name='scrappy',
-	version='1.0.0',
+	version='1.0.1',
 	description='The SCRipt APplication written in PYthon, is a compiler for manuscripts.',
 	long_description=long_description,
 	url='https://github.com/dekarrin/scrappy',
@@ -25,7 +25,7 @@ setup(
 		'Development Status :: 5 - Production/Stable',
 	],
 	keywords='renpy visual novel screenplay script word office',
-	packages=['scrappy'],
+	packages=find_packages(),
 	install_requires=['lxml', 'ply'],
 	tests_require=[],
 	python_requires='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*',
