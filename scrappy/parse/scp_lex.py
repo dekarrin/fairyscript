@@ -102,7 +102,13 @@ t_ANNOTATIONOPEN_ELIF = r"\([Ee][Ll](?:[Ss][Ee]\s*)?[Ii][Ff]"
 t_ANNOTATIONOPEN_WHILE = r"\([Ww][Hh][Ii][Ll][Ee]"
 t_ANNOTATIONOPEN_CHARACTERS = r"\([Cc][Hh][Aa][Rr][Aa][Cc][Tt][Ee][Rr][Ss]"
 t_ANNOTATIONOPEN_INCLUDE = r"\([Ii][Nn][Cc][Ll][Uu][Dd][Ee]"
-t_STRING = r"\"[^\"\\]*(?:\\.[^\"\\]*)*\""
+
+def t_STRING(t):
+	r"\"[^\"\\]*(?:\\.[^\"\\]*)*\""
+	num_linebreaks = t.value.splitlines() - 1
+	t.lexer.lineno += len(num_linebreaks)
+	return t
+
 t_NUMBER = r"(?:(?:\+|-)\s*)?\d+(\.\d*)?"
 t_PYTHON_BLOCK = r"\([Pp][Yy][Tt][Hh][Oo][Nn]\)\s*\{[^}\\]*(?:\\.[^}\\]*)*\}"
 # master regex uses a capturing group, so group in this regex is really #2:
@@ -196,6 +202,8 @@ def t_descscan_descwords_UNQUOTED_STRING(t):
 		t.lexer.lexpos = t.lexer.desc_start
 		t.lexer.begin('descwords')
 	else:
+		num_linebreaks = t.value.splitlines() - 1
+		t.lexer.lineno += len(num_linebreaks)
 		t.lexer.begin("INITIAL")
 		return t
 
