@@ -27,7 +27,7 @@ setup(
 	python_requires='>=2.7',
 	entry_points={
 		'console_scripts': [
-			'scrappy=scrappy:run'
+			'scpcompile=scrappy:run'
 		]
 	}
 )

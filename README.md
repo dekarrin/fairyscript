@@ -25,11 +25,18 @@ manuscripts written in this format, and compiling them to the following formats:
 * .SCP -> .DOCX (Word Office)
 
 ### Installation ###
+To install scrappy to the system, do `python setup.py install`. This will make the
+`scpcompile` command available on the system.
+
 As a python script, scrappy does not need to be installed; simply having it
 will allow it to be executed. However, scrappy does have some requirements:
 * Python 2
 * lxml, which can often be installed from repositories on Unix-based systems and
 can be installed from binaries on Windows.
+
+To execute it this way, without installing, run the local `scpcompile.py` (and
+substitute executing this file with the `scpcompile` command found in the
+documentation). Note that the above dependencies must first be resolved.
 
 Scrappy also requires PLY (for parsing files) and python-docx (for writing to
 Word documents). However, both of these packages have been included in the
@@ -50,19 +57,19 @@ human-readable formats or to compile .SCP files to executable scripts.
 To compile an SCP manuscript to Ren'Py:
 
 ```shell
-$ python scrappy.py -i input_file.scp -o renpy_script.rpy
+$ scpcompile -i input_file.scp -o renpy_script.rpy
 ```
 
 To compile an SCP manuscript to Microsoft Office:
 ```shell
-$ python scrappy.py -i input_file.scp -o my_script.docx --word
+$ scpcompile -i input_file.scp -o my_script.docx --word
 ```
 
 When invoked with no arguments, scrappy will read manuscript statements from 
 stdin, compile them to Ren'Py script format, and then output them to stdout:
 
 ```shell
-$ generate_scp | python scrappy.py | process_output
+$ generate_scp | scpcompile | process_output
 ```
 
 Input files are specified with the `-i` option; to specify multiple input files,
@@ -72,7 +79,7 @@ are given. If no `-i` option is given, scrappy will read from stdin.
 In this example, three files are compiled to a single Ren'Py script:
 
 ```shell
-$ python scrappy.py -i main_path.scp -i branch1.scp -i branch2.scp -o my_script.rpy
+$ scpcompile -i main_path.scp -i branch1.scp -i branch2.scp -o my_script.rpy
 ```
 
 The output file is specified with the `-o` option. Only one output file may be
@@ -98,7 +105,7 @@ The following example parses a file containing pre-lexed symbols and then
 compiles the result to a Ren'Py format script:
 
 ```shell
-$ python scrappy.py -f lex -i script_symbols.lex -o my_script.rpy
+$ scpcompile -f lex -i script_symbols.lex -o my_script.rpy
 ```
 
 In addition to the options listed above, there are many options that are
@@ -106,7 +113,7 @@ specific to the compiler for a particular format. For a full list of options,
 invoke scrappy with the `-h` option:
 
 ```shell
-$ python scrappy.py -h
+$ scpcompile -h
 ```
 
 ### SCP: The Scrappy Language ###

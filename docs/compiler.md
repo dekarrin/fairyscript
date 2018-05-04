@@ -31,7 +31,7 @@ script.
 # Compiles the Scrappy manuscript 'chapter1.scp' to the Ren'Py script
 'chapter1.rpy':
 
-python scrappy.py -i chapter1.scp -o chapter1.rpy
+scpcompile -i chapter1.scp -o chapter1.rpy
 ```
 
 Multiple input files can be specified by using multiple `-i` options.
@@ -39,7 +39,7 @@ Multiple input files can be specified by using multiple `-i` options.
 ```shell
 # Compiles three Scrappy manuscripts into a single Ren'Py script:
 
-python scrappy.py -i chap1.scp -i chap2.scp -i chap3.scp -o my_story.rpy
+scpcompile -i chap1.scp -i chap2.scp -i chap3.scp -o my_story.rpy
 ```
 
 If no `-i` options are given, the input is read from stdin instead of from a
@@ -48,7 +48,7 @@ file.
 ```shell
 # Compiles Scrappy code from stdin to a Ren'Py script:
 
-python scrappy.py -o my_visual_novel.rpy < scrappy_code.scp
+scpcompile -o my_visual_novel.rpy < scrappy_code.scp
 ```
 
 Similarily, if no `-o` is given, the compiled code is written to stdout instead
@@ -57,7 +57,7 @@ of to a file.
 ```shell
 # Compiles Scrappy code from a file and writes the Ren'Py code to stdout:
 
-python scrappy.py -i chap1.scp > my_story.rpy
+scpcompile -i chap1.scp > my_story.rpy
 ```
 
 All messages, warnings, and errors from the compiler are printed to stderr, so
