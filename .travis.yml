@@ -14,8 +14,7 @@ python:
   - "3.6"
 
 install:
-  - "pip install lxml"
-  - "pip install ply"
+  - "python setup.py install"
 
 script: "bash test/run_tests.sh"
 

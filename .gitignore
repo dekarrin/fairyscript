@@ -6,3 +6,6 @@ parser.out
 *.docx
 .idea/
 .venv/
+build/
+dist/
+*.egg-info/
