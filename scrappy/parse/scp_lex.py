@@ -105,8 +105,8 @@ t_ANNOTATIONOPEN_INCLUDE = r"\([Ii][Nn][Cc][Ll][Uu][Dd][Ee]"
 
 def t_STRING(t):
 	r"\"[^\"\\]*(?:\\.[^\"\\]*)*\""
-	num_linebreaks = t.value.splitlines() - 1
-	t.lexer.lineno += len(num_linebreaks)
+	num_linebreaks = len(t.value.splitlines()) - 1
+	t.lexer.lineno += num_linebreaks
 	return t
 
 t_NUMBER = r"(?:(?:\+|-)\s*)?\d+(\.\d*)?"
@@ -202,8 +202,8 @@ def t_descscan_descwords_UNQUOTED_STRING(t):
 		t.lexer.lexpos = t.lexer.desc_start
 		t.lexer.begin('descwords')
 	else:
-		num_linebreaks = t.value.splitlines() - 1
-		t.lexer.lineno += len(num_linebreaks)
+		num_linebreaks = len(t.value.splitlines()) - 1
+		t.lexer.lineno += num_linebreaks
 		t.lexer.begin("INITIAL")
 		return t
 
