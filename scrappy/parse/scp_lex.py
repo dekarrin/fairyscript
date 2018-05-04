@@ -110,9 +110,20 @@ def t_STRING(t):
 	return t
 
 t_NUMBER = r"(?:(?:\+|-)\s*)?\d+(\.\d*)?"
-t_PYTHON_BLOCK = r"\([Pp][Yy][Tt][Hh][Oo][Nn]\)\s*\{[^}\\]*(?:\\.[^}\\]*)*\}"
+
+def t_PYTHON_BLOCK(t):
+	r"\([Pp][Yy][Tt][Hh][Oo][Nn]\)\s*\{[^}\\]*(?:\\.[^}\\]*)*\}"
+	num_linebreaks = len(t.value.splitlines()) - 1
+	t.lexer.lineno += num_linebreaks
+	return t
+
 # master regex uses a capturing group, so group in this regex is really #2:
-t_BARE_EXPRESSION = r"'[^'\\]*(?:\\.[^'\\]*)*'"
+def t_BARE_EXPRESSION(t):
+	r"'[^'\\]*(?:\\.[^'\\]*)*'"
+	num_linebreaks = len(t.value.splitlines()) - 1
+	t.lexer.lineno += num_linebreaks
+	return t
+
 t_COMMENT = r"\#.*"
 
 t_ANY_ignore = ' \t'
