@@ -1,6 +1,7 @@
 from . import scp
 import re
 
+
 class RenpyCompiler(object):
 	def __init__(self):
 		self.default_destination = 'center'
@@ -25,6 +26,7 @@ class RenpyCompiler(object):
 		self._cam_zoom = 'CAM_ZOOM_NORMAL'
 		self._cam_pan = 'CAM_PAN_CENTER'
 		self._chars = None
+		self.last_line = False
 		
 	def set_options(self, options):
 		self.default_destination = options.default_destination
@@ -41,7 +43,8 @@ class RenpyCompiler(object):
 		
 	def add_gfx_target(self, effect, target):
 		if target.upper() != 'SCENE' and target.upper() != 'IMAGE' and target.upper() != 'DISPLAYABLE':
-			self.add_warning('bad_gfx_binding', "'%s' is an invalid binding for GFX '%s'; must be one of 'scene', 'image', or 'displayable'" % (target, effect))
+			msg_fmt = "'%s' is an invalid binding for GFX '%s'; must be one of 'scene', 'image', or 'displayable'"
+			self.add_warning('bad_gfx_binding', msg_fmt % (target, effect))
 		self._gfx_targets[effect] = target.upper()
 		
 	def clear_gfx_targets(self):
@@ -119,7 +122,8 @@ class RenpyCompiler(object):
 				self.add_line(line['speaker'][1] + ' ' + text)
 			else:
 				self.add_line(scp.quote(line['speaker'][1]) + ' ' + text)
-				
+
+	# noinspection PyPep8Naming
 	def _compile_SCENE(self, scene):
 		self.add_line("scene " + self.background_ent + " " + scene['name'][1])
 		if scene['transition'] is not None:
@@ -127,15 +131,20 @@ class RenpyCompiler(object):
 			self._scene_trans = scene['transition'][1]
 		else:
 			self.add_line()
-	
+
+	# noinspection PyPep8Naming
 	def _compile_ENTER(self, enter):
-		if self._has_enter_trans and enter['transition'] is not None and not scp.typed_check(enter['transition'], 'rel', 'WITH PREVIOUS'):
+		if (
+				self._has_enter_trans and
+				enter['transition'] is not None and
+				not scp.typed_check(enter['transition'], 'rel', 'WITH PREVIOUS')
+		):
 			self._finish_transition()
 		self.add_line(build_show(enter['target'][1], enter['states']))
 		geom = enter['motion']
+		orig = None
+		dest = None
 		if geom is not None:
-			orig = None
-			dest = None
 			if geom['origin'] is None and geom['duration'] is not None:
 				orig = self.default_origin
 			elif geom['origin'] is not None:
@@ -157,7 +166,8 @@ class RenpyCompiler(object):
 			self.add_line('at ' + dest)
 			self.add_line('with MoveTransition(' + str(time) + ')')
 		self.add_line()
-			
+
+	# noinspection PyPep8Naming
 	def _compile_ACTION(self, action):
 		self.add_line(build_show(action['target'][1], action['states']))
 		if action['destination'] is not None:
@@ -165,15 +175,20 @@ class RenpyCompiler(object):
 			self.add_line('at ' + action['destination'][1])
 			self.add_line('with MoveTransition(' + str(time) + ')')
 		self.add_line()
-	
-	def _compile_EXIT(self, exit):
-		if self._has_exit_trans and exit['transition'] is not None and not scp.typed_check(exit['transition'], 'rel', 'WITH PREVIOUS'):
+
+	# noinspection PyPep8Naming
+	def _compile_EXIT(self, xit):
+		if (
+				self._has_exit_trans and
+				xit['transition'] is not None and
+				not scp.typed_check(xit['transition'], 'rel', 'WITH PREVIOUS')
+		):
 			self._finish_transition()
-		self.add_line('show ' + exit['target'][1])
-		geom = exit['motion']
+		self.add_line('show ' + xit['target'][1])
+		geom = xit['motion']
+		orig = None
+		dest = None
 		if geom is not None:
-			orig = None
-			dest = None
 			if geom['origin'] is None and geom['duration'] is not None:
 				orig = self.default_origin
 			elif geom['origin'] is not None:
@@ -186,17 +201,18 @@ class RenpyCompiler(object):
 				self.add_line('at ' + dest)
 			else:
 				self.add_line('at ' + orig)
-		if exit['transition'] is not None and not scp.typed_check(exit['transition'], 'rel', 'WITH PREVIOUS'):
+		if xit['transition'] is not None and not scp.typed_check(xit['transition'], 'rel', 'WITH PREVIOUS'):
 			self._has_exit_trans = True
-			self._scene_trans = exit['transition'][1]
+			self._scene_trans = xit['transition'][1]
 		if geom is not None and orig is not None:
 			time = scp.get_duration(geom['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
-			self.add_line('show ' + exit['target'][1])
+			self.add_line('show ' + xit['target'][1])
 			self.add_line('at ' + orig)
 			self.add_line('with MoveTransition(' + str(time) + ')')
-		self.add_line('hide ' + exit['target'][1])
+		self.add_line('hide ' + xit['target'][1])
 		self.add_line()
-		
+
+	# noinspection PyPep8Naming
 	def _compile_MUSIC(self, music):
 		if music['action'] == 'start':
 			self.add('play music ')
@@ -213,14 +229,19 @@ class RenpyCompiler(object):
 				explicit_all = True
 			self.add('stop music')
 			if not explicit_all:
-				self._warnings['targeted_music_stop'] = ["Ren'Py does not support targeted music stop; any such directives will be compiled as if they were STOP ALL"]
+				msg = "Ren'Py does not support targeted music stop;"
+				msg += " any such directives will be compiled as if they were STOP ALL"
+				self._warnings['targeted_music_stop'] = [msg]
 			if music['duration'] is not None:
 				time = scp.get_duration(music['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
 				self.add(' fadeout ' + str(time))
 		self.add_line()
 		self.add_line()
-		
+
+	# noinspection PyPep8Naming
 	def _compile_GFX(self, gfx):
+		eff = None
+		binding_type = None
 		if scp.typed_check(gfx['target'], 'id'):
 			eff = gfx['target'][1]
 			if eff not in self._gfx_targets:
@@ -229,6 +250,7 @@ class RenpyCompiler(object):
 			binding_type = self._gfx_targets[eff]
 		if gfx['action'] == 'start':
 			if scp.typed_check(gfx['loop'], 'boolean', True):
+				# TODO: make sure binding_type is actually set by this point
 				if binding_type != 'DISPLAYABLE':
 					eff += '_loop'
 				else:
@@ -241,7 +263,6 @@ class RenpyCompiler(object):
 			elif binding_type == 'IMAGE':
 				img = eff + '_img'
 				self.add_line('show ' + img)
-				prefix = ""
 				self._cur_img_gfx.append(eff)
 				self.add_line('at ' + eff)
 			elif binding_type == 'DISPLAYABLE':
@@ -264,7 +285,8 @@ class RenpyCompiler(object):
 					try:
 						self._cur_scene_gfx.remove(eff)
 						self._cur_scene_gfx.remove(eff + '_loop')
-					except:
+					except ValueError:
+						# remove() raises an exception if the items are not in the list, but that is the intended result
 						pass
 					self.add_line("show layer master")
 					prefix = self._get_current_scene_transforms()
@@ -282,7 +304,8 @@ class RenpyCompiler(object):
 			if dissolve is not None:
 				self.add_line(dissolve)
 		self.add_line()
-		
+
+	# noinspection PyPep8Naming
 	def _compile_SFX(self, sfx):
 		if sfx['action'] == 'start':
 			self.add('play sound ')
@@ -298,20 +321,24 @@ class RenpyCompiler(object):
 				explicit_all = True
 			self.add('stop sound')
 			if not explicit_all:
-				self._warnings['targeted_sfx_stop'] = ["Ren'Py does not support targeted sound stop; any such directives will be compiled as if they were STOP ALL"]
+				msg = "Ren'Py does not support targeted sound stop;"
+				msg += " any such directives will be compiled as if they were STOP ALL"
+				self._warnings['targeted_sfx_stop'] = [msg]
 			if sfx['duration'] is not None:
 				time = scp.get_duration(sfx['duration'], self.quickly_rel, self.slowly_rel, self.default_duration)
 				self.add(' fadeout ' + str(time))
 		self.add_line()
 		self.add_line()
-			
+
+	# noinspection PyPep8Naming
 	def _compile_FMV(self, fmv):
 		name = fmv['target'][1]
 		if scp.typed_check(fmv['target'], 'string'):
 			name = scp.quote(name)
 		self.add_line('renpy.movie_cutscene(' + name + ')')
 		self.add_line()
-		
+
+	# noinspection PyPep8Naming
 	def _compile_CAMERA(self, camera):
 		if not self.use_camera_system:
 			for a in camera['actions']:
@@ -341,7 +368,8 @@ class RenpyCompiler(object):
 					self.add_line('at ' + self._get_current_scene_transforms())
 					self.add_line('with MoveTransition(' + time + ')')
 			self.add_line()
-			
+
+	# noinspection PyPep8Naming
 	def _compile_CHOICE(self, choice):
 		label = ""
 		if scp.typed_check(choice['label'], 'id'):
@@ -363,13 +391,15 @@ class RenpyCompiler(object):
 			self.add_line()
 			self._dec_indent()
 		self._dec_indent()
-			
+
+	# noinspection PyPep8Naming
 	def _compile_DESCRIPTION(self, desc):
 		# ren'py does not use descriptions, so we throw this out
 		pass
-		
+
+	# noinspection PyPep8Naming
 	def _compile_SECTION(self, section):
-		params=""
+		params = ""
 		for p in section['params']:
 			params += p['name'][1]
 			if 'default' in p:
@@ -379,24 +409,29 @@ class RenpyCompiler(object):
 			params = '(' + params[:-2] + ')'
 		self.add_line('label ' + section['section'][1] + params + ":")
 		self._inc_indent()
-		
+
+	# noinspection PyPep8Naming
 	def _compile_FLAGSET(self, flagset):
 		self.add_line('$ ' + flagset['name'][1] + ' = ' + scp.get_expr(flagset['value']))
 		self.add_line()
-		
+
+	# noinspection PyPep8Naming
 	def _compile_VARSET(self, varset, noline=False):
 		self.add_line('$ ' + varset['name'][1] + ' ' + scp.get_expr(varset['value'], '= '))
 		if not noline:
 			self.add_line()
-		
+
+	# noinspection PyPep8Naming
 	def _compile_DIALOG(self, dialog):
 		self.add_line('window ' + dialog['mode'].lower())
 		self.add_line()
-		
+
+	# noinspection PyPep8Naming
 	def _compile_GOTO(self, goto):
 		self.add_line('jump ' + goto['destination'][1])
 		self.add_line()
-		
+
+	# noinspection PyPep8Naming
 	def _compile_EXECUTE(self, execute):
 		params = ""
 		use_pass = False
@@ -413,13 +448,15 @@ class RenpyCompiler(object):
 		else:
 			self.add_line('call %s%s' % (execute['section'][1], params))
 		self.add_line()
-		
+
+	# noinspection PyPep8Naming
 	def _compile_END(self, end):
 		if 'retval' in end:
 			self.add_line('return ' + scp.get_expr(end['retval']))
 		self._dec_indent()
 		self.add_line()
-		
+
+	# noinspection PyPep8Naming
 	def _compile_WHILE(self, whilestmt):
 		self.add_line('while ' + scp.get_expr(whilestmt['condition']) + ':')
 		self._inc_indent()
@@ -427,13 +464,14 @@ class RenpyCompiler(object):
 			self.compile_statement(st)
 		self._dec_indent()
 		self.add_line()
-		
+
+	# noinspection PyPep8Naming
 	def _compile_IF(self, ifstmt):
 		elsebr = None
 		firstbr = True
 		for br in ifstmt['branches']:
 			if br['condition'] is None:
-				elsestmt = br
+				elsebr = br
 			else:
 				if firstbr:
 					self.add_line('if ' + scp.get_expr(br['condition']) + ':')
@@ -450,35 +488,40 @@ class RenpyCompiler(object):
 			for st in elsebr['statements']:
 				self.compile_statement(st)
 			self._dec_indent()
-			
+
+	# noinspection PyPep8Naming
 	def _compile_INCLUDE(self, include):
 		if not include['parsing'][1]:
 			old_indent = self._indent_lev
 			self._indent_lev = 0
 			try:
-				with open(include['file'][1]) as file:
+				with open(include['file'][1]) as inc_file:
 					lineno = 0
-					for line in file:
+					for line in inc_file:
 						lineno += 1
 						self.add(line)
-						if (include['file'][1].endswith('.rpy')):
-							if (re.match(r'^#:\s*[Ss][Cc][Rr][Aa][Pp][Pp][Yy]-[Gg][Ff][Xx](?:\s|$)', line.strip())):
+						if include['file'][1].endswith('.rpy'):
+							if re.match(r'^#:\s*[Ss][Cc][Rr][Aa][Pp][Pp][Yy]-[Gg][Ff][Xx](?:\s|$)', line.strip()):
 								m = re.match(r'^#:\s*[Ss][Cc][Rr][Aa][Pp][Pp][Yy]-[Gg][Ff][Xx]\s+(\S+)\s+(\S+)', line.strip())
 								if m:
 									effect = m.group(1)
 									target = m.group(2)
 									self.add_gfx_target(effect, target)
 								else:
-									self.add_warning("scrappy_directive", "malformed scrappy directive in included file '%s' on line %d" % (include['file'][1], lineno))
+									msg = "malformed scrappy directive in included file '%s' on line %d"
+									msg = msg % (include['file'][1], lineno)
+									self.add_warning("scrappy_directive", msg)
 				self.add_line()
 				self.add_line()
 			except IOError as e:
 				self.add_warning("file_inclusion", "can't include '%s': %s" % (include['file'][1], str(e)))
 			self._indent_lev = old_indent
-			
+
+	# noinspection PyPep8Naming
 	def _compile_CHARACTERS(self, characters):
 		pass
-			
+
+	# noinspection PyPep8Naming
 	def _compile_PYTHON(self, python):
 		self.add_line('python:')
 		self._inc_indent()
@@ -513,7 +556,8 @@ class RenpyCompiler(object):
 				color = '#000000'
 			self.add_line("define %s = Character(%s, color=%s)" % (c['id'], scp.quote(c['name']), scp.quote(color)))
 		self.add_line()
-		
+
+
 def build_show(target, states):
 	show = 'show ' + target
 	for s in states:
