@@ -285,8 +285,9 @@ def parse_cli_and_execute():
 			raise InvalidOutputFormatError("cannot output DOCX file to stdout")
 		output_file = sys.stdout
 
+	# first, load in all source files and convert to a single AST or symbol list (if only lexing):
+	input_data = []
 	for filename in args.input:
-		output = None
 		if filename == '--':
 			file_contents = sys.stdin.read()
 		else:
@@ -295,11 +296,12 @@ def parse_cli_and_execute():
 
 		if args.output_mode == 'lex':
 			if args.input_mode == 'scp':
-				output = _lex_manuscript(file_contents, filename)
+				lex_symbols = _lex_manuscript(file_contents, filename)
 			elif args.input_mode == 'lex':
-				output = eval(file_contents)
+				lex_symbols = eval(file_contents)
 			else:
 				raise InvalidInputFormatError("to output lexer symbols, input format must be scp or lex")
+			input_data += lex_symbols
 		else:
 			if args.input_mode == 'scp':
 				ast = _parse_manuscript(file_contents, filename)
@@ -310,39 +312,45 @@ def parse_cli_and_execute():
 			else:
 				raise InvalidInputFormatError(
 					"to output AST or compiled formats, input format must be scp, lex, or ast")
+			input_data += ast
 
-			# now compile the ast
-			if args.output_mode == 'ast':
-				output = ast
-			else:
-				if args.output_mode == 'renpy':
-					compiler = RenpyCompiler()
-				elif args.output_mode == 'word':
-					compiler = DocxCompiler()
-				else:
-					raise ValueError("Unknown output mode '" + args.output_mode + "'")
-
-				ast = _precompile(ast, args, compiler)
-				output = compiler.compile_script(ast)
-				if not args.quiet:
-					_show_warnings(compiler)
-
-		# write the output to disk
-		if output_file is None and args.output_mode != 'word':
-			output_file = open(args.output, 'w')
-
-		if (args.output_mode == 'lex' or args.output_mode == 'ast') and args.pretty:
-			pprint.pprint(output, output_file)
+	# now compile as necessary
+	if args.output_mode == 'ast' or args.output_mode == 'lex':
+		# already done, we got the desired format during input processing
+		output_data = input_data
+	else:
+		# preprocess and compile
+		if args.output_mode == 'renpy':
+			compiler = RenpyCompiler()
 		elif args.output_mode == 'word':
-			try:
-				output.save(args.output)
-			except IOError as e:
-				if e.errno == 13:
-					raise OutputWriteError("permission denied")
-				else:
-					raise
+			compiler = DocxCompiler()
 		else:
-			output_file.write(str(output))
+			raise ValueError("Unknown output mode '" + args.output_mode + "'")
+
+		ast = _precompile(input_data, args, compiler)
+		output_data = compiler.compile_script(ast)
+		if not args.quiet:
+			_show_warnings(compiler)
+
+	# finally, write the output to disk
+	if output_file is None and args.output_mode != 'word':
+		# word is a special case and is saved via the returned object
+		output_file = open(args.output, 'w')
+
+	if (args.output_mode == 'lex' or args.output_mode == 'ast') and args.pretty:
+		pprint.pprint(output_data, output_file)
+	elif args.output_mode == 'word':
+		try:
+			output_data.save(args.output)
+		except IOError as e:
+			if e.errno == 13:
+				raise OutputWriteError("permission denied")
+			else:
+				raise
+	else:
+		output_file.write(str(output_data))
+
+	# close the file if we need to
 	if args.output != '--' and output_file is not None:
 		output_file.close()
 
