@@ -28,7 +28,6 @@ setup(
 	url='https://github.com/dekarrin/scrappy',
 	author='Rebecca C. Nelson',
 	classifiers=[
-		'Programming Language :: Python :: 2.6',
 		'Programming Language :: Python :: 2.7',
 		'Programming Language :: Python :: 3.3',
 		'Programming Language :: Python :: 3.4',
@@ -41,7 +40,7 @@ setup(
 	packages=find_packages(),
 	install_requires=['lxml', 'ply'],
 	tests_require=[],
-	python_requires='>=2.6,!=3.0.*,!=3.1.*,!=3.2.*',
+	python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*',
 	entry_points={
 		'console_scripts': [
 			'scpcompile=scrappy:run'

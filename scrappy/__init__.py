@@ -140,8 +140,7 @@ def _preprocess(script_ast, target_lang, quiet=False):
 					if s['parsing'][1]:
 						with open(s['file'][1], 'r') as inc_file:
 							contents = inc_file.read()
-						# TODO: trap errors here
-						inc_ast = _parse_manuscript(contents)
+						inc_ast = _parse_manuscript(contents, s['file'][1])
 						new_ast += preproc_includes(inc_ast, lang)
 					else:
 						new_ast.append(s)
