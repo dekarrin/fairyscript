@@ -112,6 +112,9 @@ class RenpyCompiler(object):
 		self._indent_lev -= 1
 		if self._indent_lev < 0:
 			self._indent_lev = 0
+
+	def _reset_indent(self):
+		self._indent_lev = 0
 		
 	def _compile_line(self, line):
 		text = scp.quote(line['text'][1])
@@ -407,6 +410,7 @@ class RenpyCompiler(object):
 			params += ", "
 		if len(params) > 0:
 			params = '(' + params[:-2] + ')'
+		self._reset_indent()
 		self.add_line('label ' + section['section'][1] + params + ":")
 		self._inc_indent()
 
