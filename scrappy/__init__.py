@@ -235,7 +235,7 @@ def _precompile(ast, args, compiler):
 	return ast
 
 
-def run():
+def parse_cli_and_execute():
 	# TODO: argparse not available before python 2.7; if we want compat before then we need a re-wright
 	import argparse
 	import pprint
@@ -348,9 +348,9 @@ def run():
 		output_file.close()
 
 
-if __name__ == "__main__":
+def run():
 	try:
-		run()
+		parse_cli_and_execute()
 	except ArgumentError as e:
 		print("Fatal error: " + e.message, file=sys.stderr)
 		sys.exit(1)
@@ -368,3 +368,7 @@ if __name__ == "__main__":
 			print(msg, file=sys.stderr)
 		print("Parsing failed", file=sys.stderr)
 		sys.exit(4)
+
+
+if __name__ == "__main__":
+	run()
