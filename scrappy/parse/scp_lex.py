@@ -107,6 +107,8 @@ def t_STRING(t):
 	r"\"[^\"\\]*(?:\\.[^\"\\]*)*\""
 	num_linebreaks = len(t.value.splitlines()) - 1
 	t.lexer.lineno += num_linebreaks
+	if num_linebreaks > 0:
+		t.value = " ".join(t.value.splitlines())
 	return t
 
 t_NUMBER = r"(?:(?:\+|-)\s*)?\d+(\.\d*)?"
@@ -122,6 +124,8 @@ def t_BARE_EXPRESSION(t):
 	r"'[^'\\]*(?:\\.[^'\\]*)*'"
 	num_linebreaks = len(t.value.splitlines()) - 1
 	t.lexer.lineno += num_linebreaks
+	if num_linebreaks > 0:
+		t.value = " ".join(t.value.splitlines())
 	return t
 
 t_COMMENT = r"\#.*"
@@ -215,6 +219,8 @@ def t_descscan_descwords_UNQUOTED_STRING(t):
 	else:
 		num_linebreaks = len(t.value.splitlines()) - 1
 		t.lexer.lineno += num_linebreaks
+		if num_linebreaks > 0:
+			t.value = " ".join(t.value.splitlines())
 		t.lexer.begin("INITIAL")
 		return t
 
@@ -226,6 +232,7 @@ def t_ANY_error(t):
 	t.lexer.error_messages.append(":%d: illegal character '%s'" % (t.lexer.lineno, t.value[0]))
 	t.lexer.successful = False
 	t.lexer.skip(1)
+
 
 lexer = lex.lex()
 lexer.error_messages = []
