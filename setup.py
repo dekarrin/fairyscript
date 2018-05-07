@@ -1,17 +1,30 @@
 from setuptools import setup, find_packages
-from codecs import open
 from os import path
+import codecs
+import re
 
-here = path.abspath(path.dirname(__file__))
 
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
-	long_description = f.read()
+def read(*parts):
+	here = path.abspath(path.dirname(__file__))
+	with codecs.open(path.join(here, *parts), 'r') as fp:
+		return fp.read()
+
+
+def find_version():
+	version_file = read("scrappy", "__init__.py")
+	version_match = re.search(r"^\s*__version__\s*=\s*['\"]([^'\"]*)['\"]\s*$", version_file, re.MULTILINE)
+
+	if version_match:
+		return version_match.group(1)
+	else:
+		raise RuntimeError("Unable to find version string")
+
 
 setup(
 	name='scrappy',
-	version='1.0.2',
+	version=find_version(),
 	description='The SCRipt APplication written in PYthon, is a compiler for manuscripts.',
-	long_description=long_description,
+	long_description=read('README.md'),
 	url='https://github.com/dekarrin/scrappy',
 	author='Rebecca C. Nelson',
 	classifiers=[

@@ -5,6 +5,10 @@ from .parse import scp_yacc
 from .compile.renpy import RenpyCompiler
 from .compile.word import DocxCompiler
 
+
+__version__ = '1.1.0'
+
+
 _parser = None
 _lexer = None
 _comp_renpy = None
@@ -218,6 +222,7 @@ def run():
 
 	try:
 		argparser = argparse.ArgumentParser(description="Compiles manuscripts to other formats")
+		argparser.add_argument('--version', action='version', version="%(prog)s " + __version__)
 		argparser.add_argument('--input', '-i', action='append', help="The file(s) to be compiled. Will be compiled in order. If no input files are specified, scrappy will read from stdin.")
 		argparser.add_argument('--output', '-o', nargs=1, help="The file to write the compiled manuscript to. If no output file is specified, scrappy will write to stdout.")
 		argparser.add_argument('--pretty', action='store_true', help="Output pretty-print format. Only applies when output is a raw python type.")
