@@ -223,8 +223,10 @@ def t_ANY_newline(t):
 	t.lexer.lineno += len(t.value)
 	
 def t_ANY_error(t):
-	print("Illegal character '%s' on line %d" % (t.value[0], t.lexer.lineno))
+	t.lexer.error_messages.append(":%d: illegal character '%s'" % (t.lexer.lineno, t.value[0]))
 	t.lexer.successful = False
 	t.lexer.skip(1)
 
 lexer = lex.lex()
+lexer.error_messages = []
+lexer.successful = True

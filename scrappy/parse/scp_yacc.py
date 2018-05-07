@@ -361,8 +361,8 @@ def p_include_annotation_2_str_fortarget_parsing_onoff(p):
 	p[0] = make_annotation('INCLUDE', file=('string', unescape(p[3])), langs=p[5], parsing=p[7])
 	
 def p_characters_annotation_2_str(p):
-    '''characters_annotation : ANNOTATIONOPEN_CHARACTERS ':' STRING ')' '''
-    p[0] = make_annotation('CHARACTERS', file=('string', unescape(p[3])))
+	'''characters_annotation : ANNOTATIONOPEN_CHARACTERS ':' STRING ')' '''
+	p[0] = make_annotation('CHARACTERS', file=('string', unescape(p[3])))
 	
 def p_transition_to_2_id_to(p):
 	'transition_to : ID TO'
@@ -623,7 +623,7 @@ def p_id_list_2_id_list_and_id(p):
 def p_error(p):
 	parser.successful = False
 	if not p:
-		print("Error parsing script: unexpected end-of-file")
+		parser.error_messages.append(": unexpected end-of-file")
 	else:
 		t = None
 		v = None
@@ -640,7 +640,7 @@ def p_error(p):
 			problem = "unexpected " + t + " \"" + v + "\""
 		else:
 			problem = "unexpected " + p.value
-		print("Error parsing script: " + problem + " on line " + str(p.lineno))
+		parser.error_messages.append(":" + str(p.lineno) + ": " + problem)
 	
 def to_number(s):
 	if '.' in s:
@@ -683,3 +683,4 @@ def make_choice(text, jump_target, varsets=None, condition=None):
 	return {'text': text, 'target': jump_target, 'sets': varsets, 'condition': condition}
 	
 parser = yacc.yacc()
+parser.error_messages = []
