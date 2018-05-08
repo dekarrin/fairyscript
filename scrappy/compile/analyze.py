@@ -53,7 +53,6 @@ class AnalysisCompiler(object):
 		self.add_line()
 		self._build_characters_output()
 		self._build_sections_output()
-		self._build_cameras_output()
 		self._build_scenes_output()
 		self._build_transitions_output()
 		self._build_ids_output()
@@ -62,6 +61,7 @@ class AnalysisCompiler(object):
 		self._build_gfx_output()
 		self._build_sfx_output()
 		self._build_bgm_output()
+		self._build_cameras_output()
 
 		return self._compiled
 
@@ -105,20 +105,6 @@ class AnalysisCompiler(object):
 				self.add_line(sec + ": " + pluralize(ref_count, "reference"))
 		else:
 			self.add_line("(none)")
-		self._dec_indent()
-		self.add_line()
-
-	def _build_cameras_output(self):
-		snap = self._cam_directives['snap']
-		pan = self._cam_directives['pan']
-		zoom = self._cam_directives['zoom']
-		total = snap + pan + zoom
-
-		self.add_line(pluralize(total, "Camera Directive"))
-		self._inc_indent()
-		self.add_line("snap: " + pluralize(snap, "reference"))
-		self.add_line("pan: " + pluralize(pan, "reference"))
-		self.add_line("zoom: " + pluralize(zoom, "reference"))
 		self._dec_indent()
 		self.add_line()
 
@@ -257,6 +243,20 @@ class AnalysisCompiler(object):
 				self.add_line(n + ": " + pluralize(ref_count, "reference"))
 		else:
 			self.add_line("(none)")
+		self._dec_indent()
+		self.add_line()
+
+	def _build_cameras_output(self):
+		snap = self._cam_directives['snap']
+		pan = self._cam_directives['pan']
+		zoom = self._cam_directives['zoom']
+		total = snap + pan + zoom
+
+		self.add_line(pluralize(total, "Camera Directive"))
+		self._inc_indent()
+		self.add_line("snap: " + pluralize(snap, "reference"))
+		self.add_line("pan: " + pluralize(pan, "reference"))
+		self.add_line("zoom: " + pluralize(zoom, "reference"))
 		self._dec_indent()
 		self.add_line()
 
