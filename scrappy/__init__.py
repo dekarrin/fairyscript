@@ -9,7 +9,7 @@ from .compile.word import DocxCompiler
 from .compile.analyze import AnalysisCompiler
 
 
-__version__ = '1.2.0'
+__version__ = '1.2.1'
 
 
 class ArgumentError(ValueError):

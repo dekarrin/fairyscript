@@ -410,7 +410,6 @@ class RenpyCompiler(object):
 			params += ", "
 		if len(params) > 0:
 			params = '(' + params[:-2] + ')'
-		self._reset_indent()
 		self.add_line('label ' + section['section'][1] + params + ":")
 		self._inc_indent()
 
