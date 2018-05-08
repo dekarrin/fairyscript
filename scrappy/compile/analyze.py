@@ -7,7 +7,7 @@ class AnalysisCompiler(object):
 	def __init__(self):
 		self._warnings = {}
 		self._chars = {}
-		self._labels_map = {}
+		self._sections = {}
 		self._cam_directives = {'snap': 0, 'pan': 0, 'zoom': 0}
 		self._scenes = {}
 		self._transitions = {}
@@ -96,12 +96,12 @@ class AnalysisCompiler(object):
 		self._dec_indent()
 
 	def _build_sections_output(self):
-		num = len(self._labels_map)
+		num = len(self._sections)
 		self.add_line(pluralize(num, "Section"))
 		self._inc_indent()
 		if num > 0:
-			for sec in self._labels_map:
-				ref_count = self._labels_map[sec]
+			for sec in self._sections:
+				ref_count = self._sections[sec]
 				self.add_line(sec + ": " + pluralize(ref_count, "reference"))
 		else:
 			self.add_line("(none)")
@@ -407,15 +407,15 @@ class AnalysisCompiler(object):
 		label = ""
 		if scp.typed_check(choice['label'], 'id'):
 			label = choice['label'][1]
-			if label not in self._labels_map:
-				self._labels_map[label] = {'defines': 0, 'refs': 0}
-			self._labels_map[label]['defines'] += 1
+			if label not in self._sections:
+				self._sections[label] = {'defines': 0, 'refs': 0}
+			self._sections[label]['defines'] += 1
 
 		for c in choice['choices']:
 			dest = c['target'][1]
-			if dest not in self._labels_map:
-				self._labels_map[dest] = {'defines': 0, 'refs': 0}
-			self._labels_map[dest]['refs'] += 1
+			if dest not in self._sections:
+				self._sections[dest] = {'defines': 0, 'refs': 0}
+			self._sections[dest]['refs'] += 1
 
 	# noinspection PyPep8Naming
 	def _compile_DESCRIPTION(self, desc):
@@ -424,9 +424,9 @@ class AnalysisCompiler(object):
 	# noinspection PyPep8Naming
 	def _compile_SECTION(self, section):
 		dest = section['section'][1]
-		if dest not in self._labels_map:
-			self._labels_map[dest] = {'defines': 0, 'refs': 0}
-		self._labels_map[dest]['defines'] += 1
+		if dest not in self._sections:
+			self._sections[dest] = {'defines': 0, 'refs': 0}
+		self._sections[dest]['defines'] += 1
 
 	# noinspection PyPep8Naming
 	def _compile_FLAGSET(self, flagset):
@@ -443,9 +443,9 @@ class AnalysisCompiler(object):
 	# noinspection PyPep8Naming
 	def _compile_GOTO(self, goto):
 		dest = goto['destination'][1]
-		if dest not in self._labels_map:
-			self._labels_map[dest] = {'defines': 0, 'refs': 0}
-		self._labels_map[dest]['refs'] += 1
+		if dest not in self._sections:
+			self._sections[dest] = {'defines': 0, 'refs': 0}
+		self._sections[dest]['refs'] += 1
 
 	# noinspection PyPep8Naming
 	def _compile_EXECUTE(self, execute):
