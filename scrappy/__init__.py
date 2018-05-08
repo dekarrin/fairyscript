@@ -250,6 +250,7 @@ def parse_cli_and_execute():
 	modegroup.add_argument('--word', '-w', dest='output_mode', action='store_const', const='word', help="Compile input(s) to .docx format.")
 	modegroup.add_argument('--lex', '-l', dest='output_mode', action='store_const', const='lex', help="Perform lexical analysis on the input(s) without parsing or compiling.")
 	modegroup.add_argument('--ast', dest='output_mode', action='store_const', const='ast', help="Parse the input(s) into an abstract syntax tree without compiling.")
+	modegroup.add_argument('--analyze', dest='output_mode', action='store_const', const='analyze', help="Perform an analysis on the identifiers and references that the scrappy code will require implementations for.")
 	wordopts = argparser.add_argument_group('human-readable (DOCX) compiler options')
 	wordopts.add_argument('--h-paragraph-spacing', metavar='PTS_SPACING', dest='paragraph_spacing', type=int, default=0, help='Set the spacing in pts between each paragraph in the output.')
 	wordopts.add_argument('--h-exclude-flags', dest='include_flags', action='store_false', help='Do not produce any output for FLAG statements in the input file.')
