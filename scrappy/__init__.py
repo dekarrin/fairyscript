@@ -6,6 +6,7 @@ from .parse import scp_lex
 from .parse import scp_yacc
 from .compile.renpy import RenpyCompiler
 from .compile.word import DocxCompiler
+from .compile.analyze import AnalysisCompiler
 
 
 __version__ = '1.1.0'
@@ -325,6 +326,8 @@ def parse_cli_and_execute():
 			compiler = RenpyCompiler()
 		elif args.output_mode == 'word':
 			compiler = DocxCompiler()
+		elif args.output_mode == 'analyze':
+			compiler = AnalysisCompiler()
 		else:
 			raise ValueError("Unknown output mode '" + args.output_mode + "'")
 
