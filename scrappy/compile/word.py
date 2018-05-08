@@ -667,7 +667,8 @@ class DocxCompiler(object):
 	def _check_screenplay_vars(self):
 		if self.screenplay_mode:
 			if self.main_character is None:
-				self.add_warning('main_char_not_defined', "a main character is required for screenplay mode; using 'Main character'")
+				msg = "a main character is required for screenplay mode; using 'Main character'"
+				self.add_warning('main_char_not_defined', msg)
 				self.main_character = 'Main character'
 				
 	def compile_block(self, statements):
@@ -681,10 +682,11 @@ class DocxCompiler(object):
 			stmts_added += 1
 		self._outer_loops_ending -= 1
 		self._indent_level -= 1
-		self._last_speaker == None
+		self._last_speaker = None
 		self._just_completed_line = False
 		self.add_paragraph("}")
-				
+
+	# noinspection PyMethodMayBeStatic
 	def make_flagset(self, flagset):
 		line = ''
 		value = scp.get_expr(flagset['value'])
@@ -693,6 +695,8 @@ class DocxCompiler(object):
 		nat_lang = flag.startswith('have ')
 		if nat_lang:
 			phrase = flag[len('have '):]
+		else:
+			phrase = ""
 		if scp.typed_check(flagset['value'], 'boolean'):
 			if not nat_lang:
 				if tvalue:
@@ -720,10 +724,9 @@ class DocxCompiler(object):
 				line = 'Whether we have now ' + flag + ' is determined by the value of the variable ' + value + '.'
 			else:
 				line = 'Set the flag ' + scp.quote(flag, "'") + ' to the same as the value of the variable ' + value + '.'
-		return (line, nat_lang)
+		return line, nat_lang
 		
 	def make_varset(self, varset):
-		line = ''
 		if scp.typed_check(varset['value'], 'boolean'):
 			return self.make_flagset(varset)
 		var = scp.to_words(varset['name'][1]).lower()
@@ -736,29 +739,30 @@ class DocxCompiler(object):
 			line = readable.strip().capitalize() + '.'
 		else:
 			line = 'Set the variable ' + scp.quote(var, "'") + ' to ' + value + '.'
-		return (line, False)
+		return line, False
 		
 	def make_goto(self, goto):
 		bookmark = self.to_bookmark(scp.to_words(goto['destination'][1]).title())
-		return ('Jump to ', scp.to_words(goto['destination'][1]).title(), bookmark)
-		
+		return 'Jump to ', scp.to_words(goto['destination'][1]).title(), bookmark
+
+	# noinspection PyMethodMayBeStatic
 	def to_bookmark(self, text, hidden=False):
 		text = text.strip()
-		if not hidden: # initial digit okay if hidden; '_' will be added at start
-			text = re.sub(r'^\d', '_', text) # remove initial digit
-		text = re.sub(r'\W', '_', text) # remove illegal chars
-		text = re.sub('_+', '_', text) # collapse runs of underscores
-		
+		if not hidden:  # initial digit okay if hidden; '_' will be added at start
+			text = re.sub(r'^\d', '_', text)  # remove initial digit
+		text = re.sub(r'\W', '_', text)  # remove illegal chars
+		text = re.sub('_+', '_', text)  # collapse runs of underscores
+
 		# add/remove initial underscore
 		if not hidden and text[0] == '_':
 			text = text[1:]
 		elif hidden and text[0] != '_':
 			text = '_' + text
-		
+
 		# truncate to 40 chars:
 		if len(text) > 40:
 			text = text[:40]
-			
+
 		return text
 		
 	def contains_writeable(self, stmts):
@@ -782,12 +786,13 @@ class DocxCompiler(object):
 				else:
 					return True
 		return False
-				
-def make_states(states):	
+
+
+def make_states(states):
 	states_added = 0
 	line = ''
 	for s in states:
-		if states_added == len(states) - 1 and len(states) > 1: # we are on the last one
+		if states_added == len(states) - 1 and len(states) > 1:  # we are on the last one
 			line += ' and'
 		line += ' ' + scp.to_words(s[1]).lower()
 		if states_added < len(states) - 1 and len(states) > 2:
