@@ -181,8 +181,7 @@ class AnalysisCompiler(object):
 		self.add_line()
 
 	def _build_fmv_output(self):
-		full_list = self._resources['fmv'].keys()
-		full_list.sort()
+		full_list = sorted(self._resources['fmv'].keys())
 
 		num = len(full_list)
 		self.add_line(pluralize(num, "FMV"))
@@ -199,8 +198,7 @@ class AnalysisCompiler(object):
 		self.add_line()
 
 	def _build_gfx_output(self):
-		full_list = self._resources['gfx'].keys()
-		full_list.sort()
+		full_list = sorted(self._resources['gfx'].keys())
 
 		num = len(full_list)
 		self.add_line(pluralize(num, "GFX"))
@@ -217,8 +215,7 @@ class AnalysisCompiler(object):
 		self.add_line()
 
 	def _build_sfx_output(self):
-		full_list = self._resources['sfx'].keys()
-		full_list.sort()
+		full_list = sorted(self._resources['sfx'].keys())
 
 		num = len(full_list)
 		self.add_line(pluralize(num, "SFX"))
@@ -235,8 +232,7 @@ class AnalysisCompiler(object):
 		self.add_line()
 
 	def _build_bgm_output(self):
-		full_list = self._resources['bgm'].keys()
-		full_list.sort()
+		full_list = sorted(self._resources['bgm'].keys())
 
 		num = len(full_list)
 		self.add_line(pluralize(num, "Music Track"))
