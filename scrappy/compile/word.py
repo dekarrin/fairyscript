@@ -1,14 +1,13 @@
 from . import scp
-import copy
 import re
 
 from ..docx import Document
-from ..docx.enum.text import WD_ALIGN_PARAGRAPH, WD_UNDERLINE
+from ..docx.enum.text import WD_PARAGRAPH_ALIGNMENT as WD_ALIGN_PARAGRAPH, WD_UNDERLINE
 from ..docx.enum.style import WD_STYLE_TYPE
 from ..docx.shared import Inches
 from ..docx.shared import Pt
 from ..docx.shared import RGBColor
-from ..docx.dml.color import ColorFormat
+
 
 class DocxCompiler(object):
 	def __init__(self):
@@ -25,6 +24,7 @@ class DocxCompiler(object):
 		self._last_paragraph = None
 		self._just_completed_line = False
 		self._last_speaker = None
+		self._last_run = None
 		self._num_docs = 0
 		self._warnings = {}
 		self._screenplay_actor_margin = Inches(4)
@@ -225,7 +225,7 @@ class DocxCompiler(object):
 		else:
 			if self._just_completed_line and not self.screenplay_mode:
 				self.add_paragraph()
-				self._last_speaker == None
+				self._last_speaker = None
 				self._just_completed_line = False
 			if statement['type'] == 'comment':
 				self.add_paragraph('(' + scp.extract_comment(statement['text']) + ')', style='Actor Instruction')
@@ -247,7 +247,6 @@ class DocxCompiler(object):
 		if self.screenplay_mode:
 			cont = ""
 			vo = ""
-			charname = None
 			if continuing:
 				cont = " (CONT'D)"
 			if internal:
@@ -268,7 +267,8 @@ class DocxCompiler(object):
 				self.add_run(' "' + line['text'][1] + '"')
 		self._just_completed_line = True
 		self._last_speaker = sp
-		
+
+	# noinspection PyPep8Naming
 	def _compile_SCENE(self, scene):
 		if scene['transition'] is None:
 			trans = "cut to:"
@@ -277,7 +277,8 @@ class DocxCompiler(object):
 		self.add_paragraph(trans.capitalize() + "\n\n", style='Slugline Transition')
 		name = scp.to_words(scene['name'][1])
 		self.add_paragraph(name, style='Slugline')
-		
+
+	# noinspection PyPep8Naming
 	def _compile_ENTER(self, enter):
 		geom = enter['motion']
 		dest = None
@@ -309,6 +310,7 @@ class DocxCompiler(object):
 		line += '.'
 		self.add_paragraph(line, style='Actor Instruction')
 
+	# noinspection PyPep8Naming
 	def _compile_ACTION(self, action):
 		line = scp.to_words(action['target'][1]).title() + ' '
 		if len(action['states']) > 0:
@@ -321,9 +323,10 @@ class DocxCompiler(object):
 			line += scp.get_duration_words(action['duration'], 'over %d seconds')
 		line += '.'
 		self.add_paragraph(line, style='Actor Instruction')
-		
-	def _compile_EXIT(self, exit):
-		geom = exit['motion']
+
+	# noinspection PyPep8Naming
+	def _compile_EXIT(self, xit):
+		geom = xit['motion']
 		dest = None
 		origin = None
 		if geom is not None:
@@ -332,7 +335,7 @@ class DocxCompiler(object):
 			if geom['origin'] is not None:
 				origin = geom['origin'][1]
 		
-		line = scp.to_words(exit['target'][1]).title() + ' '
+		line = scp.to_words(xit['target'][1]).title() + ' '
 		if geom is not None:
 			line += 'moves '
 		if origin is not None:
@@ -341,8 +344,8 @@ class DocxCompiler(object):
 			line += 'to the ' + scp.to_words(dest).lower() + ' '
 		if geom is not None:
 			line += 'and '
-		if exit['transition'] is not None:
-			line += scp.to_words(exit['transition'][1]).lower() + 's out of '
+		if xit['transition'] is not None:
+			line += scp.to_words(xit['transition'][1]).lower() + 's out of '
 		else:
 			line += 'exits '
 		line += 'the scene'
@@ -350,7 +353,8 @@ class DocxCompiler(object):
 			line += scp.get_duration_words(geom['duration'], 'over %d seconds')
 		line += '.'
 		self.add_paragraph(line, style='Actor Instruction')
-		
+
+	# noinspection PyPep8Naming
 	def _compile_MUSIC(self, music):
 		self.add_paragraph(style='Actor Instruction')
 		song = music['target'][1]
@@ -379,7 +383,8 @@ class DocxCompiler(object):
 			else:
 				line += 'stop.'
 			self.add_run(line)
-			
+
+	# noinspection PyPep8Naming
 	def _compile_GFX(self, gfx):
 		line = 'We see '
 		if gfx['action'] == 'start':
@@ -399,6 +404,7 @@ class DocxCompiler(object):
 				line += 'stop.'
 		self.add_paragraph(line, style='Actor Instruction')
 
+	# noinspection PyPep8Naming
 	def _compile_SFX(self, sfx):	
 		fx = sfx['target'][1]
 		if scp.typed_check(sfx['target'], 'string'):
@@ -421,13 +427,15 @@ class DocxCompiler(object):
 			else:
 				line += 'stop.'
 		self.add_paragraph(line, style='Actor Instruction')
-			
+
+	# noinspection PyPep8Naming
 	def _compile_FMV(self, fmv):
 		self.add_paragraph(style='Actor Instruction')
 		self.add_run("We see the full-motion video ")
 		self.add_run(scp.to_words(fmv['target'][1]), italic=False)
 		self.add_run(' play.')
-		
+
+	# noinspection PyPep8Naming
 	def _compile_CAMERA(self, camera):
 		line = 'We'
 		acts_added = 0
@@ -453,7 +461,8 @@ class DocxCompiler(object):
 			acts_added += 1
 		line += '.'
 		self.add_paragraph(line, style='Actor Instruction')
-		
+
+	# noinspection PyPep8Naming
 	def _compile_CHOICE(self, choice):
 		if choice['label'] is not None:
 			labelstmt = {'type': 'annotation', 'instruction': 'SECTION', 'section': choice['label'], 'params': []}
@@ -488,21 +497,23 @@ class DocxCompiler(object):
 			self.add_run(go[0])
 			self.add_internal_link(go[1], go[2])
 			self.add_run('.')
-			
+
+	# noinspection PyPep8Naming
 	def _compile_DESCRIPTION(self, desc):
 		self.add_paragraph(style='Actor Instruction')
-		line = ''
 		if desc['target'] is not None:
 			self.add_run("Regarding ")
 			self.add_run(scp.to_words(desc['target'][1]).title() + ': ', italic=False)
 		self.add_run(desc['text'][1])
-			
+
+	# noinspection PyPep8Naming
 	def _compile_SECTION(self, section):
 		name = scp.to_words(section['section'][1]).title()
 		bookmark = self.to_bookmark(name)
 		self._document.add_heading(scp.to_words(section['section'][1]).title(), level=2, bookmark_name=bookmark)
 		self._add_break = False
-		
+
+	# noinspection PyPep8Naming
 	def _compile_FLAGSET(self, flagset):
 		if self.include_flagsets:
 			fs = self.make_flagset(flagset)
@@ -513,7 +524,8 @@ class DocxCompiler(object):
 			self.add_paragraph(fs[0], style=style)
 		else:
 			self._add_break = False
-			
+
+	# noinspection PyPep8Naming
 	def _compile_VARSET(self, varset):
 		if self.include_varsets:
 			vs = self.make_varset(varset)
@@ -524,41 +536,47 @@ class DocxCompiler(object):
 			self.add_paragraph(vs[0], style=style)
 		else:
 			self._add_break = False
-		
+
+	# noinspection PyPep8Naming
 	def _compile_DIALOG(self, dialog):
 		if dialog['mode'] == 'AUTO':
 			line = 'Set the dialog window to automatically show/hide.'
 		else:
 			line = dialog['mode'].capitalize() + " the dialog window."
 		self.add_paragraph(line, style='Engine Instruction')
-		
+
+	# noinspection PyPep8Naming
 	def _compile_GOTO(self, goto):
 		self.add_paragraph(style='Reader Instruction')
 		go = self.make_goto(goto)
 		self.add_run(go[0])
 		self.add_internal_link(go[1], go[2])
-		
+
+	# noinspection PyPep8Naming
 	def _compile_EXECUTE(self, execute):
 		section_name = scp.to_words(execute['section'][1]).title()
 		bookmark = self.to_bookmark(section_name)
 		self.add_paragraph("Execute ", style='Reader Instruction')
 		self.add_internal_link(section_name, bookmark)
-	
+
+	# noinspection PyPep8Naming
 	def _compile_INCLUDE(self, include):
 		if not include['parsing'][1]:
 			try:
-				with open(include['file'][1]) as file:
-					for line in file:
+				with open(include['file'][1]) as inc_file:
+					for line in inc_file:
 						self.add_paragraph(line)
 			except IOError as e:
 				self.add_warning("file_inclusion", "can't include '%s': %s" % (include['file'][1], str(e)))
-	
+
+	# noinspection PyPep8Naming
 	def _compile_END(self, end):
 		if 'retval' in end:
 			self.add_paragraph('Return from this section', style='Reader Instruction')
 		else:
 			self._add_break = False
-		
+
+	# noinspection PyPep8Naming
 	def _compile_WHILE(self, whilestmt):
 		line = "Do the following "
 		cond = scp.get_expr(whilestmt['condition'])
@@ -582,14 +600,15 @@ class DocxCompiler(object):
 			self.compile_block(whilestmt['statements'])
 		else:
 			self._add_break = False
-		
+
+	# noinspection PyPep8Naming
 	def _compile_IF(self, ifstmt):
 		elsebr = None
 		firstbr = True
 		had_output = False
 		for br in ifstmt['branches']:
 			if br['condition'] is None:
-				elsestmt = br
+				elsebr = br
 			else:
 				if not self.contains_writeable(br['statements']):
 					continue
@@ -625,10 +644,12 @@ class DocxCompiler(object):
 			self.compile_block(elsebr['statements'])
 		if not had_output:
 			self._add_break = False
-			
+
+	# noinspection PyPep8Naming
 	def _compile_CHARACTERS(self, characters):
 		pass
-			
+
+	# noinspection PyPep8Naming
 	def _compile_PYTHON(self, python):
 		if self.include_python:
 			self.add_paragraph("Execute the following python code:", style='Engine Instruction')
