@@ -65,34 +65,139 @@ class AnalysisCompiler(object):
 
 		return self._compiled
 
-	def _build_bgm_output(self):
-		full_list = self._resources['bgm'].keys()
-		full_list.sort()
+	def _build_characters_output(self):
+		num_chars = len(self._chars)
+		self.add_line(pluralize(num_chars, "Character"))
+		self._inc_indent()
+		if len(self._chars) > 0:
+			# get internal dialog first
+			if None in self._chars:
+				lines = self._chars[None]['lines']
+				self.add_line("Internal Dialog: " + pluralize(lines, "line"))
+				self.add_line()
 
-		num = len(full_list)
-		self.add_line(pluralize(num, "Music Track"))
+			# then get all but internal dialog
+			char_names = [n for n in self._chars.keys() if n is not None]
+			char_names.sort()
+			for name in char_names:
+				char_data = self._chars[name]
+				lines = char_data['lines']
+				states = char_data['states']
+				self.add_line(name + " (" + pluralize(lines, "line") + "):")
+				self._inc_indent()
+				for state in sorted(states.keys()):
+					ref_count = states[state]
+					self.add_line(name + " " + state + ": " + pluralize(ref_count, "reference"))
+				self._dec_indent()
+				self.add_line()
+		else:
+			self.add_line("(none)")
+			self.add_line()
+		self._dec_indent()
+
+	def _build_sections_output(self):
+		num = len(self._labels_map)
+		self.add_line(pluralize(num, "Section"))
 		self._inc_indent()
 		if num > 0:
-			for n, t in full_list:
-				ref_count = self._resources['bgm'][(n, t)]
-				if t == 'name':
-					n = scp.quote(n)
-				self.add_line(n + ": " + pluralize(ref_count, "reference"))
+			for sec in self._labels_map:
+				ref_count = self._labels_map[sec]
+				self.add_line(sec + ": " + pluralize(ref_count, "reference"))
 		else:
 			self.add_line("(none)")
 		self._dec_indent()
 		self.add_line()
 
-	def _build_sfx_output(self):
-		full_list = self._resources['sfx'].keys()
+	def _build_cameras_output(self):
+		snap = self._cam_directives['snap']
+		pan = self._cam_directives['pan']
+		zoom = self._cam_directives['zoom']
+		total = snap + pan + zoom
+
+		self.add_line(pluralize(total, "Camera Directive"))
+		self._inc_indent()
+		self.add_line("snap: " + pluralize(snap, "reference"))
+		self.add_line("pan: " + pluralize(pan, "reference"))
+		self.add_line("zoom: " + pluralize(zoom, "reference"))
+		self._dec_indent()
+		self.add_line()
+
+	def _build_scenes_output(self):
+		num = len(self._scenes)
+		self.add_line(pluralize(num, "Scene"))
+		self._inc_indent()
+		if num > 0:
+			for s in self._scenes:
+				ref_count = self._scenes[s]
+				self.add_line(s + ": " + pluralize(ref_count, "reference"))
+		else:
+			self.add_line("(none)")
+		self._dec_indent()
+		self.add_line()
+
+	def _build_transitions_output(self):
+		num = len(self._transitions)
+		self.add_line(pluralize(num, "Transition"))
+		self._inc_indent()
+		if num > 0:
+			for t in self._transitions:
+				ref_count = self._transitions[t]
+				self.add_line(t + ": " + pluralize(ref_count, "reference"))
+		else:
+			self.add_line("(none)")
+		self._dec_indent()
+		self.add_line()
+
+	def _build_ids_output(self):
+		fmvs = [(name, 'fmv') for name in self._ids['fmv'].keys()]
+		gfxs = [(name, 'gfx') for name in self._ids['gfx'].keys()]
+		sfxs = [(name, 'sfx') for name in self._ids['sfx'].keys()]
+		bgms = [(name, 'bgm') for name in self._ids['bgm'].keys()]
+		full_list = fmvs + gfxs + sfxs + bgms
 		full_list.sort()
 
 		num = len(full_list)
-		self.add_line(pluralize(num, "SFX"))
+		self.add_line(pluralize(num, "ID"))
 		self._inc_indent()
 		if num > 0:
 			for n, t in full_list:
-				ref_count = self._resources['sfx'][(n, t)]
+				ref_count = self._ids[t][n]
+				self.add_line(n + " (" + t.upper() + "): " + pluralize(ref_count, "reference"))
+		else:
+			self.add_line("(none)")
+		self._dec_indent()
+		self.add_line()
+
+	def _build_names_output(self):
+		fmvs = [(name, 'fmv') for name in self._names['fmv'].keys()]
+		gfxs = [(name, 'gfx') for name in self._names['gfx'].keys()]
+		sfxs = [(name, 'sfx') for name in self._names['sfx'].keys()]
+		bgms = [(name, 'bgm') for name in self._names['bgm'].keys()]
+		full_list = fmvs + gfxs + sfxs + bgms
+		full_list.sort()
+
+		num = len(full_list)
+		self.add_line(pluralize(num, "Names"))
+		self._inc_indent()
+		if num > 0:
+			for n, t in full_list:
+				ref_count = self._names[t][n]
+				self.add_line(scp.quote(n) + " (" + t.upper() + "): " + pluralize(ref_count, "reference"))
+		else:
+			self.add_line("(none)")
+		self._dec_indent()
+		self.add_line()
+
+	def _build_fmv_output(self):
+		full_list = self._resources['fmv'].keys()
+		full_list.sort()
+
+		num = len(full_list)
+		self.add_line(pluralize(num, "FMV"))
+		self._inc_indent()
+		if num > 0:
+			for n, t in full_list:
+				ref_count = self._resources['fmv'][(n, t)]
 				if t == 'name':
 					n = scp.quote(n)
 				self.add_line(n + ": " + pluralize(ref_count, "reference"))
@@ -119,16 +224,16 @@ class AnalysisCompiler(object):
 		self._dec_indent()
 		self.add_line()
 
-	def _build_fmv_output(self):
-		full_list = self._resources['fmv'].keys()
+	def _build_sfx_output(self):
+		full_list = self._resources['sfx'].keys()
 		full_list.sort()
 
 		num = len(full_list)
-		self.add_line(pluralize(num, "FMV"))
+		self.add_line(pluralize(num, "SFX"))
 		self._inc_indent()
 		if num > 0:
 			for n, t in full_list:
-				ref_count = self._resources['fmv'][(n, t)]
+				ref_count = self._resources['sfx'][(n, t)]
 				if t == 'name':
 					n = scp.quote(n)
 				self.add_line(n + ": " + pluralize(ref_count, "reference"))
@@ -137,119 +242,23 @@ class AnalysisCompiler(object):
 		self._dec_indent()
 		self.add_line()
 
-	def _build_names_output(self):
-		fmvs = [(scp.quote(name), 'fmv') for name in self._names['fmv'].keys()]
-		gfxs = [(scp.quote(name), 'gfx') for name in self._names['gfx'].keys()]
-		sfxs = [(scp.quote(name), 'sfx') for name in self._names['sfx'].keys()]
-		bgms = [(scp.quote(name), 'bgm') for name in self._names['bgm'].keys()]
-		full_list = fmvs + gfxs + sfxs + bgms
+	def _build_bgm_output(self):
+		full_list = self._resources['bgm'].keys()
 		full_list.sort()
 
 		num = len(full_list)
-		self.add_line(pluralize(num, "Names"))
+		self.add_line(pluralize(num, "Music Track"))
 		self._inc_indent()
 		if num > 0:
 			for n, t in full_list:
-				ref_count = self._names[t][n]
-				self.add_line(n + " (" + t.upper() + "): " + pluralize(ref_count, "reference"))
+				ref_count = self._resources['bgm'][(n, t)]
+				if t == 'name':
+					n = scp.quote(n)
+				self.add_line(n + ": " + pluralize(ref_count, "reference"))
 		else:
 			self.add_line("(none)")
 		self._dec_indent()
 		self.add_line()
-
-	def _build_ids_output(self):
-		fmvs = [(name, 'fmv') for name in self._ids['fmv'].keys()]
-		gfxs = [(name, 'gfx') for name in self._ids['gfx'].keys()]
-		sfxs = [(name, 'sfx') for name in self._ids['sfx'].keys()]
-		bgms = [(name, 'bgm') for name in self._ids['bgm'].keys()]
-		full_list = fmvs + gfxs + sfxs + bgms
-		full_list.sort()
-
-		num = len(full_list)
-		self.add_line(pluralize(num, "ID"))
-		self._inc_indent()
-		if num > 0:
-			for n, t in full_list:
-				ref_count = self._ids[t][n]
-				self.add_line(n + " (" + t.upper() + "): " + pluralize(ref_count, "reference"))
-		else:
-			self.add_line("(none)")
-		self._dec_indent()
-		self.add_line()
-
-	def _build_transitions_output(self):
-		num = len(self._transitions)
-		self.add_line(pluralize(num, "Transition"))
-		self._inc_indent()
-		if num > 0:
-			for t in self._transitions:
-				ref_count = self._transitions[t]
-				self.add_line(t + ": " + pluralize(ref_count, "reference"))
-		else:
-			self.add_line("(none)")
-		self._dec_indent()
-		self.add_line()
-
-	def _build_scenes_output(self):
-		num = len(self._scenes)
-		self.add_line(pluralize(num, "Scene"))
-		self._inc_indent()
-		if num > 0:
-			for s in self._scenes:
-				ref_count = self._scenes[s]
-				self.add_line(s + ": " + pluralize(ref_count, "reference"))
-		else:
-			self.add_line("(none)")
-		self._dec_indent()
-		self.add_line()
-
-	def _build_cameras_output(self):
-		snap = self._cam_directives['snap']
-		pan = self._cam_directives['pan']
-		zoom = self._cam_directives['zoom']
-		total = snap + pan + zoom
-
-		self.add_line(pluralize(total, "Camera Directive"))
-		self._inc_indent()
-		self.add_line("snap: " + pluralize(snap, "reference"))
-		self.add_line("pan: " + pluralize(pan, "reference"))
-		self.add_line("zoom: " + pluralize(zoom, "reference"))
-		self._dec_indent()
-		self.add_line()
-
-	def _build_sections_output(self):
-		num = len(self._labels_map)
-		self.add_line(pluralize(num, "Section"))
-		self._inc_indent()
-		if num > 0:
-			for sec in self._labels_map:
-				ref_count = self._labels_map[sec]
-				self.add_line(sec + ": " + pluralize(ref_count, "references"))
-		else:
-			self.add_line("(none)")
-		self._dec_indent()
-		self.add_line()
-
-	def _build_characters_output(self):
-		num_chars = len(self._chars)
-		self.add_line(pluralize(num_chars, "Character"))
-		self._inc_indent()
-		if len(self._chars) > 0:
-			for name in self._chars:
-				char_data = self._chars[name]
-				lines = char_data['lines']
-				states = char_data['states']
-				self.add_line(name + " (" + pluralize(lines, "line") + "):")
-				self._inc_indent()
-				for state in states:
-					ref_count = states[state]
-					self.add_line(name + " " + state + ": " + pluralize(ref_count, "references"))
-				self._dec_indent()
-				self.add_line()
-		else:
-			self.add_line("(none)")
-			self.add_line()
-		self._dec_indent()
 
 	def compile_statement(self, statement):
 		if statement['type'] == 'line':
@@ -312,7 +321,11 @@ class AnalysisCompiler(object):
 			self._chars[char_name] = {'states': {}, 'lines': 0}
 
 	def _compile_line(self, line):
-		char_name = line['speaker'][1]
+		# TODO: differentiate between IDs and Names for characters
+		if line['speaker'] is None:
+			char_name = None
+		else:
+			char_name = line['speaker'][1]
 		self._inc_char_line_count(char_name)
 
 	# noinspection PyPep8Naming
@@ -393,15 +406,16 @@ class AnalysisCompiler(object):
 	def _compile_CHOICE(self, choice):
 		label = ""
 		if scp.typed_check(choice['label'], 'id'):
-			label = " " + choice['label'][1]
-		if label not in self._labels_map:
-			self._labels_map[label] = 0
+			label = choice['label'][1]
+			if label not in self._labels_map:
+				self._labels_map[label] = {'defines': 0, 'refs': 0}
+			self._labels_map[label]['defines'] += 1
 
 		for c in choice['choices']:
 			dest = c['target'][1]
 			if dest not in self._labels_map:
-				self._labels_map[dest] = 0
-			self._labels_map[dest] += 1
+				self._labels_map[dest] = {'defines': 0, 'refs': 0}
+			self._labels_map[dest]['refs'] += 1
 
 	# noinspection PyPep8Naming
 	def _compile_DESCRIPTION(self, desc):
@@ -411,7 +425,8 @@ class AnalysisCompiler(object):
 	def _compile_SECTION(self, section):
 		dest = section['section'][1]
 		if dest not in self._labels_map:
-			self._labels_map[dest] = 0
+			self._labels_map[dest] = {'defines': 0, 'refs': 0}
+		self._labels_map[dest]['defines'] += 1
 
 	# noinspection PyPep8Naming
 	def _compile_FLAGSET(self, flagset):
@@ -429,8 +444,8 @@ class AnalysisCompiler(object):
 	def _compile_GOTO(self, goto):
 		dest = goto['destination'][1]
 		if dest not in self._labels_map:
-			self._labels_map[dest] = 0
-		self._labels_map[dest] += 1
+			self._labels_map[dest] = {'defines': 0, 'refs': 0}
+		self._labels_map[dest]['refs'] += 1
 
 	# noinspection PyPep8Naming
 	def _compile_EXECUTE(self, execute):
@@ -463,6 +478,7 @@ class AnalysisCompiler(object):
 
 def pluralize(num, word, append="s"):
 	if num != 1:
-		return str(num) + " " + word + append
+		out = str(num) + " " + word + append
 	else:
-		return str(num) + " " + word
+		out = str(num) + " " + word
+	return out
