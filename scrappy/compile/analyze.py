@@ -101,12 +101,18 @@ class AnalysisCompiler(object):
 		self._inc_indent()
 		if num > 0:
 			for sec in self._sections:
-				ref_count = self._sections[sec]
-				self.add_line(sec + ": " + pluralize(ref_count, "reference"))
+				ref_count = self._sections[sec]['refs']
+				def_count = self._sections[sec]['defines']
+				self.add_line(sec + ":")
+				self._inc_indent()
+				self.add_line(pluralize(def_count, "definition"))
+				self.add_line(pluralize(ref_count, "reference"))
+				self._dec_indent()
+				self.add_line()
 		else:
 			self.add_line("(none)")
+			self.add_line()
 		self._dec_indent()
-		self.add_line()
 
 	def _build_scenes_output(self):
 		num = len(self._scenes)
