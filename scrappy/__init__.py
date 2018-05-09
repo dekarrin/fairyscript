@@ -72,7 +72,7 @@ def _lex_manuscript(script_text, filename):
 	for tok in lexer:
 		symbols.append(tok)
 	if not lexer.successful:
-		if filename == '--':
+		if filename == '-':
 			error_file = "(stdin)"
 		else:
 			error_file = "file '" + filename + "'"
@@ -235,81 +235,152 @@ def _precompile(ast, args, compiler):
 	return ast
 
 
+def _add_renpy_subparser(subparsers):
+	rpy_desc = "Compile input(s) to Ren'Py-compatible .rpy format."
+	rpy = subparsers.add_parser('renpy', help="Compile to Ren'Py.", description=rpy_desc)
+	""":type : argparse.ArgumentParser"""
+
+	dest_help = 'Set the destination for motion statements that do not explicitly include one.'
+	rpy.add_argument('--default-destination', metavar='LOC', default='center', help=dest_help)
+
+	origin_help = 'Set the origin for motion statements that do not explicitly include one.'
+	rpy.add_argument('--default-origin', metavar='LOC', default='center', help=origin_help)
+
+	dur_help = 'Set the default time for statements that use a duration but do not explicitly include one.'
+	rpy.add_argument('--default-duration', metavar='SECS', default=0.5, type=float, help=dur_help)
+
+	quick_help = "Set the number of seconds that the phrase 'QUICKLY' is interpreted as."
+	rpy.add_argument('--quick-speed', metavar='SECS', default=0.25, type=float, help=quick_help)
+
+	slow_help = "Set the number of seconds that the phrase 'SLOWLY' is interpreted as."
+	rpy.add_argument('--slow-speed', metavar='SECS', default=2, type=float, help=slow_help)
+
+	tab_help = "Set the number of spaces that are in a single tab in the output."
+	rpy.add_argument('--tab-spaces', metavar='SPACES', default=4, type=int, help=tab_help)
+
+	back_help = 'Set the name of the entity that is used for the background in scene statements.'
+	rpy.add_argument('--r-background-entity-name', metavar='NAME', default='bg', help=back_help)
+
+	cam_help = 'Use the experimental camera system instead of just outputting camera instructions as dialog.'
+	rpy.add_argument('--r-enable-camera', action='store_true', help=cam_help)
+
+	rpy.set_defaults(output_mode='renpy')
+
+
+def _add_docx_subparser(subparsers):
+	docx_desc = "Compile input(s) to a human-readable, script-like .docx format."
+	docx = subparsers.add_parser('docx', help="Compile to DOCX.", description=docx_desc)
+	""":type : argparse.ArgumentParser"""
+
+	para_help = 'Set the spacing in pts between each paragraph in the output.'
+	docx.add_argument('--paragraph-spacing', metavar='PTS', type=int, default=0, help=para_help)
+
+	flags_help = 'Do not produce any output for FLAG statements in the input file.'
+	docx.add_argument('--exclude-flags', dest='include_flags', action='store_false', help=flags_help)
+
+	vars_help = 'Do not produce any output for VAR statements in the input file.'
+	docx.add_argument('--exclude-vars', dest='include_vars', action='store_false', help=vars_help)
+
+	python_help = 'Produce minimal output for PYTHON statements in the input file.'
+	docx.add_argument('--exclude-python', dest='include_python', action='store_false', help=python_help)
+
+	title_help = 'Set the title for the script. This will be at the top of all output files.'
+	docx.add_argument('--title', default=None, help=title_help)
+
+	docx.set_defaults(output_mode='docx')
+
+
+def _add_lex_subparser(subparsers):
+	lex_desc = "Perform lexical tokenization on the input(s) without parsing or compiling, and output the symbol list."
+	lex = subparsers.add_parser('lex', help="Lex the contents without parsing.", description=lex_desc)
+	""":type : argparse.ArgumentParser"""
+
+	lex.add_argument('--pretty', action='store_true', help= "Output pretty-print formatted list of symbols.")
+
+	lex.set_defaults(output_mode='lex')
+
+
+def _add_ast_subparser(subparsers):
+	ast_desc = "Parse the input(s) into an abstract syntax tree without compiling, and output the AST."
+	ast = subparsers.add_parser('ast', help="Parse the contents without compiling.", description=ast_desc)
+	""":type : argparse.ArgumentParser"""
+
+	ast.add_argument('--pretty', action='store_true', help= "Output pretty-print formatted AST.")
+
+	ast.set_defaults(output_mode='ast')
+
+
+def _add_analyze_subparser(subparsers):
+	ana_desc = "Perform an analysis on the identifiers and references that the final output will require"
+	ana_desc += " implementations for."
+	ana = subparsers.add_parser('analyze', help="Perform static analysis.", description=ana_desc)
+	""":type : argparse.ArgumentParser"""
+
+	ana.set_defaults(output_mode='analyze')
+
+
 def parse_cli_and_execute():
 	# TODO: argparse not available before python 2.7; if we want compat before then we need a re-wright
 	import argparse
 	import pprint
-	argparser = argparse.ArgumentParser(description="Compiles manuscripts to other formats")
-	argparser.add_argument('--version', action='version', version="%(prog)s " + __version__)
-	argparser.add_argument('--input', '-i', action='append', help="The file(s) to be compiled. Will be compiled in order. If no input files are specified, scrappy will read from stdin.")
-	argparser.add_argument('--output', '-o', nargs=1, help="The file to write the compiled manuscript to. If no output file is specified, scrappy will write to stdout.")
-	argparser.add_argument('--pretty', action='store_true', help="Output pretty-print format. Only applies when output is a raw python type.")
-	argparser.add_argument('--inputformat', '-f', nargs=1, dest='input_mode', default=['scp'], choices=('scp', 'lex', 'ast'), help="The format of the input(s).")
-	argparser.add_argument('--quiet', '-q', action='store_true', help="Suppress compiler warnings. This will not suppress errors reported by the lexer and parser.")
-	modegroup = argparser.add_mutually_exclusive_group()
-	modegroup.add_argument('--renpy', '-r', dest='output_mode', action='store_const', const='renpy', help="Compile input(s) to Ren'Py-compatible .rpy format. This is the default mode.")
-	modegroup.add_argument('--word', '-w', dest='output_mode', action='store_const', const='word', help="Compile input(s) to .docx format.")
-	modegroup.add_argument('--lex', '-l', dest='output_mode', action='store_const', const='lex', help="Perform lexical analysis on the input(s) without parsing or compiling.")
-	modegroup.add_argument('--ast', dest='output_mode', action='store_const', const='ast', help="Parse the input(s) into an abstract syntax tree without compiling.")
-	modegroup.add_argument('--analyze', dest='output_mode', action='store_const', const='analyze', help="Perform an analysis on the identifiers and references that the scrappy code will require implementations for.")
-	wordopts = argparser.add_argument_group('human-readable (DOCX) compiler options')
-	wordopts.add_argument('--h-paragraph-spacing', metavar='PTS_SPACING', dest='paragraph_spacing', type=int, default=0, help='Set the spacing in pts between each paragraph in the output.')
-	wordopts.add_argument('--h-exclude-flags', dest='include_flags', action='store_false', help='Do not produce any output for FLAG statements in the input file.')
-	wordopts.add_argument('--h-exclude-vars', dest='include_vars', action='store_false', help='Do not produce any output for VAR statements in the input file.')
-	wordopts.add_argument('--h-exclude-python', dest='include_python', action='store_false', help='Produce minimal output for PYTHON statements in the input file.')
-	wordopts.add_argument('--h-title', dest='title', default=None, help='Set the title for the script. This will be at the top of all output files.')
-	renpyopts = argparser.add_argument_group("ren'py compiler options")
-	renpyopts.add_argument('--r-default-destination', metavar='LOCATION', default='center', dest='default_destination', help='Set the destination for motion statements that do not explicitly include one.')
-	renpyopts.add_argument('--r-default-origin', metavar='LOCATION', default='center', dest='default_origin', help='Set the origin for motion statements that do not explicitly include one.')
-	renpyopts.add_argument('--r-default-duration', metavar='SECONDS', default=0.5, type=float, dest='default_duration', help='Set the default time for statements that use a duration but do not explicitly include one.')
-	renpyopts.add_argument('--r-quick-speed', metavar='SECONDS', default=0.25, dest='quick_speed', type=float, help="Set the number of seconds that the phrase 'QUICKLY' is interpreted as.")
-	renpyopts.add_argument('--r-slow-speed', metavar='SECONDS', default=2, dest='slow_speed', type=float, help="Set the number of seconds that the phrase 'SLOWLY' is interpreted as.")
-	renpyopts.add_argument('--r-tab-spaces', metavar='SPACES', default=4, dest='tab_spaces', type=int, help='Set the number of spaces that are in a single tab in the output.')
-	renpyopts.add_argument('--r-background-entity-name', metavar='NAME', default='bg', dest='background_ent', help='Set the name of the entity that is used for the background in scene statements.')
-	renpyopts.add_argument('--r-enable-camera', action='store_true', dest='enable_camera', help='Use the experimental camera system instead of just outputting camera instructions as dialog.')
+	parser = argparse.ArgumentParser(description="Compiles manuscripts to other formats")
 
-	argparser.set_defaults(output_mode='renpy', output=['--'])
+	parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
+	quiet_help = "Suppress compiler warnings. This will not suppress errors reported by the lexer and parser."
+	parser.add_argument('--quiet', '-q', action='store_true', help=quiet_help)
+
+	input_help = "The file(s) to be compiled. Will be compiled in order. If no input files are specified, scrappy will"
+	input_help += " read from stdin."
+	parser.add_argument('input', nargs='*', type=argparse.FileType('r'), default=[sys.stdin], help=input_help)
+
+	output_help = "The file to write the compiled manuscript to. If no output file is specified, scrappy will write to"
+	output_help += "stdout."
+	parser.add_argument('--output', '-o', type=argparse.FileType('w'), default=sys.stdout, help=output_help)
+
+	fmt_help = "The format of the input(s)."
+	parser.add_argument('--format', '-f', default='scp', choices=('scp', 'lex', 'ast'), help=fmt_help)
+
+	# space at the end of metavar is not a typo; we need it so help output is prettier
+	subparsers = parser.add_subparsers(description="Functionality to execute.", metavar=" SUBCOMMAND ", dest='cmd')
+	subparsers.required = True
+
+	_add_renpy_subparser(subparsers)
+	_add_docx_subparser(subparsers)
+	_add_lex_subparser(subparsers)
+	_add_ast_subparser(subparsers)
+	_add_analyze_subparser(subparsers)
 
 	try:
-		args = argparser.parse_args()
+		args = parser.parse_args()
 	except argparse.ArgumentError as e:
 		raise ArgumentError(e.message)
 
-	args.input_mode = args.input_mode[0]
-	args.output = args.output[0]
-
-	if args.input is None:
-		args.input = ['--']  # don't pass into set_defaults() or else '--' will always be present
-
 	output_file = None
-	if args.output == '--':
-		if args.output_mode == 'word':
-			raise InvalidOutputFormatError("cannot output DOCX file to stdout")
-		output_file = sys.stdout
+	if args.output == sys.stdout and args.output_mode == 'docx':
+		raise InvalidOutputFormatError("cannot output DOCX file to stdout")
 
 	# first, load in all source files and convert to a single AST or symbol list (if only lexing):
 	input_data = []
-	for filename in args.input:
-		if filename == '--':
-			file_contents = sys.stdin.read()
-		else:
-			with open(filename, 'r') as r_file:
-				file_contents = r_file.read()
+	for input_file in args.input:
+		file_contents = input_file.read()
+		input_file.close()
+
+		# TODO: what is filename for stdout/stdin on argparse.FileType?
 
 		if args.output_mode == 'lex':
-			if args.input_mode == 'scp':
-				lex_symbols = _lex_manuscript(file_contents, filename)
-			elif args.input_mode == 'lex':
+			if args.format == 'scp':
+				lex_symbols = _lex_manuscript(file_contents, input_file.name)
+			elif args.format == 'lex':
 				lex_symbols = eval(file_contents)
 			else:
 				raise InvalidInputFormatError("to output lexer symbols, input format must be scp or lex")
 			input_data += lex_symbols
 		else:
-			if args.input_mode == 'scp':
-				ast = _parse_manuscript(file_contents, filename)
-			elif args.input_mode == 'lex':
-				ast = _parse_symbols(eval(file_contents), filename)
-			elif args.input_mode == 'ast':
+			if args.format == 'scp':
+				ast = _parse_manuscript(file_contents, input_file.name)
+			elif args.format == 'lex':
+				ast = _parse_symbols(eval(file_contents), input_file.name)
+			elif args.format == 'ast':
 				ast = eval(file_contents)
 			else:
 				raise InvalidInputFormatError(
@@ -324,7 +395,7 @@ def parse_cli_and_execute():
 		# preprocess and compile
 		if args.output_mode == 'renpy':
 			compiler = RenpyCompiler()
-		elif args.output_mode == 'word':
+		elif args.output_mode == 'docx':
 			compiler = DocxCompiler()
 		elif args.output_mode == 'analyze':
 			compiler = AnalysisCompiler()
@@ -337,13 +408,13 @@ def parse_cli_and_execute():
 			_show_warnings(compiler)
 
 	# finally, write the output to disk
-	if output_file is None and args.output_mode != 'word':
+	if output_file is None and args.output_mode != 'docx':
 		# word is a special case and is saved via the returned object
 		output_file = open(args.output, 'w')
 
 	if (args.output_mode == 'lex' or args.output_mode == 'ast') and args.pretty:
 		pprint.pprint(output_data, output_file)
-	elif args.output_mode == 'word':
+	elif args.output_mode == 'docx':
 		try:
 			output_data.save(args.output)
 		except IOError as e:
