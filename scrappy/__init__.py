@@ -2,6 +2,7 @@ from __future__ import print_function
 import re
 import sys
 
+from . import pretty
 from .parse import scp_lex
 from .parse import scp_yacc
 from .compile.renpy import RenpyCompiler
@@ -96,8 +97,8 @@ def _parse_manuscript(script_text, filename):
 
 def _parse_symbols(symbols, filename):
 	def grab_token():
-		for s in symbols:
-			yield s
+		if len(symbols) > 0:
+			return symbols.pop(0)
 	parser = _create_parser()
 	script_ast = parser.parse(tokenfunc=grab_token)
 	if not parser.successful:
@@ -235,6 +236,19 @@ def _precompile(ast, args, compiler):
 	return ast
 
 
+def _load_lex_tokens(contents):
+	from ply.lex import LexToken as tok
+	def LexToken(t_type, value, line, pos):
+		t = tok()
+		t.type = t_type
+		t.value = value
+		t.lineno = line
+		t.lexpos = pos
+		return t
+	symbols = eval(contents)
+	return symbols
+
+
 def _add_renpy_subparser(subparsers, parent):
 	rpy_desc = "Compile input(s) to Ren'Py-compatible .rpy format."
 	rpy = subparsers.add_parser(
@@ -363,8 +377,6 @@ def _parse_args():
 
 
 def parse_cli_and_execute():
-	import pprint
-
 	args = _parse_args()
 
 	if args.output == sys.stdout and args.output_mode == 'docx':
@@ -382,7 +394,7 @@ def parse_cli_and_execute():
 			if args.format == 'scp':
 				lex_symbols = _lex_manuscript(file_contents, input_file.name)
 			elif args.format == 'lex':
-				lex_symbols = eval(file_contents)
+				lex_symbols = _load_lex_tokens(file_contents)
 			else:
 				raise InvalidInputFormatError("to output lexer symbols, input format must be scp or lex")
 			input_data += lex_symbols
@@ -390,7 +402,11 @@ def parse_cli_and_execute():
 			if args.format == 'scp':
 				ast = _parse_manuscript(file_contents, input_file.name)
 			elif args.format == 'lex':
-				ast = _parse_symbols(eval(file_contents), input_file.name)
+				lexstuff = _load_lex_tokens(file_contents)
+				import pprint
+				pprint.pprint(type(lexstuff[0]))
+				from ply import yacc
+				ast = _parse_symbols(lexstuff, input_file.name)
 			elif args.format == 'ast':
 				ast = eval(file_contents)
 			else:
@@ -420,7 +436,7 @@ def parse_cli_and_execute():
 
 	# finally, write the output to disk
 	if (args.output_mode == 'lex' or args.output_mode == 'ast') and args.pretty:
-		pprint.pprint(output_data, args.output)
+		pretty.pretty(output_data, args.output)
 	elif args.output_mode == 'docx':
 		# docx is saved via framework's save() method
 		args.output.close()
