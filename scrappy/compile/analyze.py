@@ -37,7 +37,11 @@ class AnalysisCompiler(object):
 		pass
 
 	def set_characters(self, chars):
-		self._chars = chars
+		for k in chars:
+			self._create_char_record(k)
+			char_data = chars[k]
+			for char_key in char_data:
+				self._chars[k][char_key] = char_data[char_key]
 
 	def compile_script(self, script):
 		self._to_add = ""
