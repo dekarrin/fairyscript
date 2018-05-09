@@ -319,7 +319,7 @@ def _add_analyze_subparser(subparsers):
 	ana.set_defaults(output_mode='analyze')
 
 def _parse_args():
-	# TODO: argparse not available before python 2.7; if we want compat before then we need a re-wright
+	# TODO: argparse not available before python 2.7; if we want compat before then we need a rewrite
 	import argparse
 
 	parser = argparse.ArgumentParser(description="Compiles manuscripts to other formats")
