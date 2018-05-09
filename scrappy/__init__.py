@@ -237,7 +237,9 @@ def _precompile(ast, args, compiler):
 
 def _add_renpy_subparser(subparsers, parent):
 	rpy_desc = "Compile input(s) to Ren'Py-compatible .rpy format."
-	rpy = subparsers.add_parser('renpy', help="Compile to Ren'Py.", description=rpy_desc, parents=[parent])
+	rpy = subparsers.add_parser(
+		'renpy', help="Compile to Ren'Py.", description=rpy_desc, parents=[parent]
+	)
 	""":type : argparse.ArgumentParser"""
 
 	dest_help = 'Set the destination for motion statements that do not explicitly include one.'
@@ -264,12 +266,12 @@ def _add_renpy_subparser(subparsers, parent):
 	cam_help = 'Use the experimental camera system instead of just outputting camera instructions as dialog.'
 	rpy.add_argument('--enable-camera', action='store_true', help=cam_help)
 
-	rpy.set_defaults(output_mode='renpy')
-
 
 def _add_docx_subparser(subparsers, parent):
 	docx_desc = "Compile input(s) to a human-readable, script-like .docx format."
-	docx = subparsers.add_parser('docx', help="Compile to DOCX.", description=docx_desc, parents=[parent])
+	docx = subparsers.add_parser(
+		'docx', help="Compile to DOCX.", description=docx_desc, parents=[parent]
+	)
 	""":type : argparse.ArgumentParser"""
 
 	para_help = 'Set the spacing in pts between each paragraph in the output.'
@@ -287,17 +289,15 @@ def _add_docx_subparser(subparsers, parent):
 	title_help = 'Set the title for the script. This will be at the top of all output files.'
 	docx.add_argument('--title', default=None, help=title_help)
 
-	docx.set_defaults(output_mode='docx')
-
 
 def _add_lex_subparser(subparsers, parent):
 	lex_desc = "Perform lexical tokenization on the input(s) without parsing or compiling, and output the symbol list."
-	lex = subparsers.add_parser('lex', help="Lex the contents without parsing.", description=lex_desc, parents=[parent])
+	lex = subparsers.add_parser(
+		'lex', help="Lex the contents without parsing.", description=lex_desc, parents=[parent]
+	)
 	""":type : argparse.ArgumentParser"""
 
 	lex.add_argument('--pretty', action='store_true', help= "Output pretty-print formatted list of symbols.")
-
-	lex.set_defaults(output_mode='lex')
 
 
 def _add_ast_subparser(subparsers, parent):
@@ -309,16 +309,14 @@ def _add_ast_subparser(subparsers, parent):
 
 	ast.add_argument('--pretty', action='store_true', help= "Output pretty-print formatted AST.")
 
-	ast.set_defaults(output_mode='ast')
-
 
 def _add_analyze_subparser(subparsers, parent):
 	ana_desc = "Perform an analysis on the identifiers and references that the final output will require"
 	ana_desc += " implementations for."
-	ana = subparsers.add_parser('analyze', help="Perform static analysis.", description=ana_desc, parents=[parent])
+	ana = subparsers.add_parser(
+		'analyze', help="Perform static analysis.", description=ana_desc, parents=[parent]
+	)
 	""":type : argparse.ArgumentParser"""
-
-	ana.set_defaults(output_mode='analyze')
 
 def _parse_args():
 	# TODO: argparse not available before python 2.7; if we want compat before then we need a rewrite
@@ -335,7 +333,9 @@ def _parse_args():
 	parent_parser.add_argument('input', nargs='*', type=argparse.FileType('r'), default=[sys.stdin], help=input_help)
 
 	# space at the end of metavar is not a typo; we need it so help output is prettier
-	subparsers = parser.add_subparsers(description="Functionality to execute.", metavar="SUBCOMMAND", dest='cmd')
+	subparsers = parser.add_subparsers(
+		description="Functionality to execute.", metavar="SUBCOMMAND", dest='output_mode'
+	)
 	subparsers.required = True
 
 	_add_renpy_subparser(subparsers, parent_parser)
@@ -423,8 +423,9 @@ def parse_cli_and_execute():
 		pprint.pprint(output_data, args.output)
 	elif args.output_mode == 'docx':
 		# docx is saved via framework's save() method
+		args.output.close()
 		try:
-			output_data.save(args.output)
+			output_data.save(args.output.name)
 		except IOError as e:
 			if e.errno == 13:
 				raise OutputWriteError("permission denied")
