@@ -5,6 +5,7 @@ parser.out
 *.ast
 *.ana
 *.docx
+test_output/
 .idea/
 .venv/
 build/
