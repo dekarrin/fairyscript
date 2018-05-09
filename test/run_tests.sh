@@ -14,7 +14,7 @@ elif command -v md5sum
 then
 	export has_md5=
 else
-	echo "md5 and md5sum are both unavailable. Cannot run comparison. Abort." >2
+	echo "md5 and md5sum are both unavailable. Cannot run comparison. Abort." >&2
 	exit 1
 fi
 
@@ -27,6 +27,15 @@ checksum() {
 	fi
 }
 
+log_and_show() {
+	echo '['$(date)']'" $1" >> test.log
+	echo "$1"
+}
+
+log() {
+	echo '['$(date)']'" $1" >> test.log
+}
+
 test_renpy() {
 	local cmd="$1"
 	"$cmd" renpy -o test_output/test.rpy test/sources/full_test.scp
@@ -34,9 +43,9 @@ test_renpy() {
 	expected=$(checksum test/expected/expected.rpy)
 	if [ "$actual" != "$expected" ]
 	then
-		echo "Ren'py output differs from expected" >2
-		diff -u test/expected/expected.rpy test_output/test.rpy >2
-		exit 1
+		echo "Ren'py output differs from expected" >&2
+		diff -u test/expected/expected.rpy test_output/test.rpy >&2
+		return 1
 	fi
 }
 
@@ -47,9 +56,9 @@ test_analyze() {
 	expected=$(checksum test/expected/expected.ana)
 	if [ "$actual" != "$expected" ]
 	then
-		echo "Static analysis output differs from expected" >2
-		diff -u test/expected/expected.ana test_output/test.ana >2
-		exit 1
+		echo "Static analysis output differs from expected" >&2
+		diff -u test/expected/expected.ana test_output/test.ana >&2
+		return 1
 	fi
 }
 
@@ -60,9 +69,9 @@ test_ast() {
 	expected=$(checksum test/expected/expected.ast)
 	if [ "$actual" != "$expected" ]
 	then
-		echo "Parsed AST output differs from expected" >2
-		diff -u test/expected/expected.ast test_output/test.ast >2
-		exit 1
+		echo "Parsed AST output differs from expected" >&2
+		diff -u test/expected/expected.ast test_output/test.ast >&2
+		return 1
 	fi
 }
 
@@ -73,9 +82,9 @@ test_lex() {
 	expected=$(checksum test/expected/expected.lex)
 	if [ "$actual" != "$expected" ]
 	then
-		echo "Lexer symbol output differs from expected" >2
-		diff -u test/expected/expected.lex test_output/test.lex >2
-		exit 1
+		echo "Lexer symbol output differs from expected" >&2
+		diff -u test/expected/expected.lex test_output/test.lex >&2
+		return 1
 	fi
 }
 
@@ -91,9 +100,9 @@ test_docx() {
 	cp test/expected/expected.docx test_output/docx/expected/
 
 	cd test_output/docx/expected
-	unzip expected.docx
+	unzip expected.docx > /dev/null 2>&1
 	cd ../actual
-	unzip test.docx
+	unzip test.docx > /dev/null 2>&1
 	cd ../../..
 
 	status=0
@@ -102,8 +111,8 @@ test_docx() {
 	expected_data=$(checksum test_output/docx/expected/word/document.xml)
 	if [ "$actual" != "$expected" ]
 	then
-		echo "DOCX document content differs from expected" >2
-		echo "(cannot show docx diffs)" >2
+		echo "DOCX document content differs from expected" >&2
+		echo "(cannot show docx diffs)" >&2
 		status=1
 	fi
 
@@ -111,13 +120,15 @@ test_docx() {
 	expected_styles=$(checksum test_output/docx/expected/word/styles.xml)
 	if [ "$actual" != "$expected" ]
 	then
-		echo "DOCX document style differs from expected" >2
-		echo "(cannot show docx diffs)" >2
+		echo "DOCX document style differs from expected" >&2
+		echo "(cannot show docx diffs)" >&2
 		status=1
 	fi
 
-	exit ${status}
+	return ${status}
 }
+
+echo "Starting tests..."
 
 rm -rf test_output
 mkdir test_output
@@ -131,6 +142,7 @@ for cmd in $ALL_COMMANDS
 do
 	for test in $ALL_TESTS
 	do
+		echo "\"$cmd / $test\"..."
 		"$test" "$cmd" || failures="$(expr $failures + 1)"
 	done
 done
@@ -141,6 +153,6 @@ echo "$passes/$total_tests passed"
 
 if [ "$failures" -gt 0 ]
 then
-	echo "$failures failed." >2
+	echo "$failures failed" >&2
 	exit 1
 fi
