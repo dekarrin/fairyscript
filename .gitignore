@@ -3,6 +3,7 @@ parser.out
 *.rpy
 *.lex
 *.ast
+*.ana
 *.docx
 .idea/
 .venv/
