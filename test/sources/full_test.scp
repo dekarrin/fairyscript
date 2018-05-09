@@ -1,8 +1,8 @@
 # Test combinations of the grammar
 
-(include: "test/quickstart.rpy" WITH   PARSING OFF)
-(include: "test/quickstart.rpy" FOR TARGET renpy WITH PARSING OFF)
-(include: "test/bindings.rpy" FOR TARGET renpy WITH PARSING OFF)
+(include: "test/sources/quickstart.rpy" WITH   PARSING OFF)
+(include: "test/sources/quickstart.rpy" FOR TARGET renpy WITH PARSING OFF)
+(include: "test/sources/bindings.rpy" FOR TARGET renpy WITH PARSING OFF)
 
 (goto: choice-section)
 
@@ -132,7 +132,7 @@
 
 (End: RETURN 5)
 
-(include: "test/quickstart.rpy" WITH PARSING OFF)
+(include: "test/sources/quickstart.rpy" WITH PARSING OFF)
 
 (while: staff) {
 	(var: runs INC)
@@ -199,7 +199,7 @@ Aerith: "I heard you were feeling down."
 
 Aerith: "So I decided to stop by."
 
-(include: "test/full_test_inc.scp")
+(include: "test/sources/full_test_inc.scp")
 
 "The Wall": "Don't forget about me!"
 
