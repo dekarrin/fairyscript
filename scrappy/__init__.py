@@ -318,30 +318,14 @@ def _add_analyze_subparser(subparsers):
 
 	ana.set_defaults(output_mode='analyze')
 
-
-def parse_cli_and_execute():
+def _parse_args():
 	# TODO: argparse not available before python 2.7; if we want compat before then we need a re-wright
 	import argparse
-	import pprint
+
 	parser = argparse.ArgumentParser(description="Compiles manuscripts to other formats")
 
-	parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
-	quiet_help = "Suppress compiler warnings. This will not suppress errors reported by the lexer and parser."
-	parser.add_argument('--quiet', '-q', action='store_true', help=quiet_help)
-
-	input_help = "The file(s) to be compiled. Will be compiled in order. If no input files are specified, scrappy will"
-	input_help += " read from stdin."
-	parser.add_argument('input', nargs='*', type=argparse.FileType('r'), default=[sys.stdin], help=input_help)
-
-	output_help = "The file to write the compiled manuscript to. If no output file is specified, scrappy will write to"
-	output_help += "stdout."
-	parser.add_argument('--output', '-o', type=argparse.FileType('w'), default=sys.stdout, help=output_help)
-
-	fmt_help = "The format of the input(s)."
-	parser.add_argument('--format', '-f', default='scp', choices=('scp', 'lex', 'ast'), help=fmt_help)
-
 	# space at the end of metavar is not a typo; we need it so help output is prettier
-	subparsers = parser.add_subparsers(description="Functionality to execute.", metavar=" SUBCOMMAND ", dest='cmd')
+	subparsers = parser.add_subparsers(description="Functionality to execute.", metavar="SUBCOMMAND", dest='cmd')
 	subparsers.required = True
 
 	_add_renpy_subparser(subparsers)
@@ -350,10 +334,33 @@ def parse_cli_and_execute():
 	_add_ast_subparser(subparsers)
 	_add_analyze_subparser(subparsers)
 
+	parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
+	quiet_help = "Suppress compiler warnings. This will not suppress errors reported by the lexer and parser."
+	parser.add_argument('--quiet', '-q', action='store_true', help=quiet_help)
+
+	output_help = "The file to write the compiled manuscript to. If no output file is specified, scrappy will write to"
+	output_help += "stdout."
+	parser.add_argument('--output', '-o', type=argparse.FileType('w'), default=sys.stdout, help=output_help)
+
+	fmt_help = "The format of the input(s)."
+	parser.add_argument('--format', '-f', default='scp', choices=('scp', 'lex', 'ast'), help=fmt_help)
+
+	input_help = "The file(s) to be compiled. Will be compiled in order. If no input files are specified, scrappy will"
+	input_help += " read from stdin."
+	parser.add_argument('input', nargs='*', type=argparse.FileType('r'), default=[sys.stdin], help=input_help)
+
 	try:
 		args = parser.parse_args()
 	except argparse.ArgumentError as e:
 		raise ArgumentError(e.message)
+
+	return args
+
+
+def parse_cli_and_execute():
+	import pprint
+
+	args = _parse_args()
 
 	output_file = None
 	if args.output == sys.stdout and args.output_mode == 'docx':

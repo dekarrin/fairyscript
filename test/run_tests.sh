@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #
-./scpcompile.py -i test/full_test.scp -o test.rpy
-./scpcompile.py -i test/full_test.scp -o test.docx --word
+./scpcompile.py -o test.rpy renpy test/full_test.scp
+./scpcompile.py -o test.docx docx test/full_test.scp
 
 # test installed version as well
-scpcompile -i test/full_test.scp -o test.rpy
-scpcompile -i test/full_test.scp -o test.docx --word
+scpcompile -o test.rpy renpy test/full_test.scp
+scpcompile -o test.docx docx test/full_test.scp
