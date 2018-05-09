@@ -1,1 +1,1151 @@
-[{'text': '# Test combinations of the grammar', 'type': 'comment'}, {'langs': None, 'instruction': 'INCLUDE', 'type': 'annotation', 'file': ('string', 'test/sources/quickstart.rpy'), 'parsing': ('boolean', False)}, {'langs': [('id', 'renpy')], 'instruction': 'INCLUDE', 'type': 'annotation', 'file': ('string', 'test/sources/quickstart.rpy'), 'parsing': ('boolean', False)}, {'langs': [('id', 'renpy')], 'instruction': 'INCLUDE', 'type': 'annotation', 'file': ('string', 'test/sources/bindings.rpy'), 'parsing': ('boolean', False)}, {'destination': ('id', 'choice-section'), 'instruction': 'GOTO', 'type': 'annotation'}, {'instruction': 'SCENE', 'type': 'directive', 'name': ('id', 'Bobs-garage-2'), 'transition': None}, {'instruction': 'SCENE', 'type': 'directive', 'name': ('id', 'my-house'), 'transition': ('id', 'FADE')}, {'motion': None, 'transition': None, 'target': ('id', 'Aerith'), 'instruction': 'ENTER', 'states': [], 'type': 'directive'}, {'motion': None, 'transition': None, 'target': ('id', 'Aerith'), 'instruction': 'ENTER', 'states': [('id', 'pissed-off')], 'type': 'directive'}, {'motion': None, 'transition': None, 'target': ('id', 'Aerith'), 'instruction': 'ENTER', 'states': [('id', 'pissed-off'), ('id', 'annoyed')], 'type': 'directive'}, {'motion': None, 'transition': None, 'target': ('id', 'Aerith'), 'instruction': 'ENTER', 'states': [('id', 'pissed'), ('id', 'annoyed'), ('id', 'with-back-turned')], 'type': 'directive'}, {'motion': None, 'transition': ('id', 'DISSOLVE'), 'target': ('id', 'Aerith'), 'instruction': 'ENTER', 'states': [], 'type': 'directive'}, {'motion': None, 'transition': ('id', 'DISSOLVE'), 'target': ('id', 'Aerith'), 'instruction': 'ENTER', 'states': [('id', 'pissed-off')], 'type': 'directive'}, {'motion': None, 'transition': ('id', 'DISSOLVE'), 'target': ('id', 'Aerith'), 'instruction': 'ENTER', 'states': [('id', 'pissed-off'), ('id', 'annoyed')], 'type': 'directive'}, {'motion': None, 'transition': ('id', 'FADE'), 'target': ('id', 'Aerith'), 'instruction': 'ENTER', 'states': [('id', 'pissed'), ('id', 'annoyed'), ('id', 'with-back-turned')], 'type': 'directive'}, {'motion': {'origin': ('id', 'LEFT'), 'duration': None, 'destination': None}, 'transition': None, 'target': ('id', 'Aerith'), 'instruction': 'ENTER', 'states': [], 'type': 'directive'}, {'motion': {'origin': None, 'duration': None, 'destination': ('id', 'DOOR')}, 'transition': None, 'target': ('id', 'Aerith'), 'instruction': 'ENTER', 'states': [], 'type': 'directive'}, {'motion': {'origin': None, 'duration': ('rel', 'QUICKLY'), 'destination': None}, 'transition': None, 'target': ('id', 'Aerith'), 'instruction': 'ENTER', 'states': [], 'type': 'directive'}, {'motion': {'origin': None, 'duration': ('rel', 'SLOWLY'), 'destination': None}, 'transition': ('id', 'FADE'), 'target': ('id', 'Aerith'), 'instruction': 'ENTER', 'states': [], 'type': 'directive'}, {'motion': {'origin': ('id', 'LEFT'), 'duration': None, 'destination': ('id', 'DOOR')}, 'transition': ('id', 'FADE'), 'target': ('id', 'Aerith'), 'instruction': 'ENTER', 'states': [], 'type': 'directive'}, {'motion': {'origin': ('id', 'LEFT'), 'duration': ('number', 4.5), 'destination': ('id', 'DOOR')}, 'transition': ('id', 'FADE'), 'target': ('id', 'Aerith'), 'instruction': 'ENTER', 'states': [], 'type': 'directive'}, {'motion': {'origin': ('id', 'LEFT'), 'duration': ('number', 4.5), 'destination': ('id', 'DOOR')}, 'transition': ('id', 'FADE'), 'target': ('id', 'Aerith'), 'instruction': 'ENTER', 'states': [('id', 'pissed'), ('id', 'mean')], 'type': 'directive'}, {'instruction': 'ACTION', 'target': ('id', 'Bob'), 'destination': None, 'states': [('id', 'pissed')], 'duration': None, 'type': 'directive'}, {'instruction': 'ACTION', 'target': ('id', 'Bob'), 'destination': ('id', 'stage-front'), 'states': [], 'duration': None, 'type': 'directive'}, {'instruction': 'ACTION', 'target': ('id', 'Bob'), 'destination': ('id', 'stage-left'), 'states': [], 'duration': ('rel', 'QUICKLY'), 'type': 'directive'}, {'instruction': 'ACTION', 'target': ('id', 'Bob'), 'destination': ('id', 'bookshelf'), 'states': [('id', 'pissed'), ('id', 'happy')], 'duration': ('rel', 'SLOWLY'), 'type': 'directive'}, {'motion': None, 'instruction': 'EXIT', 'type': 'directive', 'target': ('id', 'Aerith'), 'transition': None}, {'motion': None, 'instruction': 'EXIT', 'type': 'directive', 'target': ('id', 'Aerith'), 'transition': ('id', 'FADE')}, {'motion': {'origin': ('id', 'door'), 'duration': None, 'destination': None}, 'instruction': 'EXIT', 'type': 'directive', 'target': ('id', 'Aerith'), 'transition': None}, {'motion': {'origin': None, 'duration': None, 'destination': ('id', 'east-stairwell')}, 'instruction': 'EXIT', 'type': 'directive', 'target': ('id', 'Aerith'), 'transition': None}, {'motion': {'origin': None, 'duration': ('rel', 'SLOWLY'), 'destination': None}, 'instruction': 'EXIT', 'type': 'directive', 'target': ('id', 'Aerith'), 'transition': None}, {'motion': {'origin': None, 'duration': ('rel', 'SLOWLY'), 'destination': None}, 'instruction': 'EXIT', 'type': 'directive', 'target': ('id', 'Aerith'), 'transition': ('id', 'FADE')}, {'motion': {'origin': ('id', 'door'), 'duration': ('number', 9), 'destination': ('id', 'east-stairwell')}, 'instruction': 'EXIT', 'type': 'directive', 'target': ('id', 'Aerith'), 'transition': ('id', 'FADE')}, {'duration': None, 'action': 'stop', 'instruction': 'MUSIC', 'type': 'directive', 'target': ('rel', 'ALL')}, {'duration': ('rel', 'QUICKLY'), 'action': 'stop', 'instruction': 'MUSIC', 'type': 'directive', 'target': ('rel', 'ALL')}, {'duration': ('number', 3), 'action': 'stop', 'instruction': 'MUSIC', 'type': 'directive', 'target': ('rel', 'ALL')}, {'duration': None, 'action': 'stop', 'instruction': 'MUSIC', 'type': 'directive', 'target': ('rel', 'ALL')}, {'duration': ('rel', 'SLOWLY'), 'action': 'stop', 'instruction': 'MUSIC', 'type': 'directive', 'target': ('rel', 'ALL')}, {'duration': None, 'action': 'stop', 'instruction': 'MUSIC', 'type': 'directive', 'target': ('string', 'bad.ogg')}, {'duration': ('rel', 'SLOWLY'), 'action': 'stop', 'instruction': 'MUSIC', 'type': 'directive', 'target': ('id', 'main_theme')}, {'action': 'start', 'fadeout': None, 'instruction': 'MUSIC', 'type': 'directive', 'target': ('id', 'main-theme')}, {'action': 'start', 'fadeout': ('number', 5), 'instruction': 'MUSIC', 'type': 'directive', 'target': ('string', 'main.ogg')}, {'action': 'start', 'fadeout': ('number', 5), 'instruction': 'MUSIC', 'type': 'directive', 'target': ('string', 'main.ogg')}, {'action': 'start', 'instruction': 'GFX', 'type': 'directive', 'target': ('id', 'flash'), 'loop': ('boolean', False)}, {'action': 'start', 'instruction': 'GFX', 'type': 'directive', 'target': ('id', 'flash'), 'loop': ('boolean', True)}, {'duration': None, 'action': 'stop', 'instruction': 'GFX', 'type': 'directive', 'target': ('id', 'flash')}, {'duration': None, 'action': 'stop', 'instruction': 'GFX', 'type': 'directive', 'target': ('rel', 'ALL')}, {'duration': ('number', 5), 'action': 'stop', 'instruction': 'GFX', 'type': 'directive', 'target': ('id', 'flash')}, {'duration': ('rel', 'QUICKLY'), 'action': 'stop', 'instruction': 'GFX', 'type': 'directive', 'target': ('rel', 'ALL')}, {'duration': None, 'action': 'stop', 'instruction': 'GFX', 'type': 'directive', 'target': ('rel', 'ALL')}, {'duration': ('rel', 'SLOWLY'), 'action': 'stop', 'instruction': 'GFX', 'type': 'directive', 'target': ('rel', 'ALL')}, {'action': 'start', 'instruction': 'SFX', 'type': 'directive', 'target': ('id', 'bang'), 'loop': ('boolean', False)}, {'action': 'start', 'instruction': 'SFX', 'type': 'directive', 'target': ('string', 'concrete-sprint.ogg'), 'loop': ('boolean', False)}, {'action': 'start', 'instruction': 'SFX', 'type': 'directive', 'target': ('string', 'swish.ogg'), 'loop': ('boolean', True)}, {'action': 'start', 'instruction': 'SFX', 'type': 'directive', 'target': ('id', 'swish'), 'loop': ('boolean', True)}, {'duration': None, 'action': 'stop', 'instruction': 'SFX', 'type': 'directive', 'target': ('string', 'swish.ogg')}, {'duration': ('rel', 'SLOWLY'), 'action': 'stop', 'instruction': 'SFX', 'type': 'directive', 'target': ('id', 'swish')}, {'duration': ('rel', 'QUICKLY'), 'action': 'stop', 'instruction': 'SFX', 'type': 'directive', 'target': ('rel', 'ALL')}, {'duration': None, 'action': 'stop', 'instruction': 'SFX', 'type': 'directive', 'target': ('rel', 'ALL')}, {'duration': ('number', 4), 'action': 'stop', 'instruction': 'SFX', 'type': 'directive', 'target': ('rel', 'ALL')}, {'instruction': 'FMV', 'type': 'directive', 'target': ('id', 'opening')}, {'instruction': 'FMV', 'type': 'directive', 'target': ('string', 'opening_video.mp4')}, {'instruction': 'CAMERA', 'type': 'directive', 'actions': [{'type': 'SNAP', 'target': ('id', 'middle')}]}, {'instruction': 'CAMERA', 'type': 'directive', 'actions': [{'duration': ('rel', 'QUICKLY'), 'type': 'PAN', 'target': ('id', 'center')}]}, {'instruction': 'CAMERA', 'type': 'directive', 'actions': [{'duration': None, 'type': 'ZOOM', 'target': ('rel', 'IN')}]}, {'instruction': 'CAMERA', 'type': 'directive', 'actions': [{'duration': None, 'type': 'ZOOM', 'target': ('rel', 'OUT')}]}, {'instruction': 'CAMERA', 'type': 'directive', 'actions': [{'duration': ('number', 3), 'type': 'ZOOM', 'target': ('rel', 'OUT')}]}, {'instruction': 'CAMERA', 'type': 'directive', 'actions': [{'duration': ('number', 3), 'type': 'PAN', 'target': ('id', 'middle')}, {'duration': ('rel', 'QUICKLY'), 'type': 'ZOOM', 'target': ('rel', 'OUT')}]}, {'instruction': 'CAMERA', 'type': 'directive', 'actions': [{'duration': ('number', 3), 'type': 'PAN', 'target': ('id', 'middle')}, {'duration': ('rel', 'QUICKLY'), 'type': 'ZOOM', 'target': ('rel', 'OUT')}, {'type': 'SNAP', 'target': ('id', 'bookshelf')}]}, {'title': None, 'instruction': 'CHOICE', 'type': 'directive', 'label': None, 'choices': [{'text': ('string', "Show her the 'private collection'"), 'target': ('id', 'private'), 'condition': None, 'sets': []}, {'text': ('string', 'Show them the call logs'), 'target': ('id', 'call_logs'), 'condition': ('boolean', True), 'sets': []}, {'text': ('string', 'Show her the missing files'), 'target': ('id', 'files'), 'condition': ('id', 'have_hacked_computer'), 'sets': []}, {'text': ('string', 'Show him the broken chair'), 'target': ('id', 'files'), 'condition': ('id', 'hacked_computer'), 'sets': []}, {'text': ('string', 'Punch her'), 'target': ('id', 'punch'), 'condition': ('boolean', False), 'sets': [{'name': ('id', 'have_punched_aerith'), 'value': ('boolean', True)}]}]}, {'title': ('string', 'What should I tell him?'), 'instruction': 'CHOICE', 'type': 'directive', 'label': ('id', 'choice-section'), 'choices': [{'text': ('string', 'Try to feign ignorance'), 'target': ('id', 'ignorance'), 'condition': None, 'sets': [{'name': ('id', 'goodness'), 'value': ('incdec', {'amount': ('number', 5), 'type': ('rel', 'DEC')})}, {'name': ('id', 'ignore'), 'value': ('incdec', {'amount': ('number', 1), 'type': ('rel', 'INC')})}]}, {'text': ('string', 'Tell the truth'), 'target': ('id', 'tell_truth'), 'condition': None, 'sets': [{'name': ('id', 'badness'), 'value': ('id', 'goodness')}, {'name': ('id', 'truth'), 'value': ('boolean', True)}]}, {'text': ('string', 'Run away.'), 'target': ('id', 'run'), 'condition': ('expr', 'x + 4 >= 39'), 'sets': []}]}, {'instruction': 'SCENE', 'type': 'directive', 'name': ('id', 'ayase-bedroom'), 'transition': None}, {'text': ('string', 'We see a series of shelves and boxes. There is a huge mess everywhere. It pretty much looks like the room of any 12th-grader.'), 'instruction': 'DESCRIPTION', 'type': 'annotation', 'target': None}, {'text': ('string', 'What a hunk of junk! Those wanna-be commandos mounted a rescue operation and came to rescue you in THAT?'), 'instruction': 'DESCRIPTION', 'type': 'annotation', 'target': ('id', 'millenium-falcon')}, {'text': ('string', "this description is explicitly escaped with a pre-colon, though it probably doesn't need it."), 'instruction': 'DESCRIPTION', 'type': 'annotation', 'target': None}, {'text': ('string', ':This description begins with a colon, and so it must be escaped, I guess.'), 'instruction': 'DESCRIPTION', 'type': 'annotation', 'target': None}, {'text': ('string', 'starting_like_this: means that it must be escaped.'), 'instruction': 'DESCRIPTION', 'type': 'annotation', 'target': None}, {'params': [], 'section': ('id', 'punch'), 'instruction': 'SECTION', 'type': 'annotation'}, {'instruction': 'FLAGSET', 'type': 'annotation', 'name': ('id', 'have_drank_tea'), 'value': ('boolean', True)}, {'instruction': 'FLAGSET', 'type': 'annotation', 'name': ('id', 'drank_tea'), 'value': ('boolean', True)}, {'instruction': 'FLAGSET', 'type': 'annotation', 'name': ('id', 'drank_tea'), 'value': ('boolean', False)}, {'instruction': 'FLAGSET', 'type': 'annotation', 'name': ('id', 'have_drank_tea'), 'value': ('boolean', True)}, {'instruction': 'FLAGSET', 'type': 'annotation', 'name': ('id', 'have_drank_tea'), 'value': ('boolean', False)}, {'instruction': 'FLAGSET', 'type': 'annotation', 'name': ('id', 'impressed_aerith'), 'value': ('id', 'have_hacked_computer')}, {'instruction': 'FLAGSET', 'type': 'annotation', 'name': ('id', 'have_impressed_aerith'), 'value': ('id', 'have_hacked_computer')}, {'instruction': 'FLAGSET', 'type': 'annotation', 'name': ('id', 'impressed_aerith'), 'value': ('id', 'hacked_computer')}, {'instruction': 'FLAGSET', 'type': 'annotation', 'name': ('id', 'have_impressed_aerith'), 'value': ('id', 'hacked_computer')}, {'instruction': 'VARSET', 'type': 'annotation', 'name': ('id', 'runs'), 'value': ('number', 1)}, {'instruction': 'VARSET', 'type': 'annotation', 'name': ('id', 'runs'), 'value': ('string', '82')}, {'instruction': 'VARSET', 'type': 'annotation', 'name': ('id', 'runs'), 'value': ('incdec', {'amount': ('number', 1), 'type': ('rel', 'INC')})}, {'instruction': 'VARSET', 'type': 'annotation', 'name': ('id', 'have_run'), 'value': ('boolean', False)}, {'instruction': 'VARSET', 'type': 'annotation', 'name': ('id', 'reps'), 'value': ('number', 28)}, {'instruction': 'VARSET', 'type': 'annotation', 'name': ('id', 'reps'), 'value': ('incdec', {'amount': ('number', 5), 'type': ('rel', 'DEC')})}, {'instruction': 'DIALOG', 'type': 'annotation', 'mode': 'HIDE'}, {'instruction': 'DIALOG', 'type': 'annotation', 'mode': 'SHOW'}, {'instruction': 'DIALOG', 'type': 'annotation', 'mode': 'AUTO'}, {'destination': ('id', 'aerith-punch'), 'instruction': 'GOTO', 'type': 'annotation'}, {'destination': ('id', 'bob-punch'), 'instruction': 'GOTO', 'type': 'annotation'}, {'params': [{'name': ('id', 'target'), 'value': ('string', 'bob')}], 'section': ('id', 'punch'), 'instruction': 'EXECUTE', 'type': 'annotation'}, {'params': [], 'section': ('id', 'aerith-punch'), 'instruction': 'EXECUTE', 'type': 'annotation'}, {'instruction': 'END', 'type': 'annotation'}, {'retval': ('number', 5), 'instruction': 'END', 'type': 'annotation'}, {'langs': None, 'instruction': 'INCLUDE', 'type': 'annotation', 'file': ('string', 'test/sources/quickstart.rpy'), 'parsing': ('boolean', False)}, {'statements': [{'instruction': 'VARSET', 'type': 'annotation', 'name': ('id', 'runs'), 'value': ('incdec', {'amount': ('number', 1), 'type': ('rel', 'INC')})}], 'instruction': 'WHILE', 'type': 'annotation', 'condition': ('id', 'staff')}, {'statements': [{'instruction': 'VARSET', 'type': 'annotation', 'name': ('id', 'runs'), 'value': ('incdec', {'amount': ('number', 1), 'type': ('rel', 'DEC')})}], 'instruction': 'WHILE', 'type': 'annotation', 'condition': ('boolean', True)}, {'statements': [{'instruction': 'VARSET', 'type': 'annotation', 'name': ('id', 'runs'), 'value': ('incdec', {'amount': ('number', 2), 'type': ('rel', 'INC')})}], 'instruction': 'WHILE', 'type': 'annotation', 'condition': ('boolean', False)}, {'statements': [{'instruction': 'FLAGSET', 'type': 'annotation', 'name': ('id', 'have_seen_god'), 'value': ('boolean', True)}], 'instruction': 'WHILE', 'type': 'annotation', 'condition': ('expr', 'x > 8 and q is not 6')}, {'branches': [{'statements': [{'instruction': 'VARSET', 'type': 'annotation', 'name': ('id', 'runs'), 'value': ('incdec', {'amount': ('number', 1), 'type': ('rel', 'INC')})}], 'condition': ('id', 'staff')}], 'instruction': 'IF', 'type': 'annotation'}, {'branches': [{'statements': [{'instruction': 'VARSET', 'type': 'annotation', 'name': ('id', 'runs'), 'value': ('incdec', {'amount': ('number', 1), 'type': ('rel', 'DEC')})}], 'condition': ('boolean', True)}, {'statements': [{'instruction': 'VARSET', 'type': 'annotation', 'name': ('id', 'runs'), 'value': ('incdec', {'amount': ('number', 2), 'type': ('rel', 'INC')})}, {'instruction': 'VARSET', 'type': 'annotation', 'name': ('id', 'runs'), 'value': ('incdec', {'amount': ('number', 1), 'type': ('rel', 'INC')})}], 'condition': ('boolean', False)}], 'instruction': 'IF', 'type': 'annotation'}, {'branches': [{'statements': [{'instruction': 'FLAGSET', 'type': 'annotation', 'name': ('id', 'have_seen_god'), 'value': ('boolean', True)}, {'destination': ('id', 'bob-world'), 'instruction': 'GOTO', 'type': 'annotation'}, {'branches': [{'statements': [{'destination': ('id', 'aerith-world'), 'instruction': 'GOTO', 'type': 'annotation'}], 'condition': ('id', 'have_seen_god')}], 'instruction': 'IF', 'type': 'annotation'}], 'condition': ('expr', 'x > 8 and q is not 6')}, {'statements': [{'params': [], 'section': ('id', 'aerith-punch'), 'instruction': 'EXECUTE', 'type': 'annotation'}], 'condition': ('expr', '35 + 14 > 4')}, {'statements': [{'instruction': 'FLAGSET', 'type': 'annotation', 'name': ('id', 'have_seen_god'), 'value': ('boolean', False)}], 'condition': None}], 'instruction': 'IF', 'type': 'annotation'}, {'body': '\t42+1\n\tfor i in ziebel:\n\t\tprint i', 'instruction': 'PYTHON', 'type': 'annotation'}, {'states': [], 'speaker': None, 'type': 'line', 'text': ('string', 'It feels like everything has gone wrong.')}, {'states': [], 'speaker': None, 'type': 'line', 'text': ('string', "Never before have I felt so awful! I guess that's just how it goes...")}, {'states': [], 'speaker': None, 'type': 'line', 'text': ('string', 'One day it will be better.')}, {'states': [], 'speaker': ('id', 'Aerith'), 'type': 'line', 'text': ('string', "Hey man, what's up?")}, {'states': [], 'speaker': None, 'type': 'line', 'text': ('string', "Aerith? What's she doing here?")}, {'states': [], 'speaker': ('id', 'Aerith'), 'type': 'line', 'text': ('string', 'I heard you were feeling down.')}, {'states': [], 'speaker': ('id', 'Aerith'), 'type': 'line', 'text': ('string', 'So I decided to stop by.')}, {'langs': None, 'instruction': 'INCLUDE', 'type': 'annotation', 'file': ('string', 'test/sources/full_test_inc.scp'), 'parsing': ('boolean', True)}, {'states': [], 'speaker': ('string', 'The Wall'), 'type': 'line', 'text': ('string', "Don't forget about me!")}, {'states': [], 'speaker': ('string', 'The Wall'), 'type': 'line', 'text': ('string', "I'm here too, you know!")}]
+[
+	{
+		'text': '# Test combinations of the grammar',
+		'type': 'comment'
+	},
+	{
+		'file': ('string', 'test/sources/quickstart.rpy'),
+		'instruction': 'INCLUDE',
+		'langs': None,
+		'parsing': ('boolean', False),
+		'type': 'annotation'
+	},
+	{
+		'file': ('string', 'test/sources/quickstart.rpy'),
+		'instruction': 'INCLUDE',
+		'langs': [
+			('id', 'renpy')
+		],
+		'parsing': ('boolean', False),
+		'type': 'annotation'
+	},
+	{
+		'file': ('string', 'test/sources/bindings.rpy'),
+		'instruction': 'INCLUDE',
+		'langs': [
+			('id', 'renpy')
+		],
+		'parsing': ('boolean', False),
+		'type': 'annotation'
+	},
+	{
+		'destination': ('id', 'choice-section'),
+		'instruction': 'GOTO',
+		'type': 'annotation'
+	},
+	{
+		'instruction': 'SCENE',
+		'name': ('id', 'Bobs-garage-2'),
+		'transition': None,
+		'type': 'directive'
+	},
+	{
+		'instruction': 'SCENE',
+		'name': ('id', 'my-house'),
+		'transition': ('id', 'FADE'),
+		'type': 'directive'
+	},
+	{
+		'instruction': 'ENTER',
+		'motion': None,
+		'states': [],
+		'target': ('id', 'Aerith'),
+		'transition': None,
+		'type': 'directive'
+	},
+	{
+		'instruction': 'ENTER',
+		'motion': None,
+		'states': [
+			('id', 'pissed-off')
+		],
+		'target': ('id', 'Aerith'),
+		'transition': None,
+		'type': 'directive'
+	},
+	{
+		'instruction': 'ENTER',
+		'motion': None,
+		'states': [
+			('id', 'pissed-off'),
+			('id', 'annoyed')
+		],
+		'target': ('id', 'Aerith'),
+		'transition': None,
+		'type': 'directive'
+	},
+	{
+		'instruction': 'ENTER',
+		'motion': None,
+		'states': [
+			('id', 'pissed'),
+			('id', 'annoyed'),
+			('id', 'with-back-turned')
+		],
+		'target': ('id', 'Aerith'),
+		'transition': None,
+		'type': 'directive'
+	},
+	{
+		'instruction': 'ENTER',
+		'motion': None,
+		'states': [],
+		'target': ('id', 'Aerith'),
+		'transition': ('id', 'DISSOLVE'),
+		'type': 'directive'
+	},
+	{
+		'instruction': 'ENTER',
+		'motion': None,
+		'states': [
+			('id', 'pissed-off')
+		],
+		'target': ('id', 'Aerith'),
+		'transition': ('id', 'DISSOLVE'),
+		'type': 'directive'
+	},
+	{
+		'instruction': 'ENTER',
+		'motion': None,
+		'states': [
+			('id', 'pissed-off'),
+			('id', 'annoyed')
+		],
+		'target': ('id', 'Aerith'),
+		'transition': ('id', 'DISSOLVE'),
+		'type': 'directive'
+	},
+	{
+		'instruction': 'ENTER',
+		'motion': None,
+		'states': [
+			('id', 'pissed'),
+			('id', 'annoyed'),
+			('id', 'with-back-turned')
+		],
+		'target': ('id', 'Aerith'),
+		'transition': ('id', 'FADE'),
+		'type': 'directive'
+	},
+	{
+		'instruction': 'ENTER',
+		'motion': {
+			'destination': None,
+			'duration': None,
+			'origin': ('id', 'LEFT')
+		},
+		'states': [],
+		'target': ('id', 'Aerith'),
+		'transition': None,
+		'type': 'directive'
+	},
+	{
+		'instruction': 'ENTER',
+		'motion': {
+			'destination': ('id', 'DOOR'),
+			'duration': None,
+			'origin': None
+		},
+		'states': [],
+		'target': ('id', 'Aerith'),
+		'transition': None,
+		'type': 'directive'
+	},
+	{
+		'instruction': 'ENTER',
+		'motion': {
+			'destination': None,
+			'duration': ('rel', 'QUICKLY'),
+			'origin': None
+		},
+		'states': [],
+		'target': ('id', 'Aerith'),
+		'transition': None,
+		'type': 'directive'
+	},
+	{
+		'instruction': 'ENTER',
+		'motion': {
+			'destination': None,
+			'duration': ('rel', 'SLOWLY'),
+			'origin': None
+		},
+		'states': [],
+		'target': ('id', 'Aerith'),
+		'transition': ('id', 'FADE'),
+		'type': 'directive'
+	},
+	{
+		'instruction': 'ENTER',
+		'motion': {
+			'destination': ('id', 'DOOR'),
+			'duration': None,
+			'origin': ('id', 'LEFT')
+		},
+		'states': [],
+		'target': ('id', 'Aerith'),
+		'transition': ('id', 'FADE'),
+		'type': 'directive'
+	},
+	{
+		'instruction': 'ENTER',
+		'motion': {
+			'destination': ('id', 'DOOR'),
+			'duration': ('number', 4.5),
+			'origin': ('id', 'LEFT')
+		},
+		'states': [],
+		'target': ('id', 'Aerith'),
+		'transition': ('id', 'FADE'),
+		'type': 'directive'
+	},
+	{
+		'instruction': 'ENTER',
+		'motion': {
+			'destination': ('id', 'DOOR'),
+			'duration': ('number', 4.5),
+			'origin': ('id', 'LEFT')
+		},
+		'states': [
+			('id', 'pissed'),
+			('id', 'mean')
+		],
+		'target': ('id', 'Aerith'),
+		'transition': ('id', 'FADE'),
+		'type': 'directive'
+	},
+	{
+		'destination': None,
+		'duration': None,
+		'instruction': 'ACTION',
+		'states': [
+			('id', 'pissed')
+		],
+		'target': ('id', 'Bob'),
+		'type': 'directive'
+	},
+	{
+		'destination': ('id', 'stage-front'),
+		'duration': None,
+		'instruction': 'ACTION',
+		'states': [],
+		'target': ('id', 'Bob'),
+		'type': 'directive'
+	},
+	{
+		'destination': ('id', 'stage-left'),
+		'duration': ('rel', 'QUICKLY'),
+		'instruction': 'ACTION',
+		'states': [],
+		'target': ('id', 'Bob'),
+		'type': 'directive'
+	},
+	{
+		'destination': ('id', 'bookshelf'),
+		'duration': ('rel', 'SLOWLY'),
+		'instruction': 'ACTION',
+		'states': [
+			('id', 'pissed'),
+			('id', 'happy')
+		],
+		'target': ('id', 'Bob'),
+		'type': 'directive'
+	},
+	{
+		'instruction': 'EXIT',
+		'motion': None,
+		'target': ('id', 'Aerith'),
+		'transition': None,
+		'type': 'directive'
+	},
+	{
+		'instruction': 'EXIT',
+		'motion': None,
+		'target': ('id', 'Aerith'),
+		'transition': ('id', 'FADE'),
+		'type': 'directive'
+	},
+	{
+		'instruction': 'EXIT',
+		'motion': {
+			'destination': None,
+			'duration': None,
+			'origin': ('id', 'door')
+		},
+		'target': ('id', 'Aerith'),
+		'transition': None,
+		'type': 'directive'
+	},
+	{
+		'instruction': 'EXIT',
+		'motion': {
+			'destination': ('id', 'east-stairwell'),
+			'duration': None,
+			'origin': None
+		},
+		'target': ('id', 'Aerith'),
+		'transition': None,
+		'type': 'directive'
+	},
+	{
+		'instruction': 'EXIT',
+		'motion': {
+			'destination': None,
+			'duration': ('rel', 'SLOWLY'),
+			'origin': None
+		},
+		'target': ('id', 'Aerith'),
+		'transition': None,
+		'type': 'directive'
+	},
+	{
+		'instruction': 'EXIT',
+		'motion': {
+			'destination': None,
+			'duration': ('rel', 'SLOWLY'),
+			'origin': None
+		},
+		'target': ('id', 'Aerith'),
+		'transition': ('id', 'FADE'),
+		'type': 'directive'
+	},
+	{
+		'instruction': 'EXIT',
+		'motion': {
+			'destination': ('id', 'east-stairwell'),
+			'duration': ('number', 9),
+			'origin': ('id', 'door')
+		},
+		'target': ('id', 'Aerith'),
+		'transition': ('id', 'FADE'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': None,
+		'instruction': 'MUSIC',
+		'target': ('rel', 'ALL'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': ('rel', 'QUICKLY'),
+		'instruction': 'MUSIC',
+		'target': ('rel', 'ALL'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': ('number', 3),
+		'instruction': 'MUSIC',
+		'target': ('rel', 'ALL'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': None,
+		'instruction': 'MUSIC',
+		'target': ('rel', 'ALL'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': ('rel', 'SLOWLY'),
+		'instruction': 'MUSIC',
+		'target': ('rel', 'ALL'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': None,
+		'instruction': 'MUSIC',
+		'target': ('string', 'bad.ogg'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': ('rel', 'SLOWLY'),
+		'instruction': 'MUSIC',
+		'target': ('id', 'main_theme'),
+		'type': 'directive'
+	},
+	{
+		'action': 'start',
+		'fadeout': None,
+		'instruction': 'MUSIC',
+		'target': ('id', 'main-theme'),
+		'type': 'directive'
+	},
+	{
+		'action': 'start',
+		'fadeout': ('number', 5),
+		'instruction': 'MUSIC',
+		'target': ('string', 'main.ogg'),
+		'type': 'directive'
+	},
+	{
+		'action': 'start',
+		'fadeout': ('number', 5),
+		'instruction': 'MUSIC',
+		'target': ('string', 'main.ogg'),
+		'type': 'directive'
+	},
+	{
+		'action': 'start',
+		'instruction': 'GFX',
+		'loop': ('boolean', False),
+		'target': ('id', 'flash'),
+		'type': 'directive'
+	},
+	{
+		'action': 'start',
+		'instruction': 'GFX',
+		'loop': ('boolean', True),
+		'target': ('id', 'flash'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': None,
+		'instruction': 'GFX',
+		'target': ('id', 'flash'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': None,
+		'instruction': 'GFX',
+		'target': ('rel', 'ALL'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': ('number', 5),
+		'instruction': 'GFX',
+		'target': ('id', 'flash'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': ('rel', 'QUICKLY'),
+		'instruction': 'GFX',
+		'target': ('rel', 'ALL'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': None,
+		'instruction': 'GFX',
+		'target': ('rel', 'ALL'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': ('rel', 'SLOWLY'),
+		'instruction': 'GFX',
+		'target': ('rel', 'ALL'),
+		'type': 'directive'
+	},
+	{
+		'action': 'start',
+		'instruction': 'SFX',
+		'loop': ('boolean', False),
+		'target': ('id', 'bang'),
+		'type': 'directive'
+	},
+	{
+		'action': 'start',
+		'instruction': 'SFX',
+		'loop': ('boolean', False),
+		'target': ('string', 'concrete-sprint.ogg'),
+		'type': 'directive'
+	},
+	{
+		'action': 'start',
+		'instruction': 'SFX',
+		'loop': ('boolean', True),
+		'target': ('string', 'swish.ogg'),
+		'type': 'directive'
+	},
+	{
+		'action': 'start',
+		'instruction': 'SFX',
+		'loop': ('boolean', True),
+		'target': ('id', 'swish'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': None,
+		'instruction': 'SFX',
+		'target': ('string', 'swish.ogg'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': ('rel', 'SLOWLY'),
+		'instruction': 'SFX',
+		'target': ('id', 'swish'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': ('rel', 'QUICKLY'),
+		'instruction': 'SFX',
+		'target': ('rel', 'ALL'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': None,
+		'instruction': 'SFX',
+		'target': ('rel', 'ALL'),
+		'type': 'directive'
+	},
+	{
+		'action': 'stop',
+		'duration': ('number', 4),
+		'instruction': 'SFX',
+		'target': ('rel', 'ALL'),
+		'type': 'directive'
+	},
+	{
+		'instruction': 'FMV',
+		'target': ('id', 'opening'),
+		'type': 'directive'
+	},
+	{
+		'instruction': 'FMV',
+		'target': ('string', 'opening_video.mp4'),
+		'type': 'directive'
+	},
+	{
+		'actions': [
+			{
+				'target': ('id', 'middle'),
+				'type': 'SNAP'
+			}
+		],
+		'instruction': 'CAMERA',
+		'type': 'directive'
+	},
+	{
+		'actions': [
+			{
+				'duration': ('rel', 'QUICKLY'),
+				'target': ('id', 'center'),
+				'type': 'PAN'
+			}
+		],
+		'instruction': 'CAMERA',
+		'type': 'directive'
+	},
+	{
+		'actions': [
+			{
+				'duration': None,
+				'target': ('rel', 'IN'),
+				'type': 'ZOOM'
+			}
+		],
+		'instruction': 'CAMERA',
+		'type': 'directive'
+	},
+	{
+		'actions': [
+			{
+				'duration': None,
+				'target': ('rel', 'OUT'),
+				'type': 'ZOOM'
+			}
+		],
+		'instruction': 'CAMERA',
+		'type': 'directive'
+	},
+	{
+		'actions': [
+			{
+				'duration': ('number', 3),
+				'target': ('rel', 'OUT'),
+				'type': 'ZOOM'
+			}
+		],
+		'instruction': 'CAMERA',
+		'type': 'directive'
+	},
+	{
+		'actions': [
+			{
+				'duration': ('number', 3),
+				'target': ('id', 'middle'),
+				'type': 'PAN'
+			},
+			{
+				'duration': ('rel', 'QUICKLY'),
+				'target': ('rel', 'OUT'),
+				'type': 'ZOOM'
+			}
+		],
+		'instruction': 'CAMERA',
+		'type': 'directive'
+	},
+	{
+		'actions': [
+			{
+				'duration': ('number', 3),
+				'target': ('id', 'middle'),
+				'type': 'PAN'
+			},
+			{
+				'duration': ('rel', 'QUICKLY'),
+				'target': ('rel', 'OUT'),
+				'type': 'ZOOM'
+			},
+			{
+				'target': ('id', 'bookshelf'),
+				'type': 'SNAP'
+			}
+		],
+		'instruction': 'CAMERA',
+		'type': 'directive'
+	},
+	{
+		'choices': [
+			{
+				'condition': None,
+				'sets': [],
+				'target': ('id', 'private'),
+				'text': ('string', "Show her the 'private collection'")
+			},
+			{
+				'condition': ('boolean', True),
+				'sets': [],
+				'target': ('id', 'call_logs'),
+				'text': ('string', 'Show them the call logs')
+			},
+			{
+				'condition': ('id', 'have_hacked_computer'),
+				'sets': [],
+				'target': ('id', 'files'),
+				'text': ('string', 'Show her the missing files')
+			},
+			{
+				'condition': ('id', 'hacked_computer'),
+				'sets': [],
+				'target': ('id', 'files'),
+				'text': ('string', 'Show him the broken chair')
+			},
+			{
+				'condition': ('boolean', False),
+				'sets': [
+					{
+						'name': ('id', 'have_punched_aerith'),
+						'value': ('boolean', True)
+					}
+				],
+				'target': ('id', 'punch'),
+				'text': ('string', 'Punch her')
+			}
+		],
+		'instruction': 'CHOICE',
+		'label': None,
+		'title': None,
+		'type': 'directive'
+	},
+	{
+		'choices': [
+			{
+				'condition': None,
+				'sets': [
+					{
+						'name': ('id', 'goodness'),
+						'value': ('incdec', {
+								'amount': ('number', 5),
+								'type': ('rel', 'DEC')
+							})
+					},
+					{
+						'name': ('id', 'ignore'),
+						'value': ('incdec', {
+								'amount': ('number', 1),
+								'type': ('rel', 'INC')
+							})
+					}
+				],
+				'target': ('id', 'ignorance'),
+				'text': ('string', 'Try to feign ignorance')
+			},
+			{
+				'condition': None,
+				'sets': [
+					{
+						'name': ('id', 'badness'),
+						'value': ('id', 'goodness')
+					},
+					{
+						'name': ('id', 'truth'),
+						'value': ('boolean', True)
+					}
+				],
+				'target': ('id', 'tell_truth'),
+				'text': ('string', 'Tell the truth')
+			},
+			{
+				'condition': ('expr', 'x + 4 >= 39'),
+				'sets': [],
+				'target': ('id', 'run'),
+				'text': ('string', 'Run away.')
+			}
+		],
+		'instruction': 'CHOICE',
+		'label': ('id', 'choice-section'),
+		'title': ('string', 'What should I tell him?'),
+		'type': 'directive'
+	},
+	{
+		'instruction': 'SCENE',
+		'name': ('id', 'ayase-bedroom'),
+		'transition': None,
+		'type': 'directive'
+	},
+	{
+		'instruction': 'DESCRIPTION',
+		'target': None,
+		'text': ('string', 'We see a series of shelves and boxes. There is a huge mess everywhere. It pretty much looks like the room of any 12th-grader.'),
+		'type': 'annotation'
+	},
+	{
+		'instruction': 'DESCRIPTION',
+		'target': ('id', 'millenium-falcon'),
+		'text': ('string', 'What a hunk of junk! Those wanna-be commandos mounted a rescue operation and came to rescue you in THAT?'),
+		'type': 'annotation'
+	},
+	{
+		'instruction': 'DESCRIPTION',
+		'target': None,
+		'text': ('string', "this description is explicitly escaped with a pre-colon, though it probably doesn't need it."),
+		'type': 'annotation'
+	},
+	{
+		'instruction': 'DESCRIPTION',
+		'target': None,
+		'text': ('string', ':This description begins with a colon, and so it must be escaped, I guess.'),
+		'type': 'annotation'
+	},
+	{
+		'instruction': 'DESCRIPTION',
+		'target': None,
+		'text': ('string', 'starting_like_this: means that it must be escaped.'),
+		'type': 'annotation'
+	},
+	{
+		'instruction': 'SECTION',
+		'params': [],
+		'section': ('id', 'punch'),
+		'type': 'annotation'
+	},
+	{
+		'instruction': 'FLAGSET',
+		'name': ('id', 'have_drank_tea'),
+		'type': 'annotation',
+		'value': ('boolean', True)
+	},
+	{
+		'instruction': 'FLAGSET',
+		'name': ('id', 'drank_tea'),
+		'type': 'annotation',
+		'value': ('boolean', True)
+	},
+	{
+		'instruction': 'FLAGSET',
+		'name': ('id', 'drank_tea'),
+		'type': 'annotation',
+		'value': ('boolean', False)
+	},
+	{
+		'instruction': 'FLAGSET',
+		'name': ('id', 'have_drank_tea'),
+		'type': 'annotation',
+		'value': ('boolean', True)
+	},
+	{
+		'instruction': 'FLAGSET',
+		'name': ('id', 'have_drank_tea'),
+		'type': 'annotation',
+		'value': ('boolean', False)
+	},
+	{
+		'instruction': 'FLAGSET',
+		'name': ('id', 'impressed_aerith'),
+		'type': 'annotation',
+		'value': ('id', 'have_hacked_computer')
+	},
+	{
+		'instruction': 'FLAGSET',
+		'name': ('id', 'have_impressed_aerith'),
+		'type': 'annotation',
+		'value': ('id', 'have_hacked_computer')
+	},
+	{
+		'instruction': 'FLAGSET',
+		'name': ('id', 'impressed_aerith'),
+		'type': 'annotation',
+		'value': ('id', 'hacked_computer')
+	},
+	{
+		'instruction': 'FLAGSET',
+		'name': ('id', 'have_impressed_aerith'),
+		'type': 'annotation',
+		'value': ('id', 'hacked_computer')
+	},
+	{
+		'instruction': 'VARSET',
+		'name': ('id', 'runs'),
+		'type': 'annotation',
+		'value': ('number', 1)
+	},
+	{
+		'instruction': 'VARSET',
+		'name': ('id', 'runs'),
+		'type': 'annotation',
+		'value': ('string', '82')
+	},
+	{
+		'instruction': 'VARSET',
+		'name': ('id', 'runs'),
+		'type': 'annotation',
+		'value': ('incdec', {
+				'amount': ('number', 1),
+				'type': ('rel', 'INC')
+			})
+	},
+	{
+		'instruction': 'VARSET',
+		'name': ('id', 'have_run'),
+		'type': 'annotation',
+		'value': ('boolean', False)
+	},
+	{
+		'instruction': 'VARSET',
+		'name': ('id', 'reps'),
+		'type': 'annotation',
+		'value': ('number', 28)
+	},
+	{
+		'instruction': 'VARSET',
+		'name': ('id', 'reps'),
+		'type': 'annotation',
+		'value': ('incdec', {
+				'amount': ('number', 5),
+				'type': ('rel', 'DEC')
+			})
+	},
+	{
+		'instruction': 'DIALOG',
+		'mode': 'HIDE',
+		'type': 'annotation'
+	},
+	{
+		'instruction': 'DIALOG',
+		'mode': 'SHOW',
+		'type': 'annotation'
+	},
+	{
+		'instruction': 'DIALOG',
+		'mode': 'AUTO',
+		'type': 'annotation'
+	},
+	{
+		'destination': ('id', 'aerith-punch'),
+		'instruction': 'GOTO',
+		'type': 'annotation'
+	},
+	{
+		'destination': ('id', 'bob-punch'),
+		'instruction': 'GOTO',
+		'type': 'annotation'
+	},
+	{
+		'instruction': 'EXECUTE',
+		'params': [
+			{
+				'name': ('id', 'target'),
+				'value': ('string', 'bob')
+			}
+		],
+		'section': ('id', 'punch'),
+		'type': 'annotation'
+	},
+	{
+		'instruction': 'EXECUTE',
+		'params': [],
+		'section': ('id', 'aerith-punch'),
+		'type': 'annotation'
+	},
+	{
+		'instruction': 'END',
+		'type': 'annotation'
+	},
+	{
+		'instruction': 'END',
+		'retval': ('number', 5),
+		'type': 'annotation'
+	},
+	{
+		'file': ('string', 'test/sources/quickstart.rpy'),
+		'instruction': 'INCLUDE',
+		'langs': None,
+		'parsing': ('boolean', False),
+		'type': 'annotation'
+	},
+	{
+		'condition': ('id', 'staff'),
+		'instruction': 'WHILE',
+		'statements': [
+			{
+				'instruction': 'VARSET',
+				'name': ('id', 'runs'),
+				'type': 'annotation',
+				'value': ('incdec', {
+						'amount': ('number', 1),
+						'type': ('rel', 'INC')
+					})
+			}
+		],
+		'type': 'annotation'
+	},
+	{
+		'condition': ('boolean', True),
+		'instruction': 'WHILE',
+		'statements': [
+			{
+				'instruction': 'VARSET',
+				'name': ('id', 'runs'),
+				'type': 'annotation',
+				'value': ('incdec', {
+						'amount': ('number', 1),
+						'type': ('rel', 'DEC')
+					})
+			}
+		],
+		'type': 'annotation'
+	},
+	{
+		'condition': ('boolean', False),
+		'instruction': 'WHILE',
+		'statements': [
+			{
+				'instruction': 'VARSET',
+				'name': ('id', 'runs'),
+				'type': 'annotation',
+				'value': ('incdec', {
+						'amount': ('number', 2),
+						'type': ('rel', 'INC')
+					})
+			}
+		],
+		'type': 'annotation'
+	},
+	{
+		'condition': ('expr', 'x > 8 and q is not 6'),
+		'instruction': 'WHILE',
+		'statements': [
+			{
+				'instruction': 'FLAGSET',
+				'name': ('id', 'have_seen_god'),
+				'type': 'annotation',
+				'value': ('boolean', True)
+			}
+		],
+		'type': 'annotation'
+	},
+	{
+		'branches': [
+			{
+				'condition': ('id', 'staff'),
+				'statements': [
+					{
+						'instruction': 'VARSET',
+						'name': ('id', 'runs'),
+						'type': 'annotation',
+						'value': ('incdec', {
+								'amount': ('number', 1),
+								'type': ('rel', 'INC')
+							})
+					}
+				]
+			}
+		],
+		'instruction': 'IF',
+		'type': 'annotation'
+	},
+	{
+		'branches': [
+			{
+				'condition': ('boolean', True),
+				'statements': [
+					{
+						'instruction': 'VARSET',
+						'name': ('id', 'runs'),
+						'type': 'annotation',
+						'value': ('incdec', {
+								'amount': ('number', 1),
+								'type': ('rel', 'DEC')
+							})
+					}
+				]
+			},
+			{
+				'condition': ('boolean', False),
+				'statements': [
+					{
+						'instruction': 'VARSET',
+						'name': ('id', 'runs'),
+						'type': 'annotation',
+						'value': ('incdec', {
+								'amount': ('number', 2),
+								'type': ('rel', 'INC')
+							})
+					},
+					{
+						'instruction': 'VARSET',
+						'name': ('id', 'runs'),
+						'type': 'annotation',
+						'value': ('incdec', {
+								'amount': ('number', 1),
+								'type': ('rel', 'INC')
+							})
+					}
+				]
+			}
+		],
+		'instruction': 'IF',
+		'type': 'annotation'
+	},
+	{
+		'branches': [
+			{
+				'condition': ('expr', 'x > 8 and q is not 6'),
+				'statements': [
+					{
+						'instruction': 'FLAGSET',
+						'name': ('id', 'have_seen_god'),
+						'type': 'annotation',
+						'value': ('boolean', True)
+					},
+					{
+						'destination': ('id', 'bob-world'),
+						'instruction': 'GOTO',
+						'type': 'annotation'
+					},
+					{
+						'branches': [
+							{
+								'condition': ('id', 'have_seen_god'),
+								'statements': [
+									{
+										'destination': ('id', 'aerith-world'),
+										'instruction': 'GOTO',
+										'type': 'annotation'
+									}
+								]
+							}
+						],
+						'instruction': 'IF',
+						'type': 'annotation'
+					}
+				]
+			},
+			{
+				'condition': ('expr', '35 + 14 > 4'),
+				'statements': [
+					{
+						'instruction': 'EXECUTE',
+						'params': [],
+						'section': ('id', 'aerith-punch'),
+						'type': 'annotation'
+					}
+				]
+			},
+			{
+				'condition': None,
+				'statements': [
+					{
+						'instruction': 'FLAGSET',
+						'name': ('id', 'have_seen_god'),
+						'type': 'annotation',
+						'value': ('boolean', False)
+					}
+				]
+			}
+		],
+		'instruction': 'IF',
+		'type': 'annotation'
+	},
+	{
+		'body': '\t42+1\n\tfor i in ziebel:\n\t\tprint i',
+		'instruction': 'PYTHON',
+		'type': 'annotation'
+	},
+	{
+		'speaker': None,
+		'states': [],
+		'text': ('string', 'It feels like everything has gone wrong.'),
+		'type': 'line'
+	},
+	{
+		'speaker': None,
+		'states': [],
+		'text': ('string', "Never before have I felt so awful! I guess that's just how it goes..."),
+		'type': 'line'
+	},
+	{
+		'speaker': None,
+		'states': [],
+		'text': ('string', 'One day it will be better.'),
+		'type': 'line'
+	},
+	{
+		'speaker': ('id', 'Aerith'),
+		'states': [],
+		'text': ('string', "Hey man, what's up?"),
+		'type': 'line'
+	},
+	{
+		'speaker': None,
+		'states': [],
+		'text': ('string', "Aerith? What's she doing here?"),
+		'type': 'line'
+	},
+	{
+		'speaker': ('id', 'Aerith'),
+		'states': [],
+		'text': ('string', 'I heard you were feeling down.'),
+		'type': 'line'
+	},
+	{
+		'speaker': ('id', 'Aerith'),
+		'states': [],
+		'text': ('string', 'So I decided to stop by.'),
+		'type': 'line'
+	},
+	{
+		'file': ('string', 'test/sources/full_test_inc.scp'),
+		'instruction': 'INCLUDE',
+		'langs': None,
+		'parsing': ('boolean', True),
+		'type': 'annotation'
+	},
+	{
+		'speaker': ('string', 'The Wall'),
+		'states': [],
+		'text': ('string', "Don't forget about me!"),
+		'type': 'line'
+	},
+	{
+		'speaker': ('string', 'The Wall'),
+		'states': [],
+		'text': ('string', "I'm here too, you know!"),
+		'type': 'line'
+	}
+]
