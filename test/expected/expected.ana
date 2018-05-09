@@ -18,19 +18,7 @@ Script Analysis (v1.0)
 	The Wall (2 lines):
 	
 10 Sections
-	files:
-		0 definitions
-		2 references
-	
-	choice-section:
-		1 definition
-		1 reference
-	
 	aerith-punch:
-		0 definitions
-		1 reference
-	
-	run:
 		0 definitions
 		1 reference
 	
@@ -38,19 +26,31 @@ Script Analysis (v1.0)
 		0 definitions
 		1 reference
 	
-	punch:
+	call_logs:
+		0 definitions
+		1 reference
+	
+	choice-section:
 		1 definition
+		1 reference
+	
+	files:
+		0 definitions
+		2 references
+	
+	ignorance:
+		0 definitions
 		1 reference
 	
 	private:
 		0 definitions
 		1 reference
 	
-	ignorance:
-		0 definitions
+	punch:
+		1 definition
 		1 reference
 	
-	call_logs:
+	run:
 		0 definitions
 		1 reference
 	
@@ -59,10 +59,10 @@ Script Analysis (v1.0)
 		1 reference
 	
 4 Scenes
-	my-house: 1 reference
 	Bobs-garage-2: 1 reference
 	ayase-bedroom: 1 reference
 	bobs-house: 1 reference
+	my-house: 1 reference
 
 1 Transition
 	FADE: 1 reference

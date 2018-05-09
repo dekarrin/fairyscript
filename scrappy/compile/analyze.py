@@ -104,7 +104,7 @@ class AnalysisCompiler(object):
 		self.add_line(pluralize(num, "Section"))
 		self._inc_indent()
 		if num > 0:
-			for sec in self._sections:
+			for sec in sorted(self._sections.keys()):
 				ref_count = self._sections[sec]['refs']
 				def_count = self._sections[sec]['defines']
 				self.add_line(sec + ":")
@@ -123,7 +123,7 @@ class AnalysisCompiler(object):
 		self.add_line(pluralize(num, "Scene"))
 		self._inc_indent()
 		if num > 0:
-			for s in self._scenes:
+			for s in sorted(self._scenes.keys()):
 				ref_count = self._scenes[s]
 				self.add_line(s + ": " + pluralize(ref_count, "reference"))
 		else:
