@@ -402,11 +402,7 @@ def parse_cli_and_execute():
 			if args.format == 'scp':
 				ast = _parse_manuscript(file_contents, input_file.name)
 			elif args.format == 'lex':
-				lexstuff = _load_lex_tokens(file_contents)
-				import pprint
-				pprint.pprint(type(lexstuff[0]))
-				from ply import yacc
-				ast = _parse_symbols(lexstuff, input_file.name)
+				ast = _parse_symbols(_load_lex_tokens(file_contents), input_file.name)
 			elif args.format == 'ast':
 				ast = eval(file_contents)
 			else:
