@@ -35,7 +35,7 @@ class RenpyCompiler(object):
 		self.quickly_rel = options.quick_speed
 		self.slowly_rel = options.slow_speed
 		self.tab_spaces = options.tab_spaces
-		self.background_ent = options.background_ent
+		self.background_ent = options.background_entity
 		self.use_camera_system = options.enable_camera
 		
 	def set_characters(self, chars):

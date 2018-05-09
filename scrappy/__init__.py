@@ -235,9 +235,9 @@ def _precompile(ast, args, compiler):
 	return ast
 
 
-def _add_renpy_subparser(subparsers):
+def _add_renpy_subparser(subparsers, parent):
 	rpy_desc = "Compile input(s) to Ren'Py-compatible .rpy format."
-	rpy = subparsers.add_parser('renpy', help="Compile to Ren'Py.", description=rpy_desc)
+	rpy = subparsers.add_parser('renpy', help="Compile to Ren'Py.", description=rpy_desc, parents=[parent])
 	""":type : argparse.ArgumentParser"""
 
 	dest_help = 'Set the destination for motion statements that do not explicitly include one.'
@@ -259,17 +259,17 @@ def _add_renpy_subparser(subparsers):
 	rpy.add_argument('--tab-spaces', metavar='SPACES', default=4, type=int, help=tab_help)
 
 	back_help = 'Set the name of the entity that is used for the background in scene statements.'
-	rpy.add_argument('--r-background-entity-name', metavar='NAME', default='bg', help=back_help)
+	rpy.add_argument('--background-entity', metavar='NAME', default='bg', help=back_help)
 
 	cam_help = 'Use the experimental camera system instead of just outputting camera instructions as dialog.'
-	rpy.add_argument('--r-enable-camera', action='store_true', help=cam_help)
+	rpy.add_argument('--enable-camera', action='store_true', help=cam_help)
 
 	rpy.set_defaults(output_mode='renpy')
 
 
-def _add_docx_subparser(subparsers):
+def _add_docx_subparser(subparsers, parent):
 	docx_desc = "Compile input(s) to a human-readable, script-like .docx format."
-	docx = subparsers.add_parser('docx', help="Compile to DOCX.", description=docx_desc)
+	docx = subparsers.add_parser('docx', help="Compile to DOCX.", description=docx_desc, parents=[parent])
 	""":type : argparse.ArgumentParser"""
 
 	para_help = 'Set the spacing in pts between each paragraph in the output.'
@@ -290,9 +290,9 @@ def _add_docx_subparser(subparsers):
 	docx.set_defaults(output_mode='docx')
 
 
-def _add_lex_subparser(subparsers):
+def _add_lex_subparser(subparsers, parent):
 	lex_desc = "Perform lexical tokenization on the input(s) without parsing or compiling, and output the symbol list."
-	lex = subparsers.add_parser('lex', help="Lex the contents without parsing.", description=lex_desc)
+	lex = subparsers.add_parser('lex', help="Lex the contents without parsing.", description=lex_desc, parents=[parent])
 	""":type : argparse.ArgumentParser"""
 
 	lex.add_argument('--pretty', action='store_true', help= "Output pretty-print formatted list of symbols.")
@@ -300,9 +300,11 @@ def _add_lex_subparser(subparsers):
 	lex.set_defaults(output_mode='lex')
 
 
-def _add_ast_subparser(subparsers):
+def _add_ast_subparser(subparsers, parent):
 	ast_desc = "Parse the input(s) into an abstract syntax tree without compiling, and output the AST."
-	ast = subparsers.add_parser('ast', help="Parse the contents without compiling.", description=ast_desc)
+	ast = subparsers.add_parser(
+		'ast', help="Parse the contents without compiling.", description=ast_desc, parents=[parent]
+	)
 	""":type : argparse.ArgumentParser"""
 
 	ast.add_argument('--pretty', action='store_true', help= "Output pretty-print formatted AST.")
@@ -310,10 +312,10 @@ def _add_ast_subparser(subparsers):
 	ast.set_defaults(output_mode='ast')
 
 
-def _add_analyze_subparser(subparsers):
+def _add_analyze_subparser(subparsers, parent):
 	ana_desc = "Perform an analysis on the identifiers and references that the final output will require"
 	ana_desc += " implementations for."
-	ana = subparsers.add_parser('analyze', help="Perform static analysis.", description=ana_desc)
+	ana = subparsers.add_parser('analyze', help="Perform static analysis.", description=ana_desc, parents=[parent])
 	""":type : argparse.ArgumentParser"""
 
 	ana.set_defaults(output_mode='analyze')
@@ -324,17 +326,24 @@ def _parse_args():
 
 	parser = argparse.ArgumentParser(description="Compiles manuscripts to other formats")
 
+	parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
+
+	# these args will not be properly parsed if we just add them to the root parser
+	parent_parser = argparse.ArgumentParser(add_help=False)
+	input_help = "The file(s) to be compiled. Will be compiled in order. If no input files are specified, scrappy will"
+	input_help += " read from stdin."
+	parent_parser.add_argument('input', nargs='*', type=argparse.FileType('r'), default=[sys.stdin], help=input_help)
+
 	# space at the end of metavar is not a typo; we need it so help output is prettier
 	subparsers = parser.add_subparsers(description="Functionality to execute.", metavar="SUBCOMMAND", dest='cmd')
 	subparsers.required = True
 
-	_add_renpy_subparser(subparsers)
-	_add_docx_subparser(subparsers)
-	_add_lex_subparser(subparsers)
-	_add_ast_subparser(subparsers)
-	_add_analyze_subparser(subparsers)
+	_add_renpy_subparser(subparsers, parent_parser)
+	_add_docx_subparser(subparsers, parent_parser)
+	_add_lex_subparser(subparsers, parent_parser)
+	_add_ast_subparser(subparsers, parent_parser)
+	_add_analyze_subparser(subparsers, parent_parser)
 
-	parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
 	quiet_help = "Suppress compiler warnings. This will not suppress errors reported by the lexer and parser."
 	parser.add_argument('--quiet', '-q', action='store_true', help=quiet_help)
 
@@ -344,10 +353,6 @@ def _parse_args():
 
 	fmt_help = "The format of the input(s)."
 	parser.add_argument('--format', '-f', default='scp', choices=('scp', 'lex', 'ast'), help=fmt_help)
-
-	input_help = "The file(s) to be compiled. Will be compiled in order. If no input files are specified, scrappy will"
-	input_help += " read from stdin."
-	parser.add_argument('input', nargs='*', type=argparse.FileType('r'), default=[sys.stdin], help=input_help)
 
 	try:
 		args = parser.parse_args()
@@ -362,7 +367,6 @@ def parse_cli_and_execute():
 
 	args = _parse_args()
 
-	output_file = None
 	if args.output == sys.stdout and args.output_mode == 'docx':
 		raise InvalidOutputFormatError("cannot output DOCX file to stdout")
 
@@ -415,13 +419,10 @@ def parse_cli_and_execute():
 			_show_warnings(compiler)
 
 	# finally, write the output to disk
-	if output_file is None and args.output_mode != 'docx':
-		# word is a special case and is saved via the returned object
-		output_file = open(args.output, 'w')
-
 	if (args.output_mode == 'lex' or args.output_mode == 'ast') and args.pretty:
-		pprint.pprint(output_data, output_file)
+		pprint.pprint(output_data, args.output)
 	elif args.output_mode == 'docx':
+		# docx is saved via framework's save() method
 		try:
 			output_data.save(args.output)
 		except IOError as e:
@@ -430,11 +431,10 @@ def parse_cli_and_execute():
 			else:
 				raise
 	else:
-		output_file.write(str(output_data))
+		args.output.write(str(output_data))
 
-	# close the file if we need to
-	if args.output != '--' and output_file is not None:
-		output_file.close()
+	# close the file
+	args.output.close()
 
 
 def run():
