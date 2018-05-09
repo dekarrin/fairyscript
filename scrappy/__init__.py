@@ -327,10 +327,20 @@ def _parse_args():
 	parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
 
 	# these args will not be properly parsed if we just add them to the root parser
-	parent_parser = argparse.ArgumentParser(add_help=False)
+	parent = argparse.ArgumentParser(add_help=False)
 	input_help = "The file(s) to be compiled. Will be compiled in order. If no input files are specified, scrappy will"
 	input_help += " read from stdin."
-	parent_parser.add_argument('input', nargs='*', type=argparse.FileType('r'), default=[sys.stdin], help=input_help)
+	parent.add_argument('input', nargs='*', type=argparse.FileType('r'), default=[sys.stdin], help=input_help)
+
+	quiet_help = "Suppress compiler warnings. This will not suppress errors reported by the lexer and parser."
+	parent.add_argument('--quiet', '-q', action='store_true', help=quiet_help)
+
+	output_help = "The file to write the compiled manuscript to. If no output file is specified, scrappy will write to"
+	output_help += " stdout."
+	parent.add_argument('--output', '-o', type=argparse.FileType('w'), default=sys.stdout, help=output_help)
+
+	fmt_help = "The format of the input(s)."
+	parent.add_argument('--format', '-f', default='scp', choices=('scp', 'lex', 'ast'), help=fmt_help)
 
 	# space at the end of metavar is not a typo; we need it so help output is prettier
 	subparsers = parser.add_subparsers(
@@ -338,21 +348,11 @@ def _parse_args():
 	)
 	subparsers.required = True
 
-	_add_renpy_subparser(subparsers, parent_parser)
-	_add_docx_subparser(subparsers, parent_parser)
-	_add_lex_subparser(subparsers, parent_parser)
-	_add_ast_subparser(subparsers, parent_parser)
-	_add_analyze_subparser(subparsers, parent_parser)
-
-	quiet_help = "Suppress compiler warnings. This will not suppress errors reported by the lexer and parser."
-	parser.add_argument('--quiet', '-q', action='store_true', help=quiet_help)
-
-	output_help = "The file to write the compiled manuscript to. If no output file is specified, scrappy will write to"
-	output_help += "stdout."
-	parser.add_argument('--output', '-o', type=argparse.FileType('w'), default=sys.stdout, help=output_help)
-
-	fmt_help = "The format of the input(s)."
-	parser.add_argument('--format', '-f', default='scp', choices=('scp', 'lex', 'ast'), help=fmt_help)
+	_add_renpy_subparser(subparsers, parent)
+	_add_docx_subparser(subparsers, parent)
+	_add_lex_subparser(subparsers, parent)
+	_add_ast_subparser(subparsers, parent)
+	_add_analyze_subparser(subparsers, parent)
 
 	try:
 		args = parser.parse_args()
