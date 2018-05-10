@@ -114,7 +114,7 @@ class AnalysisCompiler(object):
 			# then get all but internal dialog
 			char_names = self._sort_map_keys(mutable_chars, lambda x: x['lines'])
 			for name in char_names:
-				char_data = mutable_chars
+				char_data = mutable_chars[name]
 				lines = char_data['lines']
 				state_keys = self._sort_ref_map_keys(char_data['states'])
 				self.add_line(name + " (" + scp.pluralize(lines, "line") + "):")
@@ -465,7 +465,8 @@ class AnalysisCompiler(object):
 		if self._order == "name":
 			sorted_items = sorted(items, key=name_key)
 		elif self._order == "usage":
-			sorted_items = sorted(items, key=lambda x: (usage_key(x), name_key(x)))
+			sorted_items = sorted(items, key=name_key)
+			sorted_items = sorted(sorted_items, key=usage_key, reverse=True)
 		else:
 			raise ValueError("Bad sorting algorithm type '" + str(self._order) + "'")
 		return sorted_items
@@ -499,7 +500,8 @@ class AnalysisCompiler(object):
 			if usage_key is None:
 				def usage_key(x):
 					return x['refs']
-			dict_keys = sorted(dict_keys, key=lambda k: (usage_key(obj_map[k]), k))
+			dict_keys = sorted(dict_keys)
+			dict_keys = sorted(dict_keys, key=lambda k: usage_key(obj_map[k]), reverse=True)
 		else:
 			raise ValueError("Bad sorting algorithm type '" + str(self._order) + "'")
 		return dict_keys

@@ -333,7 +333,7 @@ def _add_analyze_subparser(subparsers, parent):
 	""":type : argparse.ArgumentParser"""
 
 	order_help = "Select the order of entries in the analysis output."
-	ana.add_argument('--order', default='name', choices=('usage', 'name'), action='store_true', help=order_help)
+	ana.add_argument('--order', default='name', choices=('usage', 'name'), help=order_help)
 
 def _parse_args():
 	# TODO: argparse not available before python 2.7; if we want compat before then we need a rewrite
