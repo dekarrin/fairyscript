@@ -465,7 +465,7 @@ class AnalysisCompiler(object):
 		if self._order == "name":
 			sorted_items = sorted(items, key=name_key)
 		elif self._order == "usage":
-			sorted_items = sorted(items, key=usage_key)
+			sorted_items = sorted(items, key=lambda x: (usage_key(x), name_key(x)))
 		else:
 			raise ValueError("Bad sorting algorithm type '" + str(self._order) + "'")
 		return sorted_items
@@ -499,7 +499,7 @@ class AnalysisCompiler(object):
 			if usage_key is None:
 				def usage_key(x):
 					return x['refs']
-			dict_keys = sorted(dict_keys, key=lambda k: usage_key(obj_map[k]))
+			dict_keys = sorted(dict_keys, key=lambda k: (usage_key(obj_map[k]), k))
 		else:
 			raise ValueError("Bad sorting algorithm type '" + str(self._order) + "'")
 		return dict_keys
