@@ -3,7 +3,7 @@
 # test both the installed and non-installed versions
 ALL_COMMANDS="./scpcompile.py scpcompile"
 
-ALL_TESTS="test_analyze test_renpy test_lex test_ast test_docx"
+ALL_TESTS="test_analyze test_analyze_order_usage test_analyze_order_name test_renpy test_lex test_ast test_docx"
 
 
 
@@ -52,6 +52,32 @@ test_renpy() {
 test_analyze() {
 	local cmd="$1"
 	"$cmd" analyze -o test_output/test.ana test/sources/full_test.scp
+	actual=$(checksum test_output/test.ana)
+	expected=$(checksum test/expected/expected.ana)
+	if [ "$actual" != "$expected" ]
+	then
+		echo "Static analysis output differs from expected" >&2
+		diff -u test/expected/expected.ana test_output/test.ana >&2
+		return 1
+	fi
+}
+
+test_analyze_order_usage() {
+	local cmd="$1"
+	"$cmd" analyze --order usage -o test_output/test_usage_order.ana test/sources/full_test.scp
+	actual=$(checksum test_output/test_usage_order.ana)
+	expected=$(checksum test/expected/expected_usage_order.ana)
+	if [ "$actual" != "$expected" ]
+	then
+		echo "Static analysis output differs from expected" >&2
+		diff -u test/expected/expected.ana test_output/test.ana >&2
+		return 1
+	fi
+}
+
+test_analyze_order_name() {
+	local cmd="$1"
+	"$cmd" analyze --order name -o test_output/test.ana test/sources/full_test.scp
 	actual=$(checksum test_output/test.ana)
 	expected=$(checksum test/expected/expected.ana)
 	if [ "$actual" != "$expected" ]
