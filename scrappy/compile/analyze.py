@@ -206,7 +206,7 @@ class AnalysisCompiler(object):
 		full_list = self._sort_list(full_list, name_key=lambda x: x, usage_key=lambda x: self._names[x[1]][x[0]])
 
 		num = len(full_list)
-		self.add_line(scp.pluralize(num, "Names"))
+		self.add_line(scp.pluralize(num, "Name"))
 		self._inc_indent()
 		if num > 0:
 			for n, t in full_list:
