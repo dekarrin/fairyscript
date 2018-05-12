@@ -1,7 +1,7 @@
-The Scrappy Language, Version 1.0
-=================================
-This document is intended to be a complete reference to the Scrappy language.
-All information about the usage of the language is listed here.
+The FairyScript Language, Version 1.0
+======================================
+This document is intended to be a complete reference to the FairyScript
+language. All information about the usage of the language is listed here.
 
 ## Table of Contents ##
 1.  [Introduction](#introduction)
@@ -48,29 +48,30 @@ All information about the usage of the language is listed here.
 	23. [VAR Annotation](#var-annotation)
 6.  [Supplemental Files](#supplemental-files)
 	1.  [Character Files](#character-files)
-7.  [Appendix: Syntax Reference](#appendix-syntax-reference)
+7.  [Appendix - Syntax Reference](#appendix---syntax-reference)
 
 ## Introduction ##
-The Scrappy language is an intermediate language for writing manuscripts. It is
-designed to allow users to be as expressive as they might be with a screenplay
-while still adhering to a regular language.
+The FairyScript language is an intermediate language for writing manuscripts.
+It is designed to allow users to be as expressive as they might be with a
+screenplay while still adhering to a regular language.
 
-Manuscripts that are written in Scrappy are never executed. Instead, they are
-compiled to another format using the Scrappy compiler. Because of this, it is
-possible to create structures in Scrappy that can cause odd behavior in target
-languages. However, Scrappy is designed to be as flexible as possible. It will
-not attempt to check that a manuscript makes sense in a target language; only
-the Scrappy language itself.
+Manuscripts that are written in FairyScript are never executed. Instead, they
+are compiled to another format using the FairyScript compiler. Because of this,
+it is possible to create structures in FairyScript that can cause odd behavior
+in target languages. However, the FairyScript compiler (`fairyc`) is designed
+to be as flexible as possible. It will not attempt to check that a manuscript
+makes sense in a target language; it only checks the FairyScript language
+itself.
 
 ## Language Basics ##
-A manuscript written in Scrappy consists of a series of statements. These
+A manuscript written in FairyScript consists of a series of statements. These
 statement can be broken down into the following types:
 - [Lines](#lines) spoken by an actor or voiced internally
 - [Comments](#comments) to the reader of the manuscript
 - [Instructions](#instructions) to the actors, crew, or engine
 
 ### Whitespace ###
-In the Scrappy language, whitespace is unimportant. For readability,
+In the FiaryScript language, whitespace is unimportant. For readability,
 instructions typically group together the opening and closing characters along
 with the name of the instruction on a single line, but this is not necessary.
 
@@ -99,22 +100,22 @@ Scene: bobs-auto-shop]
 ```
 
 ### Case-Sensitivity ###
-In general, Scrappy is a case-sensitive language. There are only a few
+In general, FairyScript is a case-sensitive language. There are only a few
 exceptions to this, such as the names of instructions (which itself has an
 exception in the ACTION directive, which uses the name of a character).
 
 ### Escaping ###
-There may be times when a particular region of Scrappy code contains a character
-that must be escaped (such as when a double quote character is used within a
-string or a left-brace character is used within a PYTHON annotation). If that
-occurs, the character can be escaped with a backslash (`\`). Writing a literal
-backslash in these situations requires escaping the backslash, so a double
-backslash is needed.
+There may be times when a particular region of FairyScript code contains a
+character that must be escaped (such as when a double quote character is used
+within a string or a left-brace character is used within a PYTHON annotation).
+If that occurs, the character can be escaped with a backslash (`\`). Writing a
+literal backslash in these situations requires escaping the backslash, so a
+double backslash is needed.
 
 ### Types ###
-Scrappy has a system of types of parameters that are given to instructions. This
-document will often refer to parameter types, and this section of this document
-identifies exactly what is meant by each term.
+FairyScript has a system of types of parameters that are given to instructions.
+This document will often refer to parameter types, and this section of this
+document identifies exactly what is meant by each term.
 
 #### Numbers ####
 Numbers are a series of digits. They can contain a decimal point, and can be
@@ -144,9 +145,10 @@ escaped.
 ```
 
 #### Boolean Literals ####
-Boolean literals specify whether something is true or false. In Scrappy, by far
-the most common use for this is in setting the values of flags, and so Scrappy
-uses the keywords `ON` and `OFF` to refer to true and false, respectively.
+Boolean literals specify whether something is true or false. In FairyScript, by
+far the most common use for this is in setting the values of flags, and so
+FairyScript uses the keywords `ON` and `OFF` to refer to true and false,
+respectively.
 
 ```
 # Boolean literal examples:
@@ -159,18 +161,18 @@ OFF
 Identifiers reference a particular object. They are used for the names of
 variables, flags, sections, characters, and more.
 
-In Scrappy, identifiers do not need to be defined before they are used. It is
-possible that they will need to be defined before compiled output will be valid
-(usually the case with a program-consumed output), but this can be solved by
-[including](#include-annotation) a file in the target language that contains the
-definitions. For information on which identifiers a target output format
+In FairyScript, identifiers do not need to be defined before they are used. It
+is possible that they will need to be defined before compiled output will be
+valid (usually the case with a program-consumed output), but this can be solved
+by [including](#include-annotation) a file in the target language that contains
+the definitions. For information on which identifiers a target output format
 requires to be defined, see the compiler notes for that output format.
 
 Identifiers are case-sensitive; two identifiers with the same spelling but
 different case refer to two different objects. Allowed characters in identifiers
 are underscores (`_`), hyphens (`-`), the letters A-Z (either upper or lower
 case), and the digits 0-9; however, identifiers cannot start with a digit and
-they cannot be a reserved word. Also, though hyphens are allowed in Scrappy
+they cannot be a reserved word. Also, though hyphens are allowed in FairyScript
 identifiers, they will be converted to underscores during compilation if the
 target language does not support them.
 
@@ -181,8 +183,8 @@ a
 times_attacked
 bobs-house-1
 
-# These two identifiers are distinct within Scrappy itself but might become the
-# same when it is compiled:
+# These two identifiers are distinct within FairyScript itself but might become
+# the same when it is compiled:
 
 bobs_house
 bobs-house
@@ -190,11 +192,11 @@ bobs-house
 
 #### Raw Expressions ####
 Raw expressions are expressions that are contained between single quote
-characters (`'`). They exist for when Scrappy does not support the expression
-that is desired. Raw expressions are passed directly through to other languages
-unchanged during compilation (unless Scrappy is being compiled to a
-human-readable format), and so they may consist of any expression that is valid
-in the target language. Because this could introduce reliance on a target
+characters (`'`). They exist for when FairyScript does not support the
+expression that is desired. Raw expressions are passed directly through to other
+languages unchanged during compilation (unless FairyScript is being compiled to
+a human-readable format), and so they may consist of any expression that is
+valid in the target language. Because this could introduce reliance on a target
 language, it is best to only use raw expressions when necessary.
 
 ```
@@ -209,7 +211,7 @@ language, it is best to only use raw expressions when necessary.
 
 # This raw expression is noticably dependent on having a compilation target of
 # C# or a similar language. It could also be very difficult for non-coders to
-# read. This is allowed in Scrappy, but should be avoided if possible:
+# read. This is allowed in FairyScript, but should be avoided if possible:
 'mappings.Where(x => x.Width > 2).Any(x => x.Height > 10)'
 ```
 
@@ -227,10 +229,10 @@ arguments to IF annotations or arguments to options of a CHOICE directive.
 [identifiers](#identifiers) are all considered valid boolean expressions.
 
 If a raw expression is used as a boolean expression, it is the responsibility of
-the author to ensure that it actually results in a boolean value. Scrappy does
-not check the contents of raw expressions, but using a raw expression that does
-not result in a boolean value may result in incorrect syntax in a target
-language after compilation.
+the author to ensure that it actually results in a boolean value. FairyScript
+does not restrict the contents of raw expressions, but using a raw expression
+that does not result in a boolean value may result in incorrect syntax in a
+target language after compilation.
 
 ```
 # Boolean expression examples:
@@ -240,8 +242,8 @@ OFF                    # boolean literals
 'times_attacked > 32'  # raw expressions that appear to result in boolean values
 
 # Raw expressions that appear to result in non-boolean values are considered
-# valid boolean expressions in Scrappy, but using one might result in unexpected
-# behavior once it has been compiled to another format:
+# valid boolean expressions in FairyScript, but using one might result in
+# unexpected behavior once it has been compiled to another format:
 'health + 6'
 ```
 
@@ -296,14 +298,14 @@ SLOWLY
 ```
 
 ### Reserved Words ###
-Some words used as part of the Scrappy language are known as reserved words. Not
-all keywords in Scrappy are reserved; keywords that always come in sets, such as
-`WITH` and `PARAMS`, are not reserved. Only the keywords that can occur as
-single units are reserved. Identifiers cannot be a reserved word, but note that
-they are not considered a reserved word if they contain the same letters as a
-reserved word but with different capitalization.
+Some words used as part of the FairyScript language are known as reserved words.
+Not all keywords in FairyScript are reserved; keywords that always come in sets,
+such as `WITH` and `PARAMS`, are not reserved. Only the keywords that can occur
+as single units are reserved. Identifiers cannot be a reserved word, but note
+that they are not considered a reserved word if they contain the same letters as
+a reserved word but with different capitalization.
 
-The following is a list of all reserved words in the Scrappy language:
+The following is a list of all reserved words in FairyScript:
 - `AND`
 - `ALL`
 - `AUTO`
@@ -330,9 +332,9 @@ The following is a list of all reserved words in the Scrappy language:
 - `ZOOM`
 
 ## Lines ##
-In Scrappy, a 'line' is a line of dialogue spoken by a character. It consists of
-the character's name, followed by a colon, followed by what they are saying
-enclosed within double quotes.
+In FairyScript, a 'line' is a line of dialogue spoken by a character. It
+consists of the character's name, followed by a colon, followed by what
+they are saying enclosed within double quotes.
 
 ```
 Mary: "Hello, John."
@@ -355,7 +357,7 @@ John: "Well, I sure hope he shows up. We need him back at the office."
 "Receptionist A": "I'm sure I saw him not too long ago!"
 ```
 
-This works, and is valid Scrappy, but characters whose name contains a space
+This works, and is valid FairyScript, but characters whose name contains a space
 cannot be used with ACTION directives. Instead of using the name with quotes, it
 is better to define the character in a [character file](#character-files) and
 use the identifier defined there to refer to them in lines and ACTION
@@ -386,14 +388,15 @@ The `#` character begins a comment and it continues until the end of the line:
 (Flag: have_eaten) # But this comment doesn't start until part way in the line.
 ```
 
-Comments are completely ignored when compiling Scrappy to another
+Comments are completely ignored when compiling FairyScript to another
 machine-consumable language such as Ren'Py. They are not excluded from formats
 that are intended to be read by humans, such as DOCX.
 
 ## Instructions ##
-There are two types of instructions in Scrappy: directives and annotations. The
-intent of this separation is to provide a clear distinction between instructions
-intended for the manuscript and instructions intended for the computer.
+There are two types of instructions in FairyScript: directives and annotations.
+The intent of this separation is to provide a clear distinction between
+instructions intended for the manuscript and instructions intended for the
+computer.
 
 In general, directives represent instructions that would be intended for the
 'crew' of a production, either to the actors themselves or to the
@@ -443,7 +446,7 @@ result in confusion.
 # Now, there are two different flags, 'have_seen_bob' and 'Have_Seen_Bob'.
 
 # This annotation has the wrong case for a reserved-word argument, and is thus
-# not valid Scrappy:
+# not valid FairyScript:
 (Flag: have_seen_bob on)
 ```
 
@@ -469,8 +472,8 @@ instruction is to is used as the 'name' of the instruction.
 To have an actor change their appearance, list the [identifiers](#identifiers)
 for all the different ways in which they are to change, separated by commas
 (`,`). Generally, there should not be more than one of a particular type of
-appearance. That is to say, it is valid Scrappy to have an actor appear sad and
-happy, but it certainly doesn't make any sense!
+appearance. That is to say, it is valid FairyScript to have an actor appear sad
+and happy, but it certainly doesn't make any sense!
 
 ```
 # An instruction for Bob to appear sad:
@@ -479,7 +482,7 @@ happy, but it certainly doesn't make any sense!
 # An instruction for Bob to appear sad with his back to the viewers:
 [Bob: sad, back-turned]
 
-# Valid Scrappy, but a bit confusing:
+# Valid FairyScript, but a bit confusing:
 [Bob: sad, happy, back-turned]
 
 # Makes a bit more sense:
@@ -576,12 +579,12 @@ In order to work properly, the section that an option points to must exist
 somewhere in the completed script. Sections can be created either by using the
 section parameter to a CHOICE directive or by using the SECTION annotation.
 
-In Scrappy, the CHOICE directive is more limited than comparable structures in
-other languages, such as `menu` in Ren'Py. Each option must jump to a section,
-which is not required in the Ren'Py `menu` statement. However, this helps to
-enforce simplicity of design within the code; CHOICE statements are kept short
-and succinct rather than having the possibility of stretching into a very long
-block.
+In FairyScript, the CHOICE directive is more limited than comparable structures
+in other languages, such as `menu` in Ren'Py. Each option must jump to a
+section, which is not required in the Ren'Py `menu` statement. However, this
+helps to enforce simplicity of design within the code; CHOICE statements are
+kept short and succinct rather than having the possibility of stretching into a
+very long block.
 
 A minimal CHOICE directive consists of `[Choice]` followed by a series of
 options. Each option begins with an asterisk (`*`) character and gives the text
@@ -974,8 +977,8 @@ long it takes to fade out the music.
 
 ### SCENE Directive ###
 The SCENE directive specifies where the current scene is taking place. Any time
-a SCENE directive is in a Scrappy manuscript, it indicates the start of a new
-location, or at least a new sub-location within the current location.
+a SCENE directive is in a FairyScript manuscript, it indicates the start of a
+new location, or at least a new sub-location within the current location.
 
 To switch to a new scene, give the identifier for the scene to change to as a
 parameter to the instruction.
@@ -1362,16 +1365,16 @@ false.
 The INCLUDE annotation specifies that the contents of another file should be
 included at the location of the instruction.
 
-To include a file whose contents are to be parsed as Scrappy code, give a string
-containing the path to the file as a parameter to the instruction.
+To include a file whose contents are to be parsed as FairyScript code, give a
+string containing the path to the file as a parameter to the instruction.
 
 ```
-# include the file 'chapter2.scp' located in the current directory:
-(Include: "chapter2.scp")
+# include the file 'chapter2.fey' located in the current directory:
+(Include: "chapter2.fey")
 
-# include the file 'chapter2.scp' located in the 'files' directory of the
+# include the file 'chapter2.fey' located in the 'files' directory of the
 # current directory:
-(Include: "files/chapter2.scp")
+(Include: "files/chapter2.fey")
 ```
 
 To specify that the file should only be included when compiling to a particular
@@ -1379,31 +1382,31 @@ format, use the keywords `FOR TARGET` followed by the identifier for the target
 format. Multiple formats are separated with the `AND` keyword. The target
 identifier is the same as the command line option required to compile to that
 format; please see [compiler.md](compiler.md) for a complete list of target
-formats supported by the Scrappy compiler.
+formats supported by the FairyScript compiler.
 
 ```
-# include the file 'chapter2.scp' when the script is compiled to DOCX format:
-(Include: "chapter2.scp" FOR TARGET word)
+# include the file 'chapter2.fey' when the script is compiled to DOCX format:
+(Include: "chapter2.fey" FOR TARGET word)
 
-# include the file 'chapter2.scp' when the script is compiled to DOCX format and
+# include the file 'chapter2.fey' when the script is compiled to DOCX format and
 # when the script is compiled to Ren'Py format:
-(Include: "chapter2.scp" FOR TARGET word AND renpy)
+(Include: "chapter2.fey" FOR TARGET word AND renpy)
 ```
 
-To specify whether the contents of the file are to be parsed as Scrappy code,
-use the keywords `WITH PARSING` after the name of the file and after the `FOR
-TARGET` clause if it exists. The `WITH PARSING` keywords are optionally followed
-by either the keyword `ON` or the keyword `OFF`. If `ON` is given, the contents
-of the included file will be parsed as Scrappy code and included in the current
-file before compilation. If `OFF` is given, the contents of the file are not
-parsed as Scrappy code and are instead placed unchanged in the output during
-compilation. If neither keyword is given, `ON` is assumed.
+To specify whether the contents of the file are to be parsed as FairyScript
+code, use the keywords `WITH PARSING` after the name of the file and after the
+`FOR TARGET` clause if it exists. The `WITH PARSING` keywords are optionally
+followed by either the keyword `ON` or the keyword `OFF`. If `ON` is given, the
+contents of the included file will be parsed as FairyScript code and included
+in the current file before compilation. If `OFF` is given, the contents of the
+file are not parsed as FairyScript code and are instead placed unchanged in the
+output during compilation. If neither keyword is given, `ON` is assumed.
 
 ```
-# all three statements below will include chapter2.scp, parsed as Scrappy code:
-(Include: "chapter2.scp")
-(Include: "chapter2.scp" WITH PARSING)
-(Include: "chapter2.scp" WITH PARSING ON)
+# all three statements below will include chapter2.fey, parsed as FairyScript:
+(Include: "chapter2.fey")
+(Include: "chapter2.fey" WITH PARSING)
+(Include: "chapter2.fey" WITH PARSING ON)
 
 # include constants.rpy without modification in the compiled output:
 (Include: "constants.rpy" WITH PARSING OFF)
@@ -1560,7 +1563,7 @@ clause.
 ```
 
 ## Supplemental Files ##
-Sometimes, the information that can be provided using Scrappy is not quite
+Sometimes, the information that can be provided using FairyScript is not quite
 enough for compilation. In order to provide additional information, manuscripts
 can specify supplemental files that contain the information needed.
 
@@ -1599,8 +1602,8 @@ The following is an example of a character file:
 "Jim",  "James Samuel",         "#cccccc"
 ```
 
-## Appendix: Syntax Reference ##
-This is the complete grammar for Scrappy as denoted in a modified BNF syntax
+## Appendix - Syntax Reference ##
+This is the complete grammar for FairyScript as denoted in a modified BNF syntax
 that includes repetition markers and character classes from regular expression
 syntax.
 
@@ -1610,7 +1613,7 @@ the grammar given here. Also, some of the names of the classes have been changed
 to improve readability.
 
 For the exact grammar that is used by the parser, please see the file `cfg.txt`
-in the docs directory of Scrappy.
+in the docs directory of FairyScript.
 
 ```
 <manuscript>          ::= <block>

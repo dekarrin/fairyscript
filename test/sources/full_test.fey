@@ -199,7 +199,7 @@ Aerith: "I heard you were feeling down."
 
 Aerith: "So I decided to stop by."
 
-(include: "test/sources/full_test_inc.scp")
+(include: "test/sources/full_test_inc.fey")
 
 "The Wall": "Don't forget about me!"
 

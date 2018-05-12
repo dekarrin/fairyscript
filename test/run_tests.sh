@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # test both the installed and non-installed versions
-ALL_COMMANDS="./scpcompile.py scpcompile"
+ALL_COMMANDS="./fairyc.py fairyc"
 
 ALL_TESTS="test_analyze test_analyze_order_usage test_analyze_order_name test_renpy test_lex test_ast test_docx"
 
@@ -38,7 +38,7 @@ log() {
 
 test_renpy() {
 	local cmd="$1"
-	"$cmd" renpy -o test_output/test.rpy test/sources/full_test.scp
+	"$cmd" renpy -o test_output/test.rpy test/sources/full_test.fey
 	actual=$(checksum test_output/test.rpy)
 	expected=$(checksum test/expected/expected.rpy)
 	if [ "$actual" != "$expected" ]
@@ -51,7 +51,7 @@ test_renpy() {
 
 test_analyze() {
 	local cmd="$1"
-	"$cmd" analyze -o test_output/test.ana test/sources/full_test.scp
+	"$cmd" analyze -o test_output/test.ana test/sources/full_test.fey
 	actual=$(checksum test_output/test.ana)
 	expected=$(checksum test/expected/expected.ana)
 	if [ "$actual" != "$expected" ]
@@ -64,7 +64,7 @@ test_analyze() {
 
 test_analyze_order_usage() {
 	local cmd="$1"
-	"$cmd" analyze --order usage -o test_output/test_usage_order.ana test/sources/full_test.scp
+	"$cmd" analyze --order usage -o test_output/test_usage_order.ana test/sources/full_test.fey
 	actual=$(checksum test_output/test_usage_order.ana)
 	expected=$(checksum test/expected/expected_usage_order.ana)
 	if [ "$actual" != "$expected" ]
@@ -77,7 +77,7 @@ test_analyze_order_usage() {
 
 test_analyze_order_name() {
 	local cmd="$1"
-	"$cmd" analyze --order name -o test_output/test.ana test/sources/full_test.scp
+	"$cmd" analyze --order name -o test_output/test.ana test/sources/full_test.fey
 	actual=$(checksum test_output/test.ana)
 	expected=$(checksum test/expected/expected.ana)
 	if [ "$actual" != "$expected" ]
@@ -90,7 +90,7 @@ test_analyze_order_name() {
 
 test_ast() {
 	local cmd="$1"
-	"$cmd" ast --pretty -o test_output/test.ast test/sources/full_test.scp
+	"$cmd" ast --pretty -o test_output/test.ast test/sources/full_test.fey
 	actual=$(checksum test_output/test.ast)
 	expected=$(checksum test/expected/expected.ast)
 	if [ "$actual" != "$expected" ]
@@ -103,7 +103,7 @@ test_ast() {
 
 test_lex() {
 	local cmd="$1"
-	"$cmd" lex --pretty -o test_output/test.lex test/sources/full_test.scp
+	"$cmd" lex --pretty -o test_output/test.lex test/sources/full_test.fey
 	actual=$(checksum test_output/test.lex)
 	expected=$(checksum test/expected/expected.lex)
 	if [ "$actual" != "$expected" ]
@@ -122,7 +122,7 @@ test_docx() {
 	mkdir test_output/docx/expected
 	mkdir test_output/docx/actual
 
-	"$cmd" docx -o test_output/docx/actual/test.docx test/sources/full_test.scp
+	"$cmd" docx -o test_output/docx/actual/test.docx test/sources/full_test.fey
 	cp test/expected/expected.docx test_output/docx/expected/
 
 	cd test_output/docx/expected
