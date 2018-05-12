@@ -392,7 +392,7 @@ def _parse_args():
 	try:
 		args = parser.parse_args()
 	except argparse.ArgumentError as e:
-		raise ArgumentError(e.message)
+		raise ArgumentError(str(e))
 
 	if args.output == sys.stdout and args.output_mode == 'docx':
 		raise InvalidOutputFormatError("cannot output DOCX file to stdout")
@@ -475,7 +475,7 @@ def run():
 	try:
 		args = _parse_args()
 	except ArgumentError as e:
-		_log.critical("Bad arguments: " + e.message)
+		_log.critical("Bad arguments: " + str(e))
 		_log.debug("Exception Details\n", exc_info=True)
 		sys.exit(_E_ARGS)
 
@@ -485,7 +485,7 @@ def run():
 	try:
 		_run_compiler(args)
 	except OutputWriteError as e:
-		_log.critical("Critical error: " + e.message)
+		_log.critical("Critical error: " + str(e))
 		_log.error("Make sure that the output file is not open in another application")
 		_log.debug("Exception Details\n", exc_info=True)
 		sys.exit(_E_WRITE)
@@ -504,7 +504,7 @@ def run():
 	# This is the top-level exception handler for any we might have missed. It's okay to catch 'Exception' here.
 	# noinspection BroadException
 	except Exception as e:
-		_log.critical("Critical error: " + e.message)
+		_log.critical("Critical error: " + str(e))
 		_log.debug("Exception Details\n", exc_info=True)
 		sys.exit(_E_OTHER)
 
