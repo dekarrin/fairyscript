@@ -4,6 +4,7 @@ parser.out
 *.lex
 *.ast
 *.ana
+*.log
 *.docx
 test_output/
 .idea/
