@@ -1130,7 +1130,7 @@
 		'type': 'line'
 	},
 	{
-		'file': ('string', 'test/sources/full_test_inc.scp'),
+		'file': ('string', 'test/sources/full_test_inc.fey'),
 		'instruction': 'INCLUDE',
 		'langs': None,
 		'parsing': ('boolean', True),

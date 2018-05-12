@@ -852,7 +852,7 @@
 	LexToken('STRING','"So I decided to stop by."',200,4834),
 	LexToken('ANNOTATIONOPEN_INCLUDE','(include',202,4862),
 	LexToken(':',':',202,4870),
-	LexToken('STRING','"test/sources/full_test_inc.scp"',202,4872),
+	LexToken('STRING','"test/sources/full_test_inc.fey"',202,4872),
 	LexToken(')',')',202,4904),
 	LexToken('STRING','"The Wall"',204,4907),
 	LexToken(':',':',204,4917),
