@@ -16,7 +16,3 @@ install:
   - "python setup.py install"
 
 script: "bash test/run_tests.sh"
-
-env:
-  global:
-    secure: HVeOvWpqHJ6lKrYlqE2KYDF7J1+4cqZO3X7HIREZ5S+Rvp87KLCqNuWiXYDq9O+VKWBJuVhausnfWQm0m9UaLCNln+25QJ97k/iNs11KQ/mT4AavJdk5OnX9LFsqq9wl4artS8Kl/ZrCHyz9XoWAPiuG/34u15NSZ97YIjQLVFT+cFLKAvHvIeV0xXal5fE3KBdjx64Amdw5oGqLE9tK4jw+9v6VSm0cYxaznmVE3BnpuVp3W/ccQ+14/i501UCs2g46hQ5KbO7I7Bx/S4OTVA76CZRskI3Dl1BaTeH2eTT2D/D/y7msFeQ3hAu2LAo+dOu58j24m7X0jQE+sOUlHGyQZBqsK8LwthM4r0K97D+umzYPq1hmkm4EEEsc58v6bik1iL1nMX7pw8dxLtxpzvS1CvwymZ/L8JGfpr175HpZpv6aUm+Eh1n9C01iZzc5N5vt+C5ln9zvSvmnutAVjjDtOyA1oEdP4CR9ZzjJDY/tYeUqys97aZ+qZgMKz3WcvrWQnRqkAFxevWxGCC5DaRY+66Hkr7oYQHa/vFtL76oKESjRZz9c0ZugBfD3/hNtMjakxYefBHQVC6isicazeHDjq8YmYQqYBwilPtw+FXpl7c0yplRe3ZYBW1athhAv96MncASNPCAy2vR20ohVAS47Jj9HdHqXezX7ZZ4KGzQ=
