@@ -64,7 +64,7 @@ class ParserError(Exception):
 
 def _create_parser():
 	# TODO: abstract into parser module
-	parser = parse.scp_yacc.parser
+	parser = parse.fey_yacc.parser
 	parser.successful = True
 	parser.error_messages = []
 	return parser
@@ -72,7 +72,7 @@ def _create_parser():
 
 def _create_lexer():
 	# TODO: abstract into lexer module
-	lexer = parse.scp_lex.lexer
+	lexer = parse.fey_lex.lexer
 	lexer.successful = True
 	lexer.error_messages = []
 	return lexer

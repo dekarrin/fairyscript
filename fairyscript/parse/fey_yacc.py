@@ -1,6 +1,6 @@
 from ply import yacc
 
-from .scp_lex import tokens
+from .fey_lex import tokens
 
 def p_block_2_stmt(p):
 	'''block : statement'''
