@@ -14,6 +14,13 @@ from .compile.analyze import AnalysisCompiler
 __version__ = '2.0.0'
 
 
+_E_ARGS = 1
+_E_WRITE = 2
+_E_LEXER = 3
+_E_PARSER = 4
+_E_OTHER = 5
+
+
 _log = logging.getLogger('scrappy')  # explicitly give package here so we don't end up getting '__main__'
 _log.setLevel(logging.DEBUG)
 
@@ -470,7 +477,7 @@ def run():
 	except ArgumentError as e:
 		_log.critical("Bad arguments: " + e.message)
 		_log.debug("Exception Details\n", exc_info=True)
-		sys.exit(1)
+		sys.exit(_E_ARGS)
 
 	if args.quiet:
 		stderr_handler.setLevel(logging.CRITICAL)
@@ -481,25 +488,25 @@ def run():
 		_log.critical("Critical error: " + e.message)
 		_log.error("Make sure that the output file is not open in another application")
 		_log.debug("Exception Details\n", exc_info=True)
-		sys.exit(2)
+		sys.exit(_E_WRITE)
 	except LexerError as e:
 		for msg in e.error_messages:
 			_log.error(msg)
 		_log.critical("Critical error: Lexing failed")
 		_log.debug("Exception Details\n", exc_info=True)
-		sys.exit(3)
+		sys.exit(_E_LEXER)
 	except ParserError as e:
 		for msg in e.error_messages:
 			_log.error(msg)
 		_log.critical("Critical error: Parsing failed")
 		_log.debug("Exception Details\n", exc_info=True)
-		sys.exit(4)
+		sys.exit(_E_PARSER)
 	# This is the top-level exception handler for any we might have missed. It's okay to catch 'Exception' here.
 	# noinspection BroadException
 	except Exception as e:
 		_log.critical("Critical error: " + e.message)
 		_log.debug("Exception Details\n", exc_info=True)
-		sys.exit(5)
+		sys.exit(_E_OTHER)
 
 
 def _setup_logger():
