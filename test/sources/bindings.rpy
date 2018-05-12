@@ -1,1 +1,1 @@
-#: scrappy-gfx flash image
+#: fairyscript-gfx flash image

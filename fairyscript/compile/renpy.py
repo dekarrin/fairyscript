@@ -511,9 +511,9 @@ class RenpyCompiler(object):
 									target = m.group(2)
 									self.add_gfx_target(effect, target)
 								else:
-									msg = "malformed scrappy directive in included file '%s' on line %d"
+									msg = "malformed fairyscript directive in included file '%s' on line %d"
 									msg = msg % (include['file'][1], lineno)
-									self.add_warning("scrappy_directive", msg)
+									self.add_warning("fairyscript_directive", msg)
 				self.add_line()
 				self.add_line()
 			except IOError as e:

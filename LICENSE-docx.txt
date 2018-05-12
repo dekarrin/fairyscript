@@ -1,9 +1,9 @@
-Scrappy makes use of and includes as part of its distribution a derivation of
-python-docx Version 0.8.5
+FairyScript makes use of and includes as part of its distribution a derivation
+of python-docx Version 0.8.5
 
 Neither the authors of python-docx nor associated entities make any endorsement
-or promotion of scrappy. In addition, the following license applies to all code
-used by scrappy that is included in python-docx:
+or promotion of FairyScript. In addition, the following license applies to all
+code used by FairyScript that is included in python-docx:
 
 --------------------------------------------------------------------------------
 

@@ -1,4 +1,4 @@
-# analyze scrappy code
+# analyze fairyscript code
 from . import fey
 
 

@@ -54,7 +54,7 @@ label start:
 
     s "Sure, but what is a \"visual novel?\""
 
-#: scrappy-gfx flash image
+#: fairyscript-gfx flash image
 
 jump choice-section
 
