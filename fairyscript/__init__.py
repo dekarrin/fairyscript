@@ -363,14 +363,14 @@ def _parse_args():
 
 	# these args will not be properly parsed if we just add them to the root parser
 	parent = argparse.ArgumentParser(add_help=False)
-	input_help = "The file(s) to be compiled. Will be compiled in order. If no input files are specified, scrappy will"
+	input_help = "The file(s) to be compiled. Will be compiled in order. If no input files are specified, fairyc will"
 	input_help += " read from stdin."
 	parent.add_argument('input', nargs='*', type=argparse.FileType('r'), default=[sys.stdin], help=input_help)
 
 	quiet_help = "Suppress compiler warnings, as well as lexer and parser errors."
 	parent.add_argument('--quiet', '-q', action='store_true', help=quiet_help)
 
-	output_help = "The file to write the compiled manuscript to. If no output file is specified, scrappy will write to"
+	output_help = "The file to write the compiled manuscript to. If no output file is specified, fairyc will write to"
 	output_help += " stdout."
 	parent.add_argument('--output', '-o', type=argparse.FileType('w'), default=sys.stdout, help=output_help)
 
