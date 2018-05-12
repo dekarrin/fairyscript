@@ -11,7 +11,7 @@ def read(*parts):
 
 
 def find_version():
-	version_file = read("scrappy", "__init__.py")
+	version_file = read("fairyscript", "__init__.py")
 	version_match = re.search(r"^\s*__version__\s*=\s*['\"]([^'\"]*)['\"]\s*$", version_file, re.MULTILINE)
 
 	if version_match:
@@ -21,12 +21,12 @@ def find_version():
 
 
 setup(
-	name='scrappy',
+	name='fairyscript',
 	version=find_version(),
-	description='The SCRipt APplication written in PYthon, is a compiler for manuscripts.',
+	description='FairyScript is a language for compiling manuscripts.',
 	long_description=read('README.md'),
-	url='https://github.com/dekarrin/scrappy',
-	author='Rebecca C. Nelson',
+	url='https://github.com/dekarrin/fairyscript',
+	author='Rebecca Nelson',
 	classifiers=[
 		'Programming Language :: Python :: 2.7',
 		'Programming Language :: Python :: 3.3',
@@ -43,7 +43,7 @@ setup(
 	python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*',
 	entry_points={
 		'console_scripts': [
-			'scpcompile=scrappy:run'
+			'fairyc=fairyscript:run'
 		]
 	},
 	package_data={
