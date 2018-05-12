@@ -1,7 +1,7 @@
 from __future__ import print_function
 import re
 import sys
-import logging
+import logging.handlers
 
 from . import pretty
 from .parse import scp_lex
@@ -380,15 +380,13 @@ def _parse_args():
 	except argparse.ArgumentError as e:
 		raise ArgumentError(e.message)
 
-	return args
-
-
-def parse_cli_and_execute():
-	args = _parse_args()
-
 	if args.output == sys.stdout and args.output_mode == 'docx':
 		raise InvalidOutputFormatError("cannot output DOCX file to stdout")
 
+	return args
+
+
+def _run_compiler(args):
 	# first, load in all source files and convert to a single AST or symbol list (if only lexing):
 	input_data = []
 	for input_file in args.input:
@@ -459,91 +457,52 @@ def parse_cli_and_execute():
 
 def run():
 	try:
-		parse_cli_and_execute()
+		args = _parse_args()
 	except ArgumentError as e:
-		print("Fatal error: " + e.message, file=sys.stderr)
+		print("Bad arguments: " + e.message, file=sys.stderr)
 		sys.exit(1)
+
+	_setup_logger(args.quiet)
+
+	try:
+		_run_compiler(args)
 	except OutputWriteError as e:
-		print("Fatal write error: " + e.message, file=sys.stderr)
-		print("Make sure that the output file is not open in another application")
+		_log.critical("Critical error: " + e.message)
+		_log.error("Make sure that the output file is not open in another application")
+		_log.debug("Exception Details\n", exc_info=True)
 		sys.exit(2)
 	except LexerError as e:
 		for msg in e.error_messages:
-			print(msg, file=sys.stderr)
-		print("Lexing failed", file=sys.stderr)
+			_log.error(msg)
+		_log.critical("Critical error: Lexing failed")
+		_log.debug("Exception Details\n", exc_info=True)
 		sys.exit(3)
 	except ParserError as e:
 		for msg in e.error_messages:
-			print(msg, file=sys.stderr)
-		print("Parsing failed", file=sys.stderr)
+			_log.error(msg)
+		_log.critical("Critical error: Parsing failed")
+		_log.debug("Exception Details\n", exc_info=True)
 		sys.exit(4)
+	# This is the top-level exception handler for any we might have missed. It's okay to catch 'Exception' here.
+	# noinspection BroadException
+	except Exception as e:
+		_log.critical("Critical error: " + e.message)
+		_log.debug("Exception Details\n", exc_info=True)
+		sys.exit(5)
 
 
-class _ExactLevelFilter(object):
-	"""
-	Only allows log records through that are particular levels.
-	"""
 
-	def __init__(self, levels):
-		"""
-		Creates a new exact level filter.
-		:type levels: ``list[int|str]``
-		:param levels: The levels that should pass through the filter; all others are filtered out. Each item is either
-		one of the predefined level names or an integer level.
-		"""
-		self._levels = set()
-		for lev in levels:
-			is_int = False
-			try:
-				lev = lev.upper()
-			except AttributeError:
-				is_int = True
-			if not is_int:
-				if lev == 'DEBUG':
-					self._levels.add(logging.DEBUG)
-				elif lev == 'INFO':
-					self._levels.add(logging.INFO)
-				elif lev == 'WARNING' or lev == 'WARN':
-					self._levels.add(logging.WARNING)
-				elif lev == 'ERROR':
-					self._levels.add(logging.ERROR)
-				elif lev == 'CRITICAL':
-					self._levels.add(logging.CRITICAL)
-				else:
-					raise ValueError("bad level name in levels list: " + lev)
-			else:
-				self._levels.add(int(lev))
+def _setup_logger(quiet=False):
+	stderr_handler = logging.StreamHandler(stream=sys.stderr)
+	stderr_handler.setLevel(logging.INFO if not quiet else logging.CRITICAL)
+	stderr_handler.setFormatter(logging.Formatter("%(message)s"))
+	logging.getLogger().addHandler(stderr_handler)
 
-	def num_levels(self):
-		"""
-		Gets the number of levels that are allowed through the filter.
-		:rtype: ``int``
-		:return: The number of levels.
-		"""
-		return len(self._levels)
-
-	def min_level(self):
-		"""
-		Gets the minimum level that is allowed through the filter.
-		:rtype: ``int``
-		:return: The minimum leel
-		"""
-		return min(self._levels)
-
-	def filter(self, record):
-		"""
-		Check whether to include the given log record in the output.
-
-		:type record: ``logging.LogRecord``
-		:param record: The record to check.
-		:rtype: ``int``
-		:return: 0 indicates the log record should be discarded; non-zero indicates that the record should be
-		logged.
-		"""
-		if record.levelno in self._levels:
-			return 1
-		else:
-			return 0
+	# max bytes = 100 MB
+	file_handler = logging.handlers.RotatingFileHandler("scpcompile.log", maxBytes=104857600, backupCount=5)
+	file_handler.setLevel(logging.DEBUG)
+	file_handler.setFormatter(logging.Formatter("[%(asctime)-15s] - (%(levelname)-8s): %(message)s"))
+	logging.getLogger().addHandler(file_handler)
 
 
 if __name__ == "__main__":
