@@ -241,14 +241,17 @@ def _precompile(ast, args, compiler):
 
 
 def _load_lex_tokens(contents):
-	from ply.lex import LexToken as tok
+	from ply.lex import LexToken as Token
+
+	# noinspection PyUnusedLocal,PyPep8Naming
 	def LexToken(t_type, value, line, pos):
-		t = tok()
+		t = Token()
 		t.type = t_type
 		t.value = value
 		t.lineno = line
 		t.lexpos = pos
 		return t
+
 	symbols = eval(contents)
 	return symbols
 
@@ -276,6 +279,7 @@ def _add_renpy_subparser(subparsers, parent):
 	rpy.add_argument('--slow-speed', metavar='SECS', default=2, type=float, help=slow_help)
 
 	tab_help = "Set the number of spaces that are in a single tab in the output."
+	# noinspection PyTypeChecker
 	rpy.add_argument('--tab-spaces', metavar='SPACES', default=4, type=int, help=tab_help)
 
 	back_help = 'Set the name of the entity that is used for the background in scene statements.'
@@ -293,6 +297,7 @@ def _add_docx_subparser(subparsers, parent):
 	""":type : argparse.ArgumentParser"""
 
 	para_help = 'Set the spacing in pts between each paragraph in the output.'
+	# noinspection PyTypeChecker
 	docx.add_argument('--paragraph-spacing', metavar='PTS', type=int, default=0, help=para_help)
 
 	flags_help = 'Do not produce any output for FLAG statements in the input file.'
@@ -338,6 +343,7 @@ def _add_analyze_subparser(subparsers, parent):
 
 	order_help = "Select the order of entries in the analysis output."
 	ana.add_argument('--order', default='name', choices=('usage', 'name'), help=order_help)
+
 
 def _parse_args():
 	# TODO: argparse not available before python 2.7; if we want compat before then we need a rewrite
@@ -489,7 +495,6 @@ def run():
 		_log.critical("Critical error: " + e.message)
 		_log.debug("Exception Details\n", exc_info=True)
 		sys.exit(5)
-
 
 
 def _setup_logger(quiet=False):
