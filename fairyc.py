@@ -1,5 +1,5 @@
 #!/usr/bin/env python
 
-import scrappy
+import fairyscript
 
-scrappy.run()
+fairyscript.run()
