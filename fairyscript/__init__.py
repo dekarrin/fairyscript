@@ -4,8 +4,8 @@ import sys
 import logging.handlers
 
 from . import pretty
-from .parse import scp_lex
-from .parse import scp_yacc
+from .parse import fey_lex
+from .parse import fey_yacc
 from .compile.renpy import RenpyCompiler
 from .compile.word import DocxCompiler
 from .compile.analyze import AnalysisCompiler
@@ -21,7 +21,7 @@ _E_PARSER = 4
 _E_OTHER = 5
 
 
-_log = logging.getLogger('scrappy')  # explicitly give package here so we don't end up getting '__main__'
+_log = logging.getLogger('fairyscript')  # explicitly give package here so we don't end up getting '__main__'
 _log.setLevel(logging.DEBUG)
 
 
@@ -375,7 +375,7 @@ def _parse_args():
 	parent.add_argument('--output', '-o', type=argparse.FileType('w'), default=sys.stdout, help=output_help)
 
 	fmt_help = "The format of the input(s)."
-	parent.add_argument('--format', '-f', default='scp', choices=('scp', 'lex', 'ast'), help=fmt_help)
+	parent.add_argument('--format', '-f', default='fey', choices=('fey', 'lex', 'ast'), help=fmt_help)
 
 	# space at the end of metavar is not a typo; we need it so help output is prettier
 	subparsers = parser.add_subparsers(
@@ -410,15 +410,15 @@ def _run_compiler(args):
 		# TODO: what is filename for stdout/stdin on argparse.FileType?
 
 		if args.output_mode == 'lex':
-			if args.format == 'scp':
+			if args.format == 'fey':
 				lex_symbols = _lex_manuscript(file_contents, input_file.name)
 			elif args.format == 'lex':
 				lex_symbols = _load_lex_tokens(file_contents)
 			else:
-				raise InvalidInputFormatError("to output lexer symbols, input format must be scp or lex")
+				raise InvalidInputFormatError("to output lexer symbols, input format must be fey or lex")
 			input_data += lex_symbols
 		else:
-			if args.format == 'scp':
+			if args.format == 'fey':
 				ast = _parse_manuscript(file_contents, input_file.name)
 			elif args.format == 'lex':
 				ast = _parse_symbols(_load_lex_tokens(file_contents), input_file.name)
@@ -426,7 +426,7 @@ def _run_compiler(args):
 				ast = eval(file_contents)
 			else:
 				raise InvalidInputFormatError(
-					"to output AST or compiled formats, input format must be scp, lex, or ast")
+					"to output AST or compiled formats, input format must be fey, lex, or ast")
 			input_data += ast
 
 	# now compile as necessary
@@ -520,7 +520,7 @@ def _setup_logger():
 	logging.getLogger().addHandler(stderr_handler)
 
 	# max bytes = 100 MB
-	file_handler = logging.handlers.RotatingFileHandler("scpcompile.log", maxBytes=104857600, backupCount=5)
+	file_handler = logging.handlers.RotatingFileHandler("fairyc.log", maxBytes=104857600, backupCount=5)
 	file_handler.setLevel(logging.DEBUG)
 	file_handler.setFormatter(logging.Formatter("[%(asctime)-15s] - (%(levelname)-8s): %(message)s"))
 	logging.getLogger().addHandler(file_handler)

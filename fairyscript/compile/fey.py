@@ -1,4 +1,4 @@
-# contains various functions useful for getting information out ouf a .scp script tree
+# contains various functions useful for getting information out ouf a .fey script tree
 
 import re
 

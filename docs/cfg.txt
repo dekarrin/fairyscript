@@ -1,4 +1,4 @@
-Context-Free Grammar for .scp Format:
+Context-Free Grammar for .fey Format:
 
 script					: block
 

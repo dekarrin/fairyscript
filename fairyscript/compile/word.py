@@ -1,4 +1,4 @@
-from . import scp
+from . import fey
 import re
 
 from ..docx import Document
@@ -228,7 +228,7 @@ class DocxCompiler(object):
 				self._last_speaker = None
 				self._just_completed_line = False
 			if statement['type'] == 'comment':
-				self.add_paragraph('(' + scp.extract_comment(statement['text']) + ')', style='Actor Instruction')
+				self.add_paragraph('(' + fey.extract_comment(statement['text']) + ')', style='Actor Instruction')
 			else:
 				instruction = statement['instruction']
 				func = getattr(DocxCompiler, '_compile_' + instruction)
@@ -275,7 +275,7 @@ class DocxCompiler(object):
 		else:
 			trans = scene['transition'][1] + " to:"
 		self.add_paragraph(trans.capitalize() + "\n\n", style='Slugline Transition')
-		name = scp.to_words(scene['name'][1])
+		name = fey.to_words(scene['name'][1])
 		self.add_paragraph(name, style='Slugline')
 
 	# noinspection PyPep8Naming
@@ -289,7 +289,7 @@ class DocxCompiler(object):
 			if geom['origin'] is not None:
 				origin = geom['origin'][1]
 				
-		line = scp.to_words(enter['target'][1]).title()
+		line = fey.to_words(enter['target'][1]).title()
 		if len(enter['states']) > 0:
 			line += ','
 			line += make_states(enter['states'])
@@ -297,30 +297,30 @@ class DocxCompiler(object):
 		else:
 			line += ' '
 		if enter['transition'] is not None:
-			line += scp.to_words(enter['transition'][1]).lower() + 's in to '
+			line += fey.to_words(enter['transition'][1]).lower() + 's in to '
 		else:
 			line += 'enters '
 		line += 'the scene'
 		if origin is not None:
-			line += ' near the ' + scp.to_words(origin).lower()
+			line += ' near the ' + fey.to_words(origin).lower()
 		if dest is not None:
-			line += ' and moves to the ' + scp.to_words(dest).lower()
+			line += ' and moves to the ' + fey.to_words(dest).lower()
 		if geom is not None:
-			line += scp.get_duration_words(geom['duration'], 'over %d seconds')
+			line += fey.get_duration_words(geom['duration'], 'over %d seconds')
 		line += '.'
 		self.add_paragraph(line, style='Actor Instruction')
 
 	# noinspection PyPep8Naming
 	def _compile_ACTION(self, action):
-		line = scp.to_words(action['target'][1]).title() + ' '
+		line = fey.to_words(action['target'][1]).title() + ' '
 		if len(action['states']) > 0:
 			line += 'changes to appear'
 			line += make_states(action['states'])
 			if action['destination'] is not None:
 				line += ', and then '
 		if action['destination'] is not None:
-			line += 'moves to the ' + scp.to_words(action['destination'][1]).lower()
-			line += scp.get_duration_words(action['duration'], 'over %d seconds')
+			line += 'moves to the ' + fey.to_words(action['destination'][1]).lower()
+			line += fey.get_duration_words(action['duration'], 'over %d seconds')
 		line += '.'
 		self.add_paragraph(line, style='Actor Instruction')
 
@@ -335,22 +335,22 @@ class DocxCompiler(object):
 			if geom['origin'] is not None:
 				origin = geom['origin'][1]
 		
-		line = scp.to_words(xit['target'][1]).title() + ' '
+		line = fey.to_words(xit['target'][1]).title() + ' '
 		if geom is not None:
 			line += 'moves '
 		if origin is not None:
-			line += 'from the ' + scp.to_words(origin).lower() + ' '
+			line += 'from the ' + fey.to_words(origin).lower() + ' '
 		if dest is not None:
-			line += 'to the ' + scp.to_words(dest).lower() + ' '
+			line += 'to the ' + fey.to_words(dest).lower() + ' '
 		if geom is not None:
 			line += 'and '
 		if xit['transition'] is not None:
-			line += scp.to_words(xit['transition'][1]).lower() + 's out of '
+			line += fey.to_words(xit['transition'][1]).lower() + 's out of '
 		else:
 			line += 'exits '
 		line += 'the scene'
 		if geom is not None:
-			line += scp.get_duration_words(geom['duration'], 'over %d seconds')
+			line += fey.get_duration_words(geom['duration'], 'over %d seconds')
 		line += '.'
 		self.add_paragraph(line, style='Actor Instruction')
 
@@ -358,28 +358,28 @@ class DocxCompiler(object):
 	def _compile_MUSIC(self, music):
 		self.add_paragraph(style='Actor Instruction')
 		song = music['target'][1]
-		if scp.typed_check(music['target'], 'string'):
+		if fey.typed_check(music['target'], 'string'):
 			dot = song.rfind('.')
 			song = song[0:dot]
 		line = 'We hear '
 		if music['action'] == 'start':
 			if music['fadeout'] is not None:
-				line += 'the current music fade out' + scp.get_duration_words(music['fadeout'], 'over %d seconds') + ', '
+				line += 'the current music fade out' + fey.get_duration_words(music['fadeout'], 'over %d seconds') + ', '
 				line += 'and then we hear '
 			line += 'the song '
 			self.add_run(line)
-			self.add_run(scp.to_words(song).title(), italic=False)
+			self.add_run(fey.to_words(song).title(), italic=False)
 			self.add_run(' begin to play.')
 		elif music['action'] == 'stop':
-			if scp.typed_check(music['target'], 'rel'):
+			if fey.typed_check(music['target'], 'rel'):
 				line += song.lower() + ' music '
 			else:
 				line += 'the song '
 				self.add_run(line)
-				self.add_run(scp.to_words(song).title(), italic=False)
+				self.add_run(fey.to_words(song).title(), italic=False)
 				line = ' '
 			if music['duration'] is not None:
-				line += 'fade out' + scp.get_duration_words(music['duration'], 'over %d seconds') + '.'
+				line += 'fade out' + fey.get_duration_words(music['duration'], 'over %d seconds') + '.'
 			else:
 				line += 'stop.'
 			self.add_run(line)
@@ -388,18 +388,18 @@ class DocxCompiler(object):
 	def _compile_GFX(self, gfx):
 		line = 'We see '
 		if gfx['action'] == 'start':
-			a = scp.indef_article(gfx['target'][1])
-			line += a + ' ' + scp.to_words(gfx['target'][1]).upper()
-			if scp.typed_check(gfx['loop'], 'boolean', True):
+			a = fey.indef_article(gfx['target'][1])
+			line += a + ' ' + fey.to_words(gfx['target'][1]).upper()
+			if fey.typed_check(gfx['loop'], 'boolean', True):
 				line += ' effect begin and continue'
 			line += '.'
 		elif gfx['action'] == 'stop':
-			if scp.typed_check(gfx['target'], 'rel'):
+			if fey.typed_check(gfx['target'], 'rel'):
 				line += gfx['target'][1].lower() + ' effects '
 			else:
-				line += 'the ' + scp.to_words(gfx['target'][1]).upper() + ' effect '
+				line += 'the ' + fey.to_words(gfx['target'][1]).upper() + ' effect '
 			if gfx['duration'] is not None:
-				line += 'fade away' + scp.get_duration_words(gfx['duration'], 'over %d seconds') + '.'
+				line += 'fade away' + fey.get_duration_words(gfx['duration'], 'over %d seconds') + '.'
 			else:
 				line += 'stop.'
 		self.add_paragraph(line, style='Actor Instruction')
@@ -407,23 +407,23 @@ class DocxCompiler(object):
 	# noinspection PyPep8Naming
 	def _compile_SFX(self, sfx):	
 		fx = sfx['target'][1]
-		if scp.typed_check(sfx['target'], 'string'):
+		if fey.typed_check(sfx['target'], 'string'):
 			dot = fx.rfind('.')
 			fx = fx[0:dot]
 		line = 'We hear '
 		if sfx['action'] == 'start':
-			a = scp.indef_article(fx)
-			line += a + ' ' + scp.to_words(fx).upper()
-			if scp.typed_check(sfx['loop'], 'boolean', True):
+			a = fey.indef_article(fx)
+			line += a + ' ' + fey.to_words(fx).upper()
+			if fey.typed_check(sfx['loop'], 'boolean', True):
 				line += ' sound begin to repeat'
 			line += '.'
 		elif sfx['action'] == 'stop':
-			if scp.typed_check(sfx['target'], 'rel'):
+			if fey.typed_check(sfx['target'], 'rel'):
 				line += fx.lower() + ' repeating sounds '
 			else:
-				line += 'the repeated ' + scp.to_words(fx).upper() + ' sound '
+				line += 'the repeated ' + fey.to_words(fx).upper() + ' sound '
 			if sfx['duration'] is not None:
-				line += 'fade away' + scp.get_duration_words(sfx['duration'], 'over %d seconds') + '.'
+				line += 'fade away' + fey.get_duration_words(sfx['duration'], 'over %d seconds') + '.'
 			else:
 				line += 'stop.'
 		self.add_paragraph(line, style='Actor Instruction')
@@ -432,7 +432,7 @@ class DocxCompiler(object):
 	def _compile_FMV(self, fmv):
 		self.add_paragraph(style='Actor Instruction')
 		self.add_run("We see the full-motion video ")
-		self.add_run(scp.to_words(fmv['target'][1]), italic=False)
+		self.add_run(fey.to_words(fmv['target'][1]), italic=False)
 		self.add_run(' play.')
 
 	# noinspection PyPep8Naming
@@ -442,20 +442,20 @@ class DocxCompiler(object):
 		for act in camera['actions']:
 			if acts_added == len(camera['actions']) - 1 and len(camera['actions']) > 1:
 				line += ' and then'
-			if 'duration' in act and scp.typed_check(act['duration'], 'rel'):
-				line += scp.get_duration_words(act['duration'], '')
+			if 'duration' in act and fey.typed_check(act['duration'], 'rel'):
+				line += fey.get_duration_words(act['duration'], '')
 			if act['type'] == 'SNAP':
-				line += ' focus on the ' + scp.to_words(act['target'][1])
+				line += ' focus on the ' + fey.to_words(act['target'][1])
 			elif act['type'] == 'PAN':
-				line += ' shift our focus to the ' + scp.to_words(act['target'][1])
+				line += ' shift our focus to the ' + fey.to_words(act['target'][1])
 			elif act['type'] == 'ZOOM':
 				line += ' move '
-				if scp.typed_check(act['target'], 'rel', 'IN'):
+				if fey.typed_check(act['target'], 'rel', 'IN'):
 					line += 'in closer'
-				elif scp.typed_check(act['target'], 'rel', 'OUT'):
+				elif fey.typed_check(act['target'], 'rel', 'OUT'):
 					line += 'back farther'
-			if 'duration' in act and not scp.typed_check(act['duration'], 'rel'):
-				line += scp.get_duration_words(act['duration'], 'over %d seconds')
+			if 'duration' in act and not fey.typed_check(act['duration'], 'rel'):
+				line += fey.get_duration_words(act['duration'], 'over %d seconds')
 			if acts_added < len(camera['actions']) - 1 and len(camera['actions']) > 2:
 				line += ','
 			acts_added += 1
@@ -476,19 +476,19 @@ class DocxCompiler(object):
 				self.add_run(c['text'][1])
 			else:
 				self.add_run(c['text'][1] + "\n")
-				if scp.typed_check(c['condition'], 'boolean', True):
+				if fey.typed_check(c['condition'], 'boolean', True):
 					self.add_run('(always shown)', style='Choice Condition')
-				elif scp.typed_check(c['condition'], 'boolean', False):
+				elif fey.typed_check(c['condition'], 'boolean', False):
 					self.add_run('(never shown)', style='Choice Condition')
-				elif scp.typed_check(c['condition'], 'id'):
-					cond_id = scp.to_words(c['condition'][1]).lower()
+				elif fey.typed_check(c['condition'], 'id'):
+					cond_id = fey.to_words(c['condition'][1]).lower()
 					if cond_id.startswith('have '):
 						cond_ph = cond_id[len('have '):]
 						self.add_run('(choice shown only if we have ' + cond_ph + ')', style='Choice Condition')
 					else:
 						self.add_run('(choice shown only if \'' + cond_id + '\' is set)', style='Choice Condition')
 				else:
-					self.add_run('(choice shown only if ' + scp.to_human_readable(c['condition'][1]) + ')', style='Choice Condition')
+					self.add_run('(choice shown only if ' + fey.to_human_readable(c['condition'][1]) + ')', style='Choice Condition')
 			if self.include_varsets:
 				for v in c['sets']:
 					self.add_paragraph(self.make_varset(v)[0], style='Choice Instruction')
@@ -503,14 +503,14 @@ class DocxCompiler(object):
 		self.add_paragraph(style='Actor Instruction')
 		if desc['target'] is not None:
 			self.add_run("Regarding ")
-			self.add_run(scp.to_words(desc['target'][1]).title() + ': ', italic=False)
+			self.add_run(fey.to_words(desc['target'][1]).title() + ': ', italic=False)
 		self.add_run(desc['text'][1])
 
 	# noinspection PyPep8Naming
 	def _compile_SECTION(self, section):
-		name = scp.to_words(section['section'][1]).title()
+		name = fey.to_words(section['section'][1]).title()
 		bookmark = self.to_bookmark(name)
-		self._document.add_heading(scp.to_words(section['section'][1]).title(), level=2, bookmark_name=bookmark)
+		self._document.add_heading(fey.to_words(section['section'][1]).title(), level=2, bookmark_name=bookmark)
 		self._add_break = False
 
 	# noinspection PyPep8Naming
@@ -554,7 +554,7 @@ class DocxCompiler(object):
 
 	# noinspection PyPep8Naming
 	def _compile_EXECUTE(self, execute):
-		section_name = scp.to_words(execute['section'][1]).title()
+		section_name = fey.to_words(execute['section'][1]).title()
 		bookmark = self.to_bookmark(section_name)
 		self.add_paragraph("Execute ", style='Reader Instruction')
 		self.add_internal_link(section_name, bookmark)
@@ -579,22 +579,22 @@ class DocxCompiler(object):
 	# noinspection PyPep8Naming
 	def _compile_WHILE(self, whilestmt):
 		line = "Do the following "
-		cond = scp.get_expr(whilestmt['condition'])
-		if scp.typed_check(whilestmt['condition'], 'boolean'):
+		cond = fey.get_expr(whilestmt['condition'])
+		if fey.typed_check(whilestmt['condition'], 'boolean'):
 			tcond = whilestmt['condition'][1]
 			if tcond:
 				line += 'forever:'
 			else:
 				line = 'Never do the following:'
-		elif scp.typed_check(whilestmt['condition'], 'id'):
-			cond_words = scp.to_words(whilestmt['condition'][1]).lower()
+		elif fey.typed_check(whilestmt['condition'], 'id'):
+			cond_words = fey.to_words(whilestmt['condition'][1]).lower()
 			if cond_words.startswith('have '):
 				cond_ph = cond_words[len('have '):]
 				line += 'while we have ' + cond_ph + ':'
 			else:
-				line += 'while ' + scp.quote(cond_words, "'") + ' is set:'
+				line += 'while ' + fey.quote(cond_words, "'") + ' is set:'
 		else:
-			line += 'while ' + scp.to_human_readable(cond) + ':'
+			line += 'while ' + fey.to_human_readable(cond) + ':'
 		if self.contains_writeable(whilestmt['statements']):
 			self.add_paragraph(line, style='Engine Instruction')
 			self.compile_block(whilestmt['statements'])
@@ -619,8 +619,8 @@ class DocxCompiler(object):
 					firstbr = False
 				else:
 					line = 'Otherwise,%s do the following'
-				cond = scp.get_expr(br['condition'])
-				if scp.typed_check(br['condition'], 'boolean'):
+				cond = fey.get_expr(br['condition'])
+				if fey.typed_check(br['condition'], 'boolean'):
 					tcond = br['condition'][1]
 					if tcond:
 						negation = ' always'
@@ -628,15 +628,15 @@ class DocxCompiler(object):
 					else:
 						negation = ' never'
 						line += ':'
-				elif scp.typed_check(br['condition'], 'id'):
-					cond_words = scp.to_words(br['condition'][1]).lower()
+				elif fey.typed_check(br['condition'], 'id'):
+					cond_words = fey.to_words(br['condition'][1]).lower()
 					if cond_words.startswith('have '):
 						cond_ph = cond_words[len('have '):]
 						line += ' only if we have ' + cond_ph + ':'
 					else:
-						line += ' only if ' + scp.quote(cond_words, "'") + ' is set:'
+						line += ' only if ' + fey.quote(cond_words, "'") + ' is set:'
 				else:
-					line += ' only if ' + scp.to_human_readable(cond) + ':'
+					line += ' only if ' + fey.to_human_readable(cond) + ':'
 				self.add_paragraph((line % negation).strip().capitalize(), style='Engine Instruction')
 				self.compile_block(br['statements'])
 		if elsebr is not None and had_output and self.contains_writeable(elsebr['statements']):
@@ -689,61 +689,61 @@ class DocxCompiler(object):
 	# noinspection PyMethodMayBeStatic
 	def make_flagset(self, flagset):
 		line = ''
-		value = scp.get_expr(flagset['value'])
+		value = fey.get_expr(flagset['value'])
 		tvalue = flagset['value'][1]
-		flag = scp.to_words(flagset['name'][1]).lower()
+		flag = fey.to_words(flagset['name'][1]).lower()
 		nat_lang = flag.startswith('have ')
 		if nat_lang:
 			phrase = flag[len('have '):]
 		else:
 			phrase = ""
-		if scp.typed_check(flagset['value'], 'boolean'):
+		if fey.typed_check(flagset['value'], 'boolean'):
 			if not nat_lang:
 				if tvalue:
-					line = 'Set the flag ' + scp.quote(flag, "'") + '.'
+					line = 'Set the flag ' + fey.quote(flag, "'") + '.'
 				else:
-					line = 'Unset the flag ' + scp.quote(flag, "'") + '.'
+					line = 'Unset the flag ' + fey.quote(flag, "'") + '.'
 			else:
 				if tvalue:
 					line = 'We have now ' + phrase + '.'
 				else:
 					line = 'We have now not ' + phrase + '.'
-		elif scp.typed_check(flagset['value'], 'id'):
+		elif fey.typed_check(flagset['value'], 'id'):
 			if nat_lang:
 				line = 'Whether we have ' + phrase + ' is determined by '
 			else:
-				line = 'Set the flag ' + scp.quote(flag, "'") + ' to the same as '
-			value_id = scp.to_words(value).lower()
+				line = 'Set the flag ' + fey.quote(flag, "'") + ' to the same as '
+			value_id = fey.to_words(value).lower()
 			if value_id.startswith('have '):
 				val_phrase = value_id[len('have '):]
 				line += 'whether we have ' + val_phrase + '.'
 			else:
-				line += 'the value of the variable ' + scp.quote(value_id, "'") + '.'
-		elif scp.typed_check(flagset['value'], 'expr'):
+				line += 'the value of the variable ' + fey.quote(value_id, "'") + '.'
+		elif fey.typed_check(flagset['value'], 'expr'):
 			if nat_lang:
 				line = 'Whether we have now ' + flag + ' is determined by the value of the variable ' + value + '.'
 			else:
-				line = 'Set the flag ' + scp.quote(flag, "'") + ' to the same as the value of the variable ' + value + '.'
+				line = 'Set the flag ' + fey.quote(flag, "'") + ' to the same as the value of the variable ' + value + '.'
 		return line, nat_lang
 		
 	def make_varset(self, varset):
-		if scp.typed_check(varset['value'], 'boolean'):
+		if fey.typed_check(varset['value'], 'boolean'):
 			return self.make_flagset(varset)
-		var = scp.to_words(varset['name'][1]).lower()
-		value = scp.get_expr(varset['value'])
-		if scp.typed_check(varset['value'], 'incdec'):
-			readable = scp.to_human_readable(var + value)
+		var = fey.to_words(varset['name'][1]).lower()
+		value = fey.get_expr(varset['value'])
+		if fey.typed_check(varset['value'], 'incdec'):
+			readable = fey.to_human_readable(var + value)
 			var_in = readable.rfind(var)
-			var_str = readable[var_in:].replace(var, scp.quote(var, "'"), 1)
+			var_str = readable[var_in:].replace(var, fey.quote(var, "'"), 1)
 			readable = readable[0:var_in] + var_str
 			line = readable.strip().capitalize() + '.'
 		else:
-			line = 'Set the variable ' + scp.quote(var, "'") + ' to ' + value + '.'
+			line = 'Set the variable ' + fey.quote(var, "'") + ' to ' + value + '.'
 		return line, False
 		
 	def make_goto(self, goto):
-		bookmark = self.to_bookmark(scp.to_words(goto['destination'][1]).title())
-		return 'Jump to ', scp.to_words(goto['destination'][1]).title(), bookmark
+		bookmark = self.to_bookmark(fey.to_words(goto['destination'][1]).title())
+		return 'Jump to ', fey.to_words(goto['destination'][1]).title(), bookmark
 
 	# noinspection PyMethodMayBeStatic
 	def to_bookmark(self, text, hidden=False):
@@ -794,7 +794,7 @@ def make_states(states):
 	for s in states:
 		if states_added == len(states) - 1 and len(states) > 1:  # we are on the last one
 			line += ' and'
-		line += ' ' + scp.to_words(s[1]).lower()
+		line += ' ' + fey.to_words(s[1]).lower()
 		if states_added < len(states) - 1 and len(states) > 2:
 			line += ','
 		states_added += 1

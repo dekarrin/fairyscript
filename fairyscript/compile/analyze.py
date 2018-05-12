@@ -1,5 +1,5 @@
 # analyze scrappy code
-from . import scp
+from . import fey
 
 
 class AnalysisCompiler(object):
@@ -98,14 +98,14 @@ class AnalysisCompiler(object):
 
 	def _build_characters_output(self):
 		num_chars = len(self._chars)
-		self.add_line(scp.pluralize(num_chars, "Character"))
+		self.add_line(fey.pluralize(num_chars, "Character"))
 		self._inc_indent()
 		mutable_chars = dict(self._chars)
 		if num_chars > 0:
 			# get internal dialog first
 			if None in mutable_chars:
 				lines = mutable_chars[None]['lines']
-				self.add_line("Internal Dialog: " + scp.pluralize(lines, "line"))
+				self.add_line("Internal Dialog: " + fey.pluralize(lines, "line"))
 				self.add_line()
 
 				# remove the internal dialog data so we don't interfere with sorting
@@ -117,11 +117,11 @@ class AnalysisCompiler(object):
 				char_data = mutable_chars[name]
 				lines = char_data['lines']
 				state_keys = self._sort_ref_map_keys(char_data['states'])
-				self.add_line(name + " (" + scp.pluralize(lines, "line") + "):")
+				self.add_line(name + " (" + fey.pluralize(lines, "line") + "):")
 				self._inc_indent()
 				for state in state_keys:
 					ref_count = char_data['states'][state]
-					self.add_line(name + " " + state + ": " + scp.pluralize(ref_count, "reference"))
+					self.add_line(name + " " + state + ": " + fey.pluralize(ref_count, "reference"))
 				self._dec_indent()
 				self.add_line()
 		else:
@@ -131,7 +131,7 @@ class AnalysisCompiler(object):
 
 	def _build_sections_output(self):
 		num = len(self._sections)
-		self.add_line(scp.pluralize(num, "Section"))
+		self.add_line(fey.pluralize(num, "Section"))
 		self._inc_indent()
 		if num > 0:
 			section_keys = self._sort_map_keys(self._sections)
@@ -140,8 +140,8 @@ class AnalysisCompiler(object):
 				def_count = self._sections[sec]['defines']
 				self.add_line(sec + ":")
 				self._inc_indent()
-				self.add_line(scp.pluralize(def_count, "definition"))
-				self.add_line(scp.pluralize(ref_count, "reference"))
+				self.add_line(fey.pluralize(def_count, "definition"))
+				self.add_line(fey.pluralize(ref_count, "reference"))
 				self._dec_indent()
 				self.add_line()
 		else:
@@ -151,13 +151,13 @@ class AnalysisCompiler(object):
 
 	def _build_scenes_output(self):
 		num = len(self._scenes)
-		self.add_line(scp.pluralize(num, "Scene"))
+		self.add_line(fey.pluralize(num, "Scene"))
 		self._inc_indent()
 		if num > 0:
 			scene_keys = self._sort_ref_map_keys(self._scenes)
 			for s in scene_keys:
 				ref_count = self._scenes[s]
-				self.add_line(s + ": " + scp.pluralize(ref_count, "reference"))
+				self.add_line(s + ": " + fey.pluralize(ref_count, "reference"))
 		else:
 			self.add_line("(none)")
 		self._dec_indent()
@@ -165,13 +165,13 @@ class AnalysisCompiler(object):
 
 	def _build_transitions_output(self):
 		num = len(self._transitions)
-		self.add_line(scp.pluralize(num, "Transition"))
+		self.add_line(fey.pluralize(num, "Transition"))
 		self._inc_indent()
 		if num > 0:
 			transition_keys = self._sort_ref_map_keys(self._transitions)
 			for t in transition_keys:
 				ref_count = self._transitions[t]
-				self.add_line(t + ": " + scp.pluralize(ref_count, "reference"))
+				self.add_line(t + ": " + fey.pluralize(ref_count, "reference"))
 		else:
 			self.add_line("(none)")
 		self._dec_indent()
@@ -186,12 +186,12 @@ class AnalysisCompiler(object):
 		full_list = self._sort_list(full_list, name_key=lambda x: x, usage_key=lambda x: self._ids[x[1]][x[0]])
 
 		num = len(full_list)
-		self.add_line(scp.pluralize(num, "ID"))
+		self.add_line(fey.pluralize(num, "ID"))
 		self._inc_indent()
 		if num > 0:
 			for n, t in full_list:
 				ref_count = self._ids[t][n]
-				self.add_line(n + " (" + t.upper() + "): " + scp.pluralize(ref_count, "reference"))
+				self.add_line(n + " (" + t.upper() + "): " + fey.pluralize(ref_count, "reference"))
 		else:
 			self.add_line("(none)")
 		self._dec_indent()
@@ -206,12 +206,12 @@ class AnalysisCompiler(object):
 		full_list = self._sort_list(full_list, name_key=lambda x: x, usage_key=lambda x: self._names[x[1]][x[0]])
 
 		num = len(full_list)
-		self.add_line(scp.pluralize(num, "Name"))
+		self.add_line(fey.pluralize(num, "Name"))
 		self._inc_indent()
 		if num > 0:
 			for n, t in full_list:
 				ref_count = self._names[t][n]
-				self.add_line(scp.quote(n) + " (" + t.upper() + "): " + scp.pluralize(ref_count, "reference"))
+				self.add_line(fey.quote(n) + " (" + t.upper() + "): " + fey.pluralize(ref_count, "reference"))
 		else:
 			self.add_line("(none)")
 		self._dec_indent()
@@ -222,14 +222,14 @@ class AnalysisCompiler(object):
 		full_list = self._sort_ref_map_keys(res_map)
 
 		num = len(full_list)
-		self.add_line(scp.pluralize(num, title))
+		self.add_line(fey.pluralize(num, title))
 		self._inc_indent()
 		if num > 0:
 			for n, t in full_list:
 				ref_count = res_map[(n, t)]
 				if t == 'name':
-					n = scp.quote(n)
-				self.add_line(n + ": " + scp.pluralize(ref_count, "reference"))
+					n = fey.quote(n)
+				self.add_line(n + ": " + fey.pluralize(ref_count, "reference"))
 		else:
 			self.add_line("(none)")
 		self._dec_indent()
@@ -253,11 +253,11 @@ class AnalysisCompiler(object):
 		zoom = self._cam_directives['zoom']
 		total = snap + pan + zoom
 
-		self.add_line(scp.pluralize(total, "Camera Directive"))
+		self.add_line(fey.pluralize(total, "Camera Directive"))
 		self._inc_indent()
-		self.add_line("snap: " + scp.pluralize(snap, "reference"))
-		self.add_line("pan: " + scp.pluralize(pan, "reference"))
-		self.add_line("zoom: " + scp.pluralize(zoom, "reference"))
+		self.add_line("snap: " + fey.pluralize(snap, "reference"))
+		self.add_line("pan: " + fey.pluralize(pan, "reference"))
+		self.add_line("zoom: " + fey.pluralize(zoom, "reference"))
 		self._dec_indent()
 		self.add_line()
 
@@ -355,10 +355,10 @@ class AnalysisCompiler(object):
 	def _inc_resource_count(self, resource_kind, resource):
 		resource_name = resource[1]
 
-		if scp.typed_check(resource, 'string'):
+		if fey.typed_check(resource, 'string'):
 			ref_type = 'name'
 			ref_dict = self._names
-		elif scp.typed_check(resource, 'id'):
+		elif fey.typed_check(resource, 'id'):
 			ref_type = 'id'
 			ref_dict = self._ids
 		else:
@@ -380,7 +380,7 @@ class AnalysisCompiler(object):
 
 	# noinspection PyPep8Naming
 	def _compile_CHOICE(self, choice):
-		if scp.typed_check(choice['label'], 'id'):
+		if fey.typed_check(choice['label'], 'id'):
 			label = choice['label'][1]
 			if label not in self._sections:
 				self._sections[label] = {'defines': 0, 'refs': 0}
