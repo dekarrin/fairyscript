@@ -13,7 +13,8 @@ from .compile.analyze import AnalysisCompiler
 
 __version__ = '2.0.0'
 
-_log = logging.getLogger('rpmbuilder')  # explicitly give package here so we don't end up getting '__main__'
+
+_log = logging.getLogger('scrappy')  # explicitly give package here so we don't end up getting '__main__'
 _log.setLevel(logging.DEBUG)
 
 
@@ -118,7 +119,7 @@ def _parse_symbols(symbols, filename):
 def _show_warnings(compiler):
 	warns = compiler.get_warnings()
 	for w in warns:
-		print("Warning: " + w, file=sys.stderr)
+		_log.warning("Warning: " + w)
 
 
 def _preprocess(script_ast, target_lang, quiet=False):
@@ -170,8 +171,8 @@ def _preprocess(script_ast, target_lang, quiet=False):
 						new_chars = _read_chars_file(filename)
 					except (IOError, FileFormatError) as e:
 						if not quiet:
-							print("Preprocessor warning: could not process characters file '%s':" % filename, file=sys.stderr)
-							print("\t" + e.message, file=sys.stderr)
+							msg = "Preprocessor warning: could not process characters file '%s':\n\t%s"
+							_log.warning(msg % (filename, e.message))
 					chars_dict.update(new_chars)
 		return chars_dict
 
@@ -462,13 +463,17 @@ def _run_compiler(args):
 
 
 def run():
+	stderr_handler = _setup_logger()
+
 	try:
 		args = _parse_args()
 	except ArgumentError as e:
-		print("Bad arguments: " + e.message, file=sys.stderr)
+		_log.critical("Bad arguments: " + e.message)
+		_log.debug("Exception Details\n", exc_info=True)
 		sys.exit(1)
 
-	_setup_logger(args.quiet)
+	if args.quiet:
+		stderr_handler.setLevel(logging.CRITICAL)
 
 	try:
 		_run_compiler(args)
@@ -497,9 +502,13 @@ def run():
 		sys.exit(5)
 
 
-def _setup_logger(quiet=False):
+def _setup_logger():
+	"""
+	Setup logging facilities.
+	:return: the stderr_handler so we can set set the level after arguments are parsed.
+	"""
 	stderr_handler = logging.StreamHandler(stream=sys.stderr)
-	stderr_handler.setLevel(logging.INFO if not quiet else logging.CRITICAL)
+	stderr_handler.setLevel(logging.INFO)
 	stderr_handler.setFormatter(logging.Formatter("%(message)s"))
 	logging.getLogger().addHandler(stderr_handler)
 
@@ -508,6 +517,8 @@ def _setup_logger(quiet=False):
 	file_handler.setLevel(logging.DEBUG)
 	file_handler.setFormatter(logging.Formatter("[%(asctime)-15s] - (%(levelname)-8s): %(message)s"))
 	logging.getLogger().addHandler(file_handler)
+
+	return stderr_handler
 
 
 if __name__ == "__main__":
