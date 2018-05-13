@@ -103,7 +103,7 @@ not present, the output will instead be written to stdout. Note that all
 warnings, errors, and messages during compilation are written to stderr, so
 this will not interfere with the stdout output. Note further that due to the
 structure of the DOCX format, it makes no sense to write to stdout, so this
-option **must** be present when compiling to DOCX.
+option *must* be present when compiling to DOCX.
 
 * `--quiet`, `-q` - **Suppress all warning output.** When this option is
 enabled, all warnings and supplementary information from the compilation
