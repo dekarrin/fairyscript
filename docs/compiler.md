@@ -114,7 +114,7 @@ written to the log file.
 ## Actions ##
 A variety of subcommands, also known as actions, are available to the
 FairyScript compiler. Each one will cause the compiler to perform a slightly
-different action, and have slightly different options available to them.
+different action, and have different options available to them.
 
 ### Lexed Symbols ###
 Subcommand: `lex`.
