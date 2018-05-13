@@ -504,8 +504,9 @@ class RenpyCompiler(object):
 						lineno += 1
 						self.add(line)
 						if include['file'][1].endswith('.rpy'):
-							if re.match(r'^#:\s*[Ss][Cc][Rr][Aa][Pp][Pp][Yy]-[Gg][Ff][Xx](?:\s|$)', line.strip()):
-								m = re.match(r'^#:\s*[Ss][Cc][Rr][Aa][Pp][Pp][Yy]-[Gg][Ff][Xx]\s+(\S+)\s+(\S+)', line.strip())
+							words = "[Ff][Aa][Ii][Rr][Yy][Ss][Cc][Rr][Ii][Pp][Tt]-[Gg][Ff][Xx]"
+							if re.match(r'^#:\s*' + words + r'(?:\s|$)', line.strip()):
+								m = re.match(r'^#:\s*' + words + r'\s+(\S+)\s+(\S+)', line.strip())
 								if m:
 									effect = m.group(1)
 									target = m.group(2)
