@@ -288,7 +288,7 @@ def _add_renpy_subparser(subparsers, parent):
 
 	tab_help = "Set the number of spaces that are in a single tab in the output."
 	# noinspection PyTypeChecker
-	rpy.add_argument('--tab-spaces', metavar='SPACES', default=4, type=int, help=tab_help)
+	rpy.add_argument('--tab-width', metavar='SPACES', default=4, type=int, help=tab_help)
 
 	back_help = 'Set the name of the entity that is used for the background in scene statements.'
 	rpy.add_argument('--background-entity', metavar='NAME', default='bg', help=back_help)

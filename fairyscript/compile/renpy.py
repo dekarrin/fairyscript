@@ -9,7 +9,7 @@ class RenpyCompiler(object):
 		self.default_duration = 0.5
 		self.quickly_rel = 0.25
 		self.slowly_rel = 2
-		self.tab_spaces = 4
+		self.tab_width = 4
 		self.background_ent = 'bg'
 		self.use_camera_system = False
 		
@@ -34,7 +34,7 @@ class RenpyCompiler(object):
 		self.default_duration = options.default_duration
 		self.quickly_rel = options.quick_speed
 		self.slowly_rel = options.slow_speed
-		self.tab_spaces = options.tab_spaces
+		self.tab_width = options.tab_width
 		self.background_ent = options.background_entity
 		self.use_camera_system = options.enable_camera
 		
@@ -101,7 +101,7 @@ class RenpyCompiler(object):
 		
 	def add_line(self, text=""):
 		self.add(text)
-		indent = (' ' * self.tab_spaces * self._indent_lev)
+		indent = (' ' * self.tab_width * self._indent_lev)
 		self._compiled += indent + self._to_add + '\n'
 		self._to_add = ""
 	
