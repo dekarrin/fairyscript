@@ -82,20 +82,6 @@ behavior. This section covers options that apply to multiple compiler actions;
 for options that apply only to a particular subcommand, please see the section
 on that action in the [Actions](#actions) chapter.
 
-* `--quiet`, `-q` - **Suppress all warning output.** When this option is
-enabled, all warnings and supplementary information from the compilation
-process is not shown. Critical errors which cause compilation to abort will
-still be shown, but only as a single line of information. All output is still
-written to the log file.
-
-* `--output <FILE>`, `-o <FILE>` - **Write output to a file.** When this option
-is enabled, the output will be written to the specified file. If this option is
-not present, the output will instead be written to stdout. Note that all
-warnings, errors, and messages during compilation are written to stderr, so
-this will not interfere with the stdout output. Note further that due to the
-structure of the DOCX format, it makes no sense to write to stdout, so this
-option **must** be present when compiling to DOCX.
-
 * `--format <FMT>`, `-f <FMT>` - **Set the format of input files.** When this
 option is set, all inputs are assumed to contain data in the given format.
 There are three options for the format, `fey`, `lex`, and `ast`. `fey` is the
@@ -105,6 +91,25 @@ list from a previous lexing of FairyScript code, and parsing can continue from
 that point rather than having to re-lex code. `ast` indicates that the input
 contains abstract syntax trees from a previous parse, and that it can be used
 to immediately compile to other formats without requiring additional parsing.
+
+* `--logfile <FILE>`, `-l <FILE>` - **Write log to file.** When this option is
+set, all log messages are written to a file. This file will contain every
+single message generated during compilation, and is unaffected by the `-q`
+option.
+
+* `--output <FILE>`, `-o <FILE>` - **Write output to a file.** When this option
+is enabled, the output will be written to the specified file. If this option is
+not present, the output will instead be written to stdout. Note that all
+warnings, errors, and messages during compilation are written to stderr, so
+this will not interfere with the stdout output. Note further that due to the
+structure of the DOCX format, it makes no sense to write to stdout, so this
+option **must** be present when compiling to DOCX.
+
+* `--quiet`, `-q` - **Suppress all warning output.** When this option is
+enabled, all warnings and supplementary information from the compilation
+process is not shown. Critical errors which cause compilation to abort will
+still be shown, but only as a single line of information. All output is still
+written to the log file.
 
 ## Actions ##
 A variety of subcommands, also known as actions, are available to the

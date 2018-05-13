@@ -374,6 +374,8 @@ def _parse_args():
 	output_help += " stdout."
 	parent.add_argument('--output', '-o', type=argparse.FileType('w'), default=sys.stdout, help=output_help)
 
+	parent.add_argument('--logfile', '-l', default=None, help="Sets a logfile to write all output to.")
+
 	fmt_help = "The format of the input(s)."
 	parent.add_argument('--format', '-f', default='fey', choices=('fey', 'lex', 'ast'), help=fmt_help)
 
@@ -481,6 +483,8 @@ def run():
 
 	if args.quiet:
 		stderr_handler.setLevel(logging.CRITICAL)
+	if args.logfile:
+		_setup_file_log(args.logfile)
 
 	try:
 		_run_compiler(args)
@@ -519,13 +523,15 @@ def _setup_logger():
 	stderr_handler.setFormatter(logging.Formatter("%(message)s"))
 	logging.getLogger().addHandler(stderr_handler)
 
+	return stderr_handler
+
+
+def _setup_file_log(filename):
 	# max bytes = 100 MB
-	file_handler = logging.handlers.RotatingFileHandler("fairyc.log", maxBytes=104857600, backupCount=5)
+	file_handler = logging.handlers.RotatingFileHandler(filename, maxBytes=104857600, backupCount=5)
 	file_handler.setLevel(logging.DEBUG)
 	file_handler.setFormatter(logging.Formatter("[%(asctime)-15s] - (%(levelname)-8s): %(message)s"))
 	logging.getLogger().addHandler(file_handler)
-
-	return stderr_handler
 
 
 if __name__ == "__main__":
