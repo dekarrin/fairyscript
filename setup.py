@@ -48,7 +48,7 @@ setup(
 		]
 	},
 	package_data={
-		'': ['docx/templates/*.docx', 'docx/templates/*.xml']
+		'': ['docx/templates/*.docx', 'docx/templates/*.xml', 'readme.rst']
 	},
 	include_package_data=True
 )
