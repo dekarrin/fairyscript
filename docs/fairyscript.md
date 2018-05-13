@@ -48,7 +48,8 @@ language. All information about the usage of the language is listed here.
 	23. [VAR Annotation](#var-annotation)
 6.  [Supplemental Files](#supplemental-files)
 	1.  [Character Files](#character-files)
-7.  [Appendix - Syntax Reference](#appendix---syntax-reference)
+	2.  [GFX Bindings](#gfx-bindings)
+7.  [Appendix: Syntax Reference](#appendix-syntax-reference)
 
 ## Introduction ##
 The FairyScript language is an intermediate language for writing manuscripts.
@@ -1602,7 +1603,37 @@ The following is an example of a character file:
 "Jim",  "James Samuel",         "#cccccc"
 ```
 
-## Appendix - Syntax Reference ##
+### GFX Bindings ###
+GFX bindings, located in files external to the compiled manuscript, indicate to
+the FairyScript compiler how to interpret a particular GFX identifier. This is
+used for compilation to Ren'Py only.
+
+GFX bindings must be in an external file that is brought in using the
+[INCLUDE annotation](#include-annotation) that disables parsing. This must be a
+Ren'Py-formatted file that defines all of the objects used in GFX statements.
+The binding is then given as a specially-formatted comment, of the form:
+
+`#: fairyscript-gfx <IDENTIFIER> <BINDING-TYPE>`
+
+In this format, the identifier is the identifier to be used in `GFX` directives
+and the binding type is one of `scene`, `image`, or `displayable`. The
+identifier is case-sensitive; the rest of the statement is not case-sensitive.
+
+Scene effects are applied to the entire scene in the list of the scene
+transforms. 
+
+Image effects are displayed by simply showing the image on the screen using the
+GFX identifier as a transform. The image definition itself must also exist, and
+have the same name as the identifier but with `_img` appended to it.
+
+Displayable effects are displayed as-is with no additional modification, but
+they cannot be looped.
+
+For effects to be looped, there must be a definition identical to the effect
+but with `_loop` appended to it. This combines with the image-bound GFX to
+require a definition of identifier + `_loop_img`.
+
+## Appendix: Syntax Reference ##
 This is the complete grammar for FairyScript as denoted in a modified BNF syntax
 that includes repetition markers and character classes from regular expression
 syntax.
