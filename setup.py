@@ -24,7 +24,7 @@ setup(
 	name='fairyscript',
 	version=find_version(),
 	description='FairyScript is a language for compiling manuscripts.',
-	long_description=read('README.md'),
+	long_description=read('README.rst'),
 	url='https://github.com/dekarrin/fairyscript',
 	author='Rebecca Nelson',
 	author_email='dekarrin.irl@gmail.com',
