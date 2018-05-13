@@ -37,7 +37,7 @@ the following formats:
 Installation
 ~~~~~~~~~~~~
 
-To install FairyScript to the system, do ``python setup.py install``.
+To install FairyScript to the system, do ``pip install fairyscript``.
 This will make the ``fairyc`` command available on the system.
 
 Requirements:
