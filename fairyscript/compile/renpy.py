@@ -253,7 +253,6 @@ class RenpyCompiler(object):
 			binding_type = self._gfx_targets[eff]
 		if gfx['action'] == 'start':
 			if fey.typed_check(gfx['loop'], 'boolean', True):
-				# TODO: make sure binding_type is actually set by this point
 				if binding_type != 'DISPLAYABLE':
 					eff += '_loop'
 				else:
@@ -270,6 +269,8 @@ class RenpyCompiler(object):
 				self.add_line('at ' + eff)
 			elif binding_type == 'DISPLAYABLE':
 				self.add_line('show ' + eff)
+			else:
+				raise ValueError("Bad binding type: " + (binding_type))
 		elif gfx['action'] == 'stop':
 			dissolve = None
 			if gfx['duration'] is not None:

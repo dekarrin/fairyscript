@@ -85,7 +85,7 @@ def _lex_manuscript(script_text, filename):
 	for tok in lexer:
 		symbols.append(tok)
 	if not lexer.successful:
-		if filename == '-':
+		if filename == '<stdin>':
 			error_file = "(stdin)"
 		else:
 			error_file = "file '" + filename + "'"
@@ -98,7 +98,7 @@ def _parse_manuscript(script_text, filename):
 	parser = _create_parser()
 	script_ast = parser.parse(script_text)
 	if not parser.successful:
-		if filename == '--':
+		if filename == '<stdin>':
 			error_file = "(stdin)"
 		else:
 			error_file = "file '" + filename + "'"
@@ -114,7 +114,7 @@ def _parse_symbols(symbols, filename):
 	parser = _create_parser()
 	script_ast = parser.parse(tokenfunc=grab_token)
 	if not parser.successful:
-		if filename == '--':
+		if filename == '<stdin>':
 			error_file = "(stdin)"
 		else:
 			error_file = "file '" + filename + "'"
@@ -408,8 +408,6 @@ def _run_compiler(args):
 	for input_file in args.input:
 		file_contents = input_file.read()
 		input_file.close()
-
-		# TODO: what is filename for stdout/stdin on argparse.FileType?
 
 		if args.output_mode == 'lex':
 			if args.format == 'fey':
