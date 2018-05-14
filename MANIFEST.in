@@ -1,5 +1,5 @@
 include README.rst
 include docs/*.md
 include docs/cfg.txt
-include docx/templates/*.docx
-include docx/templates/*.xml
+include fairyscript/docx/templates/*.docx
+include fairyscript/docx/templates/*.xml
