@@ -11,7 +11,7 @@ from .compile.word import DocxCompiler
 from .compile.analyze import AnalysisCompiler
 
 
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 
 
 _E_ARGS = 1
