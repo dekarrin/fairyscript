@@ -62,358 +62,358 @@ def p_annotation_2_python(p):
 	first_brace = p[1].index('{')
 	last_brace = p[1].rindex('}')
 	py = unescape(p[1][first_brace+1:last_brace])
-	p[0] = make_annotation('PYTHON', body=py)
+	p[0] = make_annotation('PYTHON', p.lineno(1), body=py)
 
 
 def p_line_2_id_str(p):
 	"""line : ID ':' STRING"""
-	p[0] = make_line(('id', p[1]), ('string', unescape(p[3])))
+	p[0] = make_line(('id', p[1]), ('string', unescape(p[3])), p.lineno(1))
 
 
 def p_line_2_str_str(p):
 	"""line : STRING ':' STRING"""
-	p[0] = make_line(('string', unescape(p[1])), ('string', unescape(p[3])))
+	p[0] = make_line(('string', unescape(p[1])), ('string', unescape(p[3])), p.lineno(1))
 
 
 def p_line_2_str(p):
 	"""line : ':' STRING"""
-	p[0] = make_line(None, ('string', unescape(p[2])))
+	p[0] = make_line(None, ('string', unescape(p[2])), p.lineno(1))
 
 
 def p_line_2_id_attr_str(p):
 	"""line : ID '(' actor_states ')' ':' STRING"""
-	p[0] = make_line(('id', p[1]), ('string', unescape(p[6])), p[3])
+	p[0] = make_line(('id', p[1]), ('string', unescape(p[6])), p.lineno(1), p[3])
 
 
 def p_line_2_str_attr_str(p):
 	"""line : STRING '(' actor_states ')' ':' STRING"""
-	p[0] = make_line(('string', unescape(p[1])), ('string', unescape(p[6])), p[3])
+	p[0] = make_line(('string', unescape(p[1])), ('string', unescape(p[6])), p.lineno(1), p[3])
 
 
 def p_line_2_str_attr(p):
 	"""line : '(' actor_states ')' ':' STRING"""
-	p[0] = make_line(None, ('string', unescape(p[5])), p[2])
+	p[0] = make_line(None, ('string', unescape(p[5])), p.lineno(1), p[2])
 
 
 def p_scene_directive_2_id(p):
 	"""scene_directive : DIRECTIVEOPEN_SCENE ':' ID ']' """
-	p[0] = make_directive('SCENE', name=('id', p[3]), transition=None)
+	p[0] = make_directive('SCENE', p.lineno(1), name=('id', p[3]), transition=None)
 	
 
 def p_scene_directive_2_trans_to_id(p):
 	"""scene_directive : DIRECTIVEOPEN_SCENE ':' transition_to ID ']' """
-	p[0] = make_directive('SCENE', name=('id', p[4]), transition=p[3])
+	p[0] = make_directive('SCENE', p.lineno(1), name=('id', p[4]), transition=p[3])
 
 
 def p_enter_directive_2_id(p):
 	"""enter_directive : DIRECTIVEOPEN_ENTER ':' ID ']' """
-	p[0] = make_directive('ENTER', target=('id', p[3]), states=[], transition=None, motion=None)
+	p[0] = make_directive('ENTER', p.lineno(1), target=('id', p[3]), states=[], transition=None, motion=None)
 
 
 def p_enter_directive_2_id_states(p):
 	"""enter_directive : DIRECTIVEOPEN_ENTER ':' ID '(' actor_states ')' ']' """
-	p[0] = make_directive('ENTER', target=('id', p[3]), states=p[5], transition=None, motion=None)
+	p[0] = make_directive('ENTER', p.lineno(1), target=('id', p[3]), states=p[5], transition=None, motion=None)
 	
 
 def p_enter_directive_2_id_trans_in(p):
 	"""enter_directive : DIRECTIVEOPEN_ENTER ':' ID transition_in ']' """
-	p[0] = make_directive('ENTER', target=('id', p[3]), states=[], transition=p[4], motion=None)
+	p[0] = make_directive('ENTER', p.lineno(1), target=('id', p[3]), states=[], transition=p[4], motion=None)
 	
 
 def p_enter_directive_2_id_states_trans_in(p):
 	"""enter_directive : DIRECTIVEOPEN_ENTER ':' ID '(' actor_states ')' transition_in ']' """
-	p[0] = make_directive('ENTER', target=('id', p[3]), states=p[5], transition=p[7], motion=None)
+	p[0] = make_directive('ENTER', p.lineno(1), target=('id', p[3]), states=p[5], transition=p[7], motion=None)
 	
 
 def p_enter_directive_2_id_motion(p):
 	"""enter_directive : DIRECTIVEOPEN_ENTER ':' ID motion_geometry ']' """
-	p[0] = make_directive('ENTER', target=('id', p[3]), states=[], transition=None, motion=p[4])
+	p[0] = make_directive('ENTER', p.lineno(1), target=('id', p[3]), states=[], transition=None, motion=p[4])
 	
 
 def p_enter_directive_2_id_states_motion(p):
 	"""enter_directive : DIRECTIVEOPEN_ENTER ':' ID '(' actor_states ')' motion_geometry ']' """
-	p[0] = make_directive('ENTER', target=('id', p[3]), states=p[5], transition=None, motion=p[7])
+	p[0] = make_directive('ENTER', p.lineno(1), target=('id', p[3]), states=p[5], transition=None, motion=p[7])
 	
 
 def p_enter_directive_2_id_trans_in_motion(p):
 	"""enter_directive : DIRECTIVEOPEN_ENTER ':' ID transition_in motion_geometry ']' """
-	p[0] = make_directive('ENTER', target=('id', p[3]), states=[], transition=p[4], motion=p[5])
+	p[0] = make_directive('ENTER', p.lineno(1), target=('id', p[3]), states=[], transition=p[4], motion=p[5])
 	
 
 def p_enter_directive_2_id_states_trans_in_motion(p):
 	"""enter_directive : DIRECTIVEOPEN_ENTER ':' ID '(' actor_states ')' transition_in motion_geometry ']' """
-	p[0] = make_directive('ENTER', target=('id', p[3]), states=p[5], transition=p[7], motion=p[8])
+	p[0] = make_directive('ENTER', p.lineno(1), target=('id', p[3]), states=p[5], transition=p[7], motion=p[8])
 
 
 def p_action_directive_2_states(p):
 	"""action_directive : DIRECTIVEOPEN_ACTION ID ':' actor_states ']' """
-	p[0] = make_directive('ACTION', target=('id', p[2]), states=p[4], destination=None, duration=None)
+	p[0] = make_directive('ACTION', p.lineno(1), target=('id', p[2]), states=p[4], destination=None, duration=None)
 	
 
 def p_action_directive_2_go_destination(p):
 	"""action_directive : DIRECTIVEOPEN_ACTION ID ':' GO destination ']' """
-	p[0] = make_directive('ACTION', target=('id', p[2]), states=[], destination=p[5], duration=None)
+	p[0] = make_directive('ACTION', p.lineno(1), target=('id', p[2]), states=[], destination=p[5], duration=None)
 	
 
 def p_action_directive_2_go_destination_duration(p):
 	"""action_directive : DIRECTIVEOPEN_ACTION ID ':' GO destination duration ']' """
-	p[0] = make_directive('ACTION', target=('id', p[2]), states=[], destination=p[5], duration=p[6])
+	p[0] = make_directive('ACTION', p.lineno(1), target=('id', p[2]), states=[], destination=p[5], duration=p[6])
 	
 
 def p_action_directive_2_states_go_destination(p):
 	"""action_directive : DIRECTIVEOPEN_ACTION ID ':' actor_states ',' GO destination ']' """
-	p[0] = make_directive('ACTION', target=('id', p[2]), states=p[4], destination=p[7], duration=None)
+	p[0] = make_directive('ACTION', p.lineno(1), target=('id', p[2]), states=p[4], destination=p[7], duration=None)
 	
 
 def p_action_directive_2_states_go_destination_dur(p):
 	"""action_directive : DIRECTIVEOPEN_ACTION ID ':' actor_states ',' GO destination duration ']' """
-	p[0] = make_directive('ACTION', target=('id', p[2]), states=p[4], destination=p[7], duration=p[8])
+	p[0] = make_directive('ACTION', p.lineno(1), target=('id', p[2]), states=p[4], destination=p[7], duration=p[8])
 
 
 def p_exit_directive_2_id(p):
 	"""exit_directive : DIRECTIVEOPEN_EXIT ':' ID ']' """
-	p[0] = make_directive('EXIT', target=('id', p[3]), transition=None, motion=None)
+	p[0] = make_directive('EXIT', p.lineno(1), target=('id', p[3]), transition=None, motion=None)
 	
 
 def p_exit_directive_2_id_trans_out(p):
 	"""exit_directive : DIRECTIVEOPEN_EXIT ':' ID transition_out ']' """
-	p[0] = make_directive('EXIT', target=('id', p[3]), transition=p[4], motion=None)
+	p[0] = make_directive('EXIT', p.lineno(1), target=('id', p[3]), transition=p[4], motion=None)
 	
 
 def p_exit_directive_2_id_motion(p):
 	"""exit_directive : DIRECTIVEOPEN_EXIT ':' ID motion_geometry ']' """
-	p[0] = make_directive('EXIT', target=('id', p[3]), transition=None, motion=p[4])
+	p[0] = make_directive('EXIT', p.lineno(1), target=('id', p[3]), transition=None, motion=p[4])
 	
 
 def p_exit_directive_2_id_trans_out_motion(p):
 	"""exit_directive : DIRECTIVEOPEN_EXIT ':' ID transition_out motion_geometry ']' """
-	p[0] = make_directive('EXIT', target=('id', p[3]), transition=p[4], motion=p[5])
+	p[0] = make_directive('EXIT', p.lineno(1), target=('id', p[3]), transition=p[4], motion=p[5])
 
 
 def p_music_directive_2_stop(p):
 	"""music_directive : DIRECTIVEOPEN_MUSIC ':' STOP ']' """
-	p[0] = make_directive('MUSIC', target=('rel', 'ALL'), duration=None, action='stop')
+	p[0] = make_directive('MUSIC', p.lineno(1), target=('rel', 'ALL'), duration=None, action='stop')
 	
 
 def p_music_directive_2_stop_dur(p):
 	"""music_directive : DIRECTIVEOPEN_MUSIC ':' STOP duration ']' """
-	p[0] = make_directive('MUSIC', target=('rel', 'ALL'), duration=p[4], action='stop')
+	p[0] = make_directive('MUSIC', p.lineno(1), target=('rel', 'ALL'), duration=p[4], action='stop')
 	
 
 def p_music_directive_2_stop_elem(p):
 	"""music_directive : DIRECTIVEOPEN_MUSIC ':' STOP any_element_id ']' """
-	p[0] = make_directive('MUSIC', target=p[4], duration=None, action='stop')
+	p[0] = make_directive('MUSIC', p.lineno(1), target=p[4], duration=None, action='stop')
 	
 
 def p_music_directive_2_stop_elem_dur(p):
 	"""music_directive : DIRECTIVEOPEN_MUSIC ':' STOP any_element_id duration ']' """
-	p[0] = make_directive('MUSIC', target=p[4], duration=p[5], action='stop')
+	p[0] = make_directive('MUSIC', p.lineno(1), target=p[4], duration=p[5], action='stop')
 	
 
 def p_music_directive_2_elem(p):
 	"""music_directive : DIRECTIVEOPEN_MUSIC ':' element_id ']' """
-	p[0] = make_directive('MUSIC', target=p[3], fadeout=None, action='start')
+	p[0] = make_directive('MUSIC', p.lineno(1), target=p[3], fadeout=None, action='start')
 	
 
 def p_music_directive_2_elem_fadeout(p):
 	"""music_directive : DIRECTIVEOPEN_MUSIC ':' element_id ',' FADEOUT_OLD ']' """
-	p[0] = make_directive('MUSIC', target=p[3], fadeout=('number', 5), action='start')
+	p[0] = make_directive('MUSIC', p.lineno(1), target=p[3], fadeout=('number', 5), action='start')
 	
 
 def p_music_directive_2_elem_fadeout_dur(p):
 	"""music_directive : DIRECTIVEOPEN_MUSIC ':' element_id ',' FADEOUT_OLD duration ']' """
-	p[0] = make_directive('MUSIC', target=p[3], fadeout=p[6], action='start')
+	p[0] = make_directive('MUSIC', p.lineno(1), target=p[3], fadeout=p[6], action='start')
 
 
 def p_gfx_directive_2_id(p):
 	"""gfx_directive : DIRECTIVEOPEN_GFX ':' ID ']' """
-	p[0] = make_directive('GFX', target=('id', p[3]), loop=('boolean', False), action='start')
+	p[0] = make_directive('GFX', p.lineno(1), target=('id', p[3]), loop=('boolean', False), action='start')
 	
 
 def p_gfx_directive_2_loop_id(p):
 	"""gfx_directive : DIRECTIVEOPEN_GFX ':' LOOP ID ']' """
-	p[0] = make_directive('GFX', target=('id', p[4]), loop=('boolean', True), action='start')
+	p[0] = make_directive('GFX', p.lineno(1), target=('id', p[4]), loop=('boolean', True), action='start')
 	
 
 def p_gfx_directive_2_stop_elem(p):
 	"""gfx_directive : DIRECTIVEOPEN_GFX ':' STOP id_or_all ']' """
-	p[0] = make_directive('GFX', target=p[4], duration=None, action='stop')
+	p[0] = make_directive('GFX', p.lineno(1), target=p[4], duration=None, action='stop')
 	
 
 def p_gfx_directive_2_stop_elem_dur(p):
 	"""gfx_directive : DIRECTIVEOPEN_GFX ':' STOP id_or_all duration ']' """
-	p[0] = make_directive('GFX', target=p[4], duration=p[5], action='stop')
+	p[0] = make_directive('GFX', p.lineno(1), target=p[4], duration=p[5], action='stop')
 	
 
 def p_gfx_directive_2_stop(p):
 	"""gfx_directive : DIRECTIVEOPEN_GFX ':' STOP ']' """
-	p[0] = make_directive('GFX', target=('rel', 'ALL'), duration=None, action='stop')
+	p[0] = make_directive('GFX', p.lineno(1), target=('rel', 'ALL'), duration=None, action='stop')
 	
 
 def p_gfx_directive_2_stop_dur(p):
 	"""gfx_directive : DIRECTIVEOPEN_GFX ':' STOP duration ']' """
-	p[0] = make_directive('GFX', target=('rel', 'ALL'), duration=p[4], action='stop')
+	p[0] = make_directive('GFX', p.lineno(1), target=('rel', 'ALL'), duration=p[4], action='stop')
 
 
 def p_sfx_directive_2_elem_id(p):
 	"""sfx_directive : DIRECTIVEOPEN_SFX ':' element_id ']' """
-	p[0] = make_directive('SFX', target=p[3], loop=('boolean', False), action='start')
+	p[0] = make_directive('SFX', p.lineno(1), target=p[3], loop=('boolean', False), action='start')
 	
 
 def p_sfx_directive_2_loop_elem_id(p):
 	"""sfx_directive : DIRECTIVEOPEN_SFX ':' LOOP element_id ']' """
-	p[0] = make_directive('SFX', target=p[4], loop=('boolean', True), action='start')
+	p[0] = make_directive('SFX', p.lineno(1), target=p[4], loop=('boolean', True), action='start')
 	
 
 def p_sfx_directive_2_stop_elem(p):
 	"""sfx_directive : DIRECTIVEOPEN_SFX ':' STOP any_element_id ']' """
-	p[0] = make_directive('SFX', target=p[4], duration=None, action='stop')
+	p[0] = make_directive('SFX', p.lineno(1), target=p[4], duration=None, action='stop')
 	
 
 def p_sfx_directive_2_stop_elem_dur(p):
 	"""sfx_directive : DIRECTIVEOPEN_SFX ':' STOP any_element_id duration ']' """
-	p[0] = make_directive('SFX', target=p[4], duration=p[5], action='stop')
+	p[0] = make_directive('SFX', p.lineno(1), target=p[4], duration=p[5], action='stop')
 	
 
 def p_sfx_directive_2_stop(p):
 	"""sfx_directive : DIRECTIVEOPEN_SFX ':' STOP ']' """
-	p[0] = make_directive('SFX', target=('rel', 'ALL'), duration=None, action='stop')
+	p[0] = make_directive('SFX', p.lineno(1), target=('rel', 'ALL'), duration=None, action='stop')
 	
 
 def p_sfx_directive_2_stop_dur(p):
 	"""sfx_directive : DIRECTIVEOPEN_SFX ':' STOP duration ']' """
-	p[0] = make_directive('SFX', target=('rel', 'ALL'), duration=p[4], action='stop')
+	p[0] = make_directive('SFX', p.lineno(1), target=('rel', 'ALL'), duration=p[4], action='stop')
 
 
 def p_fmv_directive_2_elem_id(p):
 	"""fmv_directive : DIRECTIVEOPEN_FMV ':' element_id ']' """
-	p[0] = make_directive('FMV', target=p[3])
+	p[0] = make_directive('FMV', p.lineno(1), target=p[3])
 	
 
 def p_camera_directive_2_camera_actions(p):
 	"""camera_directive : DIRECTIVEOPEN_CAMERA ':' camera_actions ']' """
-	p[0] = make_directive('CAMERA', actions=p[3])
+	p[0] = make_directive('CAMERA', p.lineno(1), actions=p[3])
 	
 
 def p_choice_directive_2_choices(p):
 	"""choice_directive : DIRECTIVEOPEN_CHOICE ']' choices"""
-	p[0] = make_directive('CHOICE', title=None, label=None, choices=p[3])
+	p[0] = make_directive('CHOICE', p.lineno(1), title=None, label=None, choices=p[3])
 	
 
 def p_choice_directive_2_label_choices(p):
 	"""choice_directive : DIRECTIVEOPEN_CHOICE ':' ID ']' choices"""
-	p[0] = make_directive('CHOICE', title=None, label=('id', p[3]), choices=p[5])
+	p[0] = make_directive('CHOICE', p.lineno(1), title=None, label=('id', p[3]), choices=p[5])
 	
 
 def p_choice_directive_2_title_choices(p):
 	"""choice_directive : DIRECTIVEOPEN_CHOICE ']' STRING choices"""
-	p[0] = make_directive('CHOICE', title=('string', unescape(p[3])), label=None, choices=p[4])
+	p[0] = make_directive('CHOICE', p.lineno(1), title=('string', unescape(p[3])), label=None, choices=p[4])
 	
 
 def p_choice_directive_2_label_title_choices(p):
 	"""choice_directive : DIRECTIVEOPEN_CHOICE ':' ID ']' STRING choices"""
-	p[0] = make_directive('CHOICE', title=('string', unescape(p[5])), label=('id', p[3]), choices=p[6])
+	p[0] = make_directive('CHOICE', p.lineno(1), title=('string', unescape(p[5])), label=('id', p[3]), choices=p[6])
 
 
 def p_description_annotation_2_unstr(p):
 	"""description_annotation : ANNOTATIONOPEN_DESCRIPTION ':' UNQUOTED_STRING ')' """
-	p[0] = make_annotation('DESCRIPTION', text=('string', unescape(' ' + p[3] + ' ')), target=None)
+	p[0] = make_annotation('DESCRIPTION', p.lineno(1), text=('string', unescape(' ' + p[3] + ' ')), target=None)
 	
 
 def p_description_annotation_2_id_str(p):
 	"""description_annotation : ANNOTATIONOPEN_DESCRIPTION ':' ID ':' UNQUOTED_STRING ')' """
-	p[0] = make_annotation('DESCRIPTION', text=('string', unescape(' ' + p[5] + ' ')), target=('id', p[3]))
+	p[0] = make_annotation('DESCRIPTION', p.lineno(1), text=('string', unescape(' ' + p[5] + ' ')), target=('id', p[3]))
 	
 
 def p_description_annotation_2_c_unstr(p):
 	"""description_annotation : ANNOTATIONOPEN_DESCRIPTION ':' ':' UNQUOTED_STRING ')' """
-	p[0] = make_annotation('DESCRIPTION', text=('string', unescape(' ' + p[4] + ' ')), target=None)
+	p[0] = make_annotation('DESCRIPTION', p.lineno(1), text=('string', unescape(' ' + p[4] + ' ')), target=None)
 	
 
 def p_section_annotation_2_id(p):
 	"""section_annotation : ANNOTATIONOPEN_SECTION ':' ID ')' """
-	p[0] = make_annotation('SECTION', section=('id', p[3]), params=[])
+	p[0] = make_annotation('SECTION', p.lineno(1), section=('id', p[3]), params=[])
 	
 
 def p_section_annotation_2_id_params(p):
 	"""section_annotation : ANNOTATIONOPEN_SECTION ':' ID PARAMSOPEN params_declaration ')' """
-	p[0] = make_annotation('SECTION', section=('id', p[3]), params=p[5])
+	p[0] = make_annotation('SECTION', p.lineno(1), section=('id', p[3]), params=p[5])
 	
 
 def p_flagset_annotation_2_id(p):
 	"""flagset_annotation : ANNOTATIONOPEN_FLAGSET ':' ID ')' """
-	p[0] = make_annotation('FLAGSET', name=('id', p[3]), value=('boolean', True))
+	p[0] = make_annotation('FLAGSET', p.lineno(1), name=('id', p[3]), value=('boolean', True))
 	
 
 def p_flagset_annotation_2_id_bool_expression(p):
 	"""flagset_annotation : ANNOTATIONOPEN_FLAGSET ':' ID bool_expression ')' """
-	p[0] = make_annotation('FLAGSET', name=('id', p[3]), value=p[4])
+	p[0] = make_annotation('FLAGSET', p.lineno(1), name=('id', p[3]), value=p[4])
 	
 
 def p_varset_annotation_2_id(p):
 	"""varset_annotation : ANNOTATIONOPEN_VARSET ':' ID ')' """
-	p[0] = make_annotation('VARSET', name=('id', p[3]), value=('number', 1))
+	p[0] = make_annotation('VARSET', p.lineno(1), name=('id', p[3]), value=('number', 1))
 	
 
 def p_varset_annotation_2_id_params(p):
 	"""varset_annotation	: ANNOTATIONOPEN_VARSET ':' ID inc_dec ')'
 							| ANNOTATIONOPEN_VARSET ':' ID expression ')' """
-	p[0] = make_annotation('VARSET', name=('id', p[3]), value=p[4])
+	p[0] = make_annotation('VARSET', p.lineno(1), name=('id', p[3]), value=p[4])
 
 
 def p_dialog_annotation_2_token(p):
 	"""dialog_annotation	: ANNOTATIONOPEN_DIALOG ':' HIDE ')'
 							| ANNOTATIONOPEN_DIALOG ':' SHOW ')'
 							| ANNOTATIONOPEN_DIALOG ':' AUTO ')' """
-	p[0] = make_annotation('DIALOG', mode=p[3])
+	p[0] = make_annotation('DIALOG', p.lineno(1), mode=p[3])
 
 
 def p_goto_annotation_2_tokens(p):
 	"""goto_annotation : ANNOTATIONOPEN_GOTO ':' ID ')' """
-	p[0] = make_annotation('GOTO', destination=('id', p[3]))
+	p[0] = make_annotation('GOTO', p.lineno(1), destination=('id', p[3]))
 	
 
 def p_execute_annotation_2_id(p):
 	"""execute_annotation : ANNOTATIONOPEN_EXECUTE ':' ID ')' """
-	p[0] = make_annotation('EXECUTE', section=('id', p[3]), params=[])
+	p[0] = make_annotation('EXECUTE', p.lineno(1), section=('id', p[3]), params=[])
 	
 
 def p_execute_annotation_2_id_params(p):
 	"""execute_annotation : ANNOTATIONOPEN_EXECUTE ':' ID PARAMSOPEN params_set ')' """
-	p[0] = make_annotation('EXECUTE', section=('id', p[3]), params=p[5])
+	p[0] = make_annotation('EXECUTE', p.lineno(1), section=('id', p[3]), params=p[5])
 	
 
 def p_end_annotation_2_tokens(p):
 	"""end_annotation : ANNOTATIONOPEN_END ')' """
-	p[0] = make_annotation('END')
+	p[0] = make_annotation('END', p.lineno(1))
 	
 
 def p_end_annotation_2_return(p):
 	"""end_annotation : ANNOTATIONOPEN_END ':' RETURN expression ')' """
-	p[0] = make_annotation('END', retval=p[4])
+	p[0] = make_annotation('END', p.lineno(1), retval=p[4])
 	
 
 def p_while_annotation_2_tokens(p):
 	"""while_annotation : ANNOTATIONOPEN_WHILE ':' bool_expression ')' '{' block '}' """
-	p[0] = make_annotation('WHILE', condition=p[3], statements=p[6])
+	p[0] = make_annotation('WHILE', p.lineno(1), condition=p[3], statements=p[6])
 	
 
 def p_if_annotation_2_single(p):
 	"""if_annotation : ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}' """
 	ifs = [{'condition': p[3], 'statements': p[6]}]
-	p[0] = make_annotation('IF', branches=ifs)
+	p[0] = make_annotation('IF', p.lineno(1), branches=ifs)
 	
 
 def p_if_annotation_2_single_else(p):
 	"""if_annotation : ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}' ANNOTATIONOPEN_ELSE ')' '{' block '}' """
 	ifs = [{'condition': p[3], 'statements': p[6]}, {'condition': None, 'statements': p[11]}]
-	p[0] = make_annotation('IF', branches=ifs)
+	p[0] = make_annotation('IF', p.lineno(1), branches=ifs)
 	
 
 def p_if_annotation_2_multi(p):
 	"""if_annotation : ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}' else_ifs"""
 	ifs = [{'condition': p[3], 'statements': p[6]}] + p[8]
-	p[0] = make_annotation('IF', branches=ifs)
+	p[0] = make_annotation('IF', p.lineno(1), branches=ifs)
 
 
 def p_if_annotation_2_multi_else(p):
@@ -421,34 +421,34 @@ def p_if_annotation_2_multi_else(p):
 	# noinspection PyPep8
 	"""if_annotation : ANNOTATIONOPEN_IF ':' bool_expression ')' '{' block '}' else_ifs ANNOTATIONOPEN_ELSE ')' '{' block '}' """
 	ifs = [{'condition': p[3], 'statements': p[6]}] + p[8] + [{'condition': None, 'statements': p[12]}]
-	p[0] = make_annotation('IF', branches=ifs)
+	p[0] = make_annotation('IF', p.lineno(1), branches=ifs)
 
 
 def p_include_annotation_2_str(p):
 	"""include_annotation	: ANNOTATIONOPEN_INCLUDE ':' STRING ')'
 							| ANNOTATIONOPEN_INCLUDE ':' STRING WITH_PARSING ')' """
-	p[0] = make_annotation('INCLUDE', file=('string', unescape(p[3])), langs=None, parsing=('boolean', True))
+	p[0] = make_annotation('INCLUDE', p.lineno(1), file=('string', unescape(p[3])), langs=None, parsing=('boolean', True))
 	
 
 def p_include_annotation_2_str_fortarget(p):
 	"""include_annotation	: ANNOTATIONOPEN_INCLUDE ':' STRING FOR_TARGET id_list ')'
 							| ANNOTATIONOPEN_INCLUDE ':' STRING FOR_TARGET id_list WITH_PARSING ')' """
-	p[0] = make_annotation('INCLUDE', file=('string', unescape(p[3])), langs=p[5], parsing=('boolean', True))
+	p[0] = make_annotation('INCLUDE', p.lineno(1), file=('string', unescape(p[3])), langs=p[5], parsing=('boolean', True))
 	
 
 def p_include_annotation_2_str_parsing_onoff(p):
 	"""include_annotation : ANNOTATIONOPEN_INCLUDE ':' STRING WITH_PARSING bool_literal ')' """
-	p[0] = make_annotation('INCLUDE', file=('string', unescape(p[3])), langs=None, parsing=p[5])
+	p[0] = make_annotation('INCLUDE', p.lineno(1), file=('string', unescape(p[3])), langs=None, parsing=p[5])
 	
 
 def p_include_annotation_2_str_fortarget_parsing_onoff(p):
 	"""include_annotation : ANNOTATIONOPEN_INCLUDE ':' STRING FOR_TARGET id_list WITH_PARSING bool_literal ')' """
-	p[0] = make_annotation('INCLUDE', file=('string', unescape(p[3])), langs=p[5], parsing=p[7])
+	p[0] = make_annotation('INCLUDE', p.lineno(1), file=('string', unescape(p[3])), langs=p[5], parsing=p[7])
 	
 
 def p_characters_annotation_2_str(p):
 	"""characters_annotation : ANNOTATIONOPEN_CHARACTERS ':' STRING ')' """
-	p[0] = make_annotation('CHARACTERS', file=('string', unescape(p[3])))
+	p[0] = make_annotation('CHARACTERS', p.lineno(1), file=('string', unescape(p[3])))
 	
 
 def p_transition_to_2_id_to(p):
@@ -812,24 +812,24 @@ def unescape(s):
 	return stripped
 	
 
-def make_annotation(instruction, **kwargs):
-	ann = {'type': 'annotation', 'instruction': instruction}
+def make_annotation(instruction, lineno, **kwargs):
+	ann = {'type': 'annotation', 'instruction': instruction, 'lineno': lineno}
 	for k in kwargs:
 		ann[k] = kwargs[k]
 	return ann
 
 
-def make_directive(instruction, **kwargs):
-	direc = {'type': 'directive', 'instruction': instruction}
+def make_directive(instruction, lineno, **kwargs):
+	direc = {'type': 'directive', 'instruction': instruction, 'lineno': lineno}
 	for k in kwargs:
 		direc[k] = kwargs[k]
 	return direc
 	
 
-def make_line(speaker, line, states=None):
+def make_line(speaker, line, lineno, states=None):
 	if states is None:
 		states = []
-	return {'type': 'line', 'speaker': speaker, 'text': line, 'states': states}
+	return {'type': 'line', 'speaker': speaker, 'text': line, 'states': states, 'lineno': lineno}
 
 
 def make_choice(text, jump_target, varsets=None, condition=None):
