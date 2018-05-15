@@ -18,7 +18,7 @@ def p_statement_2_type(p):
 	
 def p_statement_2_comment(p):
 	'statement : COMMENT'
-	p[0] = {'type': 'comment', 'text': p[1]}
+	p[0] = {'type': 'comment', 'text': p[1], 'lineno': p.lineno(1)}
 	
 def p_directive_2_specific(p):
 	'''directive	: scene_directive
@@ -53,7 +53,7 @@ def p_annotation_2_python(p):
 	first_brace = p[1].index('{')
 	last_brace = p[1].rindex('}')
 	py = unescape(p[1][first_brace+1:last_brace])
-	p[0] = make_annotation('PYTHON', body=py)
+	p[0] = make_annotation('PYTHON', p.lineno(1), body=py)
 
 def p_line_2_id_str(p):
 	'''line : ID ':' STRING'''

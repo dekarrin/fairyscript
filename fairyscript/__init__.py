@@ -94,7 +94,7 @@ def _lex_manuscript(script_text, filename):
 	return symbols
 
 
-def _parse_manuscript(script_text, filename):
+def _parse_manuscript(script_text, filename, strip_linenums):
 	parser = _create_parser()
 	script_ast = parser.parse(script_text)
 	if not parser.successful:
@@ -104,10 +104,12 @@ def _parse_manuscript(script_text, filename):
 			error_file = "file '" + filename + "'"
 		errors = [error_file + line for line in parser.error_messages]
 		raise ParserError(errors, "encountered problems during parse")
+	if strip_linenums:
+		_strip_ast_line_numbers(script_ast)
 	return script_ast
 
 
-def _parse_symbols(symbols, filename):
+def _parse_symbols(symbols, filename, strip_linenums):
 	def grab_token():
 		if len(symbols) > 0:
 			return symbols.pop(0)
@@ -120,7 +122,21 @@ def _parse_symbols(symbols, filename):
 			error_file = "file '" + filename + "'"
 		errors = [error_file + line for line in parser.error_messages]
 		raise ParserError(errors, "encountered problems during parse")
+	if strip_linenums:
+		_strip_ast_line_numbers(script_ast)
 	return script_ast
+
+
+def _strip_ast_line_numbers(ast):
+	for s in ast:
+		if 'lineno' in s:
+			del s['lineno']
+		if 'instruction' in s:
+			if s['instruction'] == 'IF':
+				for br in s['branches']:
+					_strip_ast_line_numbers(br['statements'])
+			elif s['instruction'] == 'WHILE':
+				_strip_ast_line_numbers(s['statements'])
 
 
 def _show_warnings(compiler):
@@ -129,7 +145,7 @@ def _show_warnings(compiler):
 		_log.warning("Warning: " + w)
 
 
-def _preprocess(script_ast, target_lang, quiet=False):
+def _preprocess(script_ast, target_lang, quiet=False, strip_ast_linenums=False):
 	def preproc_includes(ast, lang):
 		new_ast = []
 		for s in ast:
@@ -154,7 +170,7 @@ def _preprocess(script_ast, target_lang, quiet=False):
 					if s['parsing'][1]:
 						with open(s['file'][1], 'r') as inc_file:
 							contents = inc_file.read()
-						inc_ast = _parse_manuscript(contents, s['file'][1])
+						inc_ast = _parse_manuscript(contents, s['file'][1], strip_ast_linenums)
 						new_ast += preproc_includes(inc_ast, lang)
 					else:
 						new_ast.append(s)
@@ -339,6 +355,7 @@ def _add_ast_subparser(subparsers, parent):
 	""":type : argparse.ArgumentParser"""
 
 	ast.add_argument('--pretty', action='store_true', help="Output pretty-print formatted AST.")
+	ast.add_argument('--no-line-numbers', action='store_true', help="Do not include line number information in AST.")
 
 
 def _add_analyze_subparser(subparsers, parent):
@@ -392,6 +409,7 @@ def _parse_args():
 	_add_analyze_subparser(subparsers, parent)
 
 	try:
+		parser.set_defaults(no_line_numbers=False)
 		args = parser.parse_args()
 	except argparse.ArgumentError as e:
 		raise ArgumentError(str(e))
@@ -418,12 +436,17 @@ def _run_compiler(args):
 				raise InvalidInputFormatError("to output lexer symbols, input format must be fey or lex")
 			input_data += lex_symbols
 		else:
+			# note that args.no_line_numbers can only be true if we are in ast output format mode
+			# (guaranteed by argument parsing at time of this writing)
+
 			if args.format == 'fey':
-				ast = _parse_manuscript(file_contents, input_file.name)
+				ast = _parse_manuscript(file_contents, input_file.name, args.no_line_numbers)
 			elif args.format == 'lex':
-				ast = _parse_symbols(_load_lex_tokens(file_contents), input_file.name)
+				ast = _parse_symbols(_load_lex_tokens(file_contents), input_file.name, args.no_line_numbers)
 			elif args.format == 'ast':
 				ast = eval(file_contents)
+				if args.no_line_numbers:
+					_strip_ast_line_numbers(ast)
 			else:
 				raise InvalidInputFormatError(
 					"to output AST or compiled formats, input format must be fey, lex, or ast")
