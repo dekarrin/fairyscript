@@ -39,7 +39,7 @@ setup(
 	],
 	keywords='renpy visual novel screenplay script word office',
 	packages=find_packages(),
-	install_requires=['lxml', 'ply'],
+	install_requires=['lxml', 'ply==3.11'],
 	tests_require=[],
 	python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*',
 	entry_points={
