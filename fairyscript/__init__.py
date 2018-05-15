@@ -84,6 +84,7 @@ def _lex_manuscript(script_text, filename):
 	lexer.input(script_text)
 	for tok in lexer:
 		symbols.append(tok)
+	# TODO: switch to exact check of stdin
 	if not lexer.successful:
 		if filename == '<stdin>':
 			error_file = "(stdin)"
