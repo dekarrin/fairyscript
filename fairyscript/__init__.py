@@ -3,7 +3,7 @@ import re
 import sys
 import logging.handlers
 
-from . import pretty
+from . import pretty, fileinfo
 from .parse import fey_lex
 from .parse import fey_yacc
 from .compile.renpy import RenpyCompiler
@@ -95,14 +95,14 @@ def _lex_manuscript(script_text, filename):
 	return symbols
 
 
-def _parse_manuscript(script_text, filename, strip_linenums):
+def _parse_manuscript(script_text, file_info, strip_linenums):
 	parser = _create_parser()
 	script_ast = parser.parse(script_text)
 	if not parser.successful:
-		if filename == '<stdin>':
+		if file_info.is_stdin:
 			error_file = "(stdin)"
 		else:
-			error_file = "file '" + filename + "'"
+			error_file = "file '" + file_info.name + "'"
 		errors = [error_file + line for line in parser.error_messages]
 		raise ParserError(errors, "encountered problems during parse")
 	if strip_linenums:
@@ -110,17 +110,17 @@ def _parse_manuscript(script_text, filename, strip_linenums):
 	return script_ast
 
 
-def _parse_symbols(symbols, filename, strip_linenums):
+def _parse_symbols(symbols, file_info, strip_linenums):
 	def grab_token():
 		if len(symbols) > 0:
 			return symbols.pop(0)
 	parser = _create_parser()
 	script_ast = parser.parse(tokenfunc=grab_token)
 	if not parser.successful:
-		if filename == '<stdin>':
+		if file_info.is_stdin:
 			error_file = "(stdin)"
 		else:
-			error_file = "file '" + filename + "'"
+			error_file = "file '" + file_info.name + "'"
 		errors = [error_file + line for line in parser.error_messages]
 		raise ParserError(errors, "encountered problems during parse")
 	if strip_linenums:
@@ -169,9 +169,11 @@ def _preprocess(script_ast, target_lang, quiet=False, strip_ast_linenums=False):
 			elif s['instruction'] == 'INCLUDE':
 				if s['langs'] is None or lang in [x[1] for x in s['langs']]:
 					if s['parsing'][1]:
+						info = fileinfo.FileInfo(mode='r', name=s['file'][1])
 						with open(s['file'][1], 'r') as inc_file:
 							contents = inc_file.read()
-						inc_ast = _parse_manuscript(contents, s['file'][1], strip_ast_linenums)
+
+						inc_ast = _parse_manuscript(contents, info, strip_ast_linenums)
 						new_ast += preproc_includes(inc_ast, lang)
 					else:
 						new_ast.append(s)
@@ -441,9 +443,11 @@ def _run_compiler(args):
 			# (guaranteed by argument parsing at time of this writing)
 
 			if args.format == 'fey':
-				ast = _parse_manuscript(file_contents, input_file.name, args.no_line_numbers)
+				file_info = fileinfo.from_file(input_file)
+				ast = _parse_manuscript(file_contents, file_info, args.no_line_numbers)
 			elif args.format == 'lex':
-				ast = _parse_symbols(_load_lex_tokens(file_contents), input_file.name, args.no_line_numbers)
+				file_info = fileinfo.from_file(input_file)
+				ast = _parse_symbols(_load_lex_tokens(file_contents), file_info, args.no_line_numbers)
 			elif args.format == 'ast':
 				ast = eval(file_contents)
 				if args.no_line_numbers:
