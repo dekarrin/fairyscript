@@ -24,7 +24,8 @@ def p_statement_2_type(p):
 
 def p_statement_2_comment(p):
 	"""statement : COMMENT"""
-	p[0] = {'type': 'comment', 'text': p[1], 'lineno': p.lineno(1)}
+	debug = make_debug_symbols(p.lineno(1))
+	p[0] = {'type': 'comment', 'text': p[1], '_debug': debug}
 
 
 def p_directive_2_specific(p):
@@ -813,14 +814,16 @@ def unescape(s):
 	
 
 def make_annotation(instruction, lineno, **kwargs):
-	ann = {'type': 'annotation', 'instruction': instruction, 'lineno': lineno}
+	debug = make_debug_symbols(lineno)
+	ann = {'type': 'annotation', 'instruction': instruction, '_debug': debug}
 	for k in kwargs:
 		ann[k] = kwargs[k]
 	return ann
 
 
 def make_directive(instruction, lineno, **kwargs):
-	direc = {'type': 'directive', 'instruction': instruction, 'lineno': lineno}
+	debug = make_debug_symbols(lineno)
+	direc = {'type': 'directive', 'instruction': instruction, '_debug': debug}
 	for k in kwargs:
 		direc[k] = kwargs[k]
 	return direc
@@ -829,7 +832,14 @@ def make_directive(instruction, lineno, **kwargs):
 def make_line(speaker, line, lineno, states=None):
 	if states is None:
 		states = []
-	return {'type': 'line', 'speaker': speaker, 'text': line, 'states': states, 'lineno': lineno}
+	debug = make_debug_symbols(lineno)
+	return {'type': 'line', 'speaker': speaker, 'text': line, 'states': states, '_debug': debug}
+
+
+def make_debug_symbols(lineno):
+	return {
+		'lineno': lineno,
+	}
 
 
 def make_choice(text, jump_target, varsets=None, condition=None):
