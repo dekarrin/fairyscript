@@ -78,20 +78,36 @@ def _create_lexer():
 	return lexer
 
 
-def _lex_manuscript(script_text, filename):
+def _lex_manuscript(script_text, file_info):
 	symbols = []
 	lexer = _create_lexer()
 	lexer.input(script_text)
 	for tok in lexer:
 		symbols.append(tok)
-	# TODO: switch to exact check of stdin
 	if not lexer.successful:
-		if filename == '<stdin>':
+		if file_info.is_stdin:
 			error_file = "(stdin)"
 		else:
-			error_file = "file '" + filename + "'"
+			error_file = "file '" + file_info.name + "'"
 		errors = [error_file + line for line in lexer.error_messages]
 		raise LexerError(errors, "encountered problems during lex")
+	lexed = {'symbols': symbols, 'file': None if file_info.is_stdin else file_info.name}
+	return lexed
+
+
+def _load_lex_tokens(contents):
+	from ply.lex import LexToken as Token
+
+	# noinspection PyUnusedLocal,PyPep8Naming
+	def LexToken(t_type, value, line, pos):
+		t = Token()
+		t.type = t_type
+		t.value = value
+		t.lineno = line
+		t.lexpos = pos
+		return t
+
+	symbols = eval(contents)
 	return symbols
 
 
@@ -267,22 +283,6 @@ def _precompile(ast, args, compiler):
 	return ast
 
 
-def _load_lex_tokens(contents):
-	from ply.lex import LexToken as Token
-
-	# noinspection PyUnusedLocal,PyPep8Naming
-	def LexToken(t_type, value, line, pos):
-		t = Token()
-		t.type = t_type
-		t.value = value
-		t.lineno = line
-		t.lexpos = pos
-		return t
-
-	symbols = eval(contents)
-	return symbols
-
-
 def _add_renpy_subparser(subparsers, parent):
 	rpy_desc = "Compile input(s) to Ren'Py-compatible .rpy format."
 	rpy = subparsers.add_parser(
@@ -432,12 +432,13 @@ def _run_compiler(args):
 
 		if args.output_mode == 'lex':
 			if args.format == 'fey':
-				lex_symbols = _lex_manuscript(file_contents, input_file.name)
+				file_info = fileinfo.from_file(input_file)
+				lex_symbols = _lex_manuscript(file_contents, file_info)
 			elif args.format == 'lex':
 				lex_symbols = _load_lex_tokens(file_contents)
 			else:
 				raise InvalidInputFormatError("to output lexer symbols, input format must be fey or lex")
-			input_data += lex_symbols
+			input_data.append(lex_symbols)
 		else:
 			# note that args.no_line_numbers can only be true if we are in ast output format mode
 			# (guaranteed by argument parsing at time of this writing)
