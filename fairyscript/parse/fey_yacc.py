@@ -838,6 +838,7 @@ def make_line(speaker, line, lineno, states=None):
 
 def make_debug_symbols(lineno):
 	return {
+		'filename': parser.filename,
 		'lineno': lineno,
 	}
 
@@ -850,3 +851,5 @@ def make_choice(text, jump_target, varsets=None, condition=None):
 
 parser = yacc.yacc()
 parser.error_messages = []
+parser.filename = None
+

@@ -91,7 +91,7 @@ def _lex_manuscript(script_text, file_info):
 			error_file = "file '" + file_info.name + "'"
 		errors = [error_file + line for line in lexer.error_messages]
 		raise LexerError(errors, "encountered problems during lex")
-	lexed = {'symbols': symbols, 'file': None if file_info.is_stdin else file_info.name}
+	lexed = {'symbols': symbols, 'file': file_info.name if not file_info.is_stdin else None}
 	return lexed
 
 
@@ -113,6 +113,7 @@ def _load_lex_tokens(contents):
 
 def _parse_manuscript(script_text, file_info, strip_linenums):
 	parser = _create_parser()
+	parser.filename = file_info.name if not file_info.is_stdin else None
 	script_ast = parser.parse(script_text)
 	if not parser.successful:
 		if file_info.is_stdin:
@@ -126,11 +127,26 @@ def _parse_manuscript(script_text, file_info, strip_linenums):
 	return script_ast
 
 
-def _parse_symbols(symbols, file_info, strip_linenums):
+def _parse_symbols(lex_symbols, file_info, strip_linenums):
+	parser = _create_parser()
+	# need to use this 'dictionary indirection' solution for py 2 compat with closure
+	v = {'cur_lex_series': 0}
+	parser.filename = lex_symbols[v['cur_lex_series']]['file']
+
 	def grab_token():
+		symbols = lex_symbols[v['cur_lex_series']]['symbols']
 		if len(symbols) > 0:
 			return symbols.pop(0)
-	parser = _create_parser()
+		else:
+			v['cur_lex_series'] += 1
+			if v['cur_lex_series'] >= len(lex_symbols):
+				return None
+			elif len(lex_symbols[v['cur_lex_series']]['symbols']) > 0:
+				symbols = lex_symbols[v['cur_lex_series']]['symbols']
+				if len(symbols) > 0:
+					return symbols.pop(0)
+		return None
+
 	script_ast = parser.parse(tokenfunc=grab_token)
 	if not parser.successful:
 		if file_info.is_stdin:
