@@ -860,6 +860,8 @@ def make_choice(text, jump_target, varsets=None, condition=None):
 
 
 parser = yacc.yacc()
+parser.successful = True
 parser.error_messages = []
 parser.filename = None
 parser.no_debug = False
+parser.header_info = {}

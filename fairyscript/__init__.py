@@ -62,13 +62,14 @@ class ParserError(Exception):
 		self.error_messages = errors
 
 
-def _create_parser():
+def _create_parser(filename, debug_symbols):
 	# TODO: abstract into parser module
 	parser = parse.fey_yacc.parser
 	parser.successful = True
 	parser.error_messages = []
-	parser.filename = None
-	parser.no_debug = False
+	parser.filename = filename
+	parser.no_debug = debug_symbols
+	parser.header_info = {'has_debug_symbols': debug_symbols}
 	return parser
 
 
@@ -114,9 +115,7 @@ def _load_lex_tokens(contents):
 
 
 def _parse_manuscript(script_text, file_info, strip_debug):
-	parser = _create_parser()
-	parser.filename = file_info.name if not file_info.is_stdin else None
-	parser.no_debug = strip_debug
+	parser = _create_parser(file_info.name if not file_info.is_stdin else None, strip_debug)
 
 	script_ast = parser.parse(script_text)
 	if not parser.successful:
@@ -126,15 +125,15 @@ def _parse_manuscript(script_text, file_info, strip_debug):
 			error_file = "file '" + file_info.name + "'"
 		errors = [error_file + line for line in parser.error_messages]
 		raise ParserError(errors, "encountered problems during parse")
-	return script_ast
+	header_info = parser.header_info
+	return {'_meta': header_info, 'nodes': script_ast}
 
 
 def _parse_symbols(lex_symbols, file_info, strip_debug):
-	parser = _create_parser()
 	# need to use this 'dictionary indirection' solution for py 2 compat with closure
 	v = {'cur_lex_series': 0}
-	parser.filename = lex_symbols[v['cur_lex_series']]['file']
-	parser.no_debug = strip_debug
+
+	parser = _create_parser(lex_symbols[v['cur_lex_series']]['file'], strip_debug)
 
 	def grab_token():
 		symbols = lex_symbols[v['cur_lex_series']]['symbols']
@@ -158,7 +157,8 @@ def _parse_symbols(lex_symbols, file_info, strip_debug):
 			error_file = "file '" + file_info.name + "'"
 		errors = [error_file + line for line in parser.error_messages]
 		raise ParserError(errors, "encountered problems during parse")
-	return script_ast
+	header_info = parser.header_info
+	return {'_meta': header_info, 'nodes': script_ast}
 
 
 def _strip_ast_debug_symbols(ast):
@@ -171,6 +171,21 @@ def _strip_ast_debug_symbols(ast):
 					_strip_ast_debug_symbols(br['statements'])
 			elif s['instruction'] == 'WHILE':
 				_strip_ast_debug_symbols(s['statements'])
+
+
+def _combine_asts(ast_1, ast_2):
+	meta_1 = ast_1['_meta']
+	meta_2 = ast_2['_meta']
+	new_meta = {
+		'has_debug_symbols': meta_1['has_debug_symbols'] and meta_2['has_debug_symbols']
+	}
+
+	new_nodes = ast_1['nodes'] + ast_2['nodes']
+
+	return {
+		'_meta': new_meta,
+		'nodes': new_nodes
+	}
 
 
 def _show_warnings(compiler):
@@ -449,8 +464,8 @@ def _run_compiler(args):
 
 		if args.output_mode == 'lex':
 			if args.format == 'fey':
-				file_info = fileinfo.from_file(input_file)
-				lex_symbols = _lex_manuscript(file_contents, file_info)
+				info = fileinfo.from_file(input_file)
+				lex_symbols = _lex_manuscript(file_contents, info)
 			elif args.format == 'lex':
 				lex_symbols = _load_lex_tokens(file_contents)
 			else:
@@ -461,11 +476,11 @@ def _run_compiler(args):
 			# (guaranteed by argument parsing at time of this writing)
 
 			if args.format == 'fey':
-				file_info = fileinfo.from_file(input_file)
-				ast = _parse_manuscript(file_contents, file_info, args.no_debug_symbols)
+				info = fileinfo.from_file(input_file)
+				ast = _parse_manuscript(file_contents, info, args.no_debug_symbols)
 			elif args.format == 'lex':
-				file_info = fileinfo.from_file(input_file)
-				ast = _parse_symbols(_load_lex_tokens(file_contents), file_info, args.no_debug_symbols)
+				info = fileinfo.from_file(input_file)
+				ast = _parse_symbols(_load_lex_tokens(file_contents), info, args.no_debug_symbols)
 			elif args.format == 'ast':
 				ast = eval(file_contents)
 				if args.no_debug_symbols:
@@ -473,7 +488,7 @@ def _run_compiler(args):
 			else:
 				raise InvalidInputFormatError(
 					"to output AST or compiled formats, input format must be fey, lex, or ast")
-			input_data += ast
+			input_data = _combine_asts(input_data, ast)
 
 	# now compile as necessary
 	if args.output_mode == 'ast' or args.output_mode == 'lex':
