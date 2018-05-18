@@ -24,8 +24,9 @@ def p_statement_2_type(p):
 
 def p_statement_2_comment(p):
 	"""statement : COMMENT"""
-	debug = make_debug_symbols(p.lineno(1))
-	p[0] = {'type': 'comment', 'text': p[1], '_debug': debug}
+	p[0] = {'type': 'comment', 'text': p[1]}
+	add_debug_symbols(p[0], p.lineno(1))
+	return p[0]
 
 
 def p_directive_2_specific(p):
@@ -814,33 +815,42 @@ def unescape(s):
 	
 
 def make_annotation(instruction, lineno, **kwargs):
-	debug = make_debug_symbols(lineno)
-	ann = {'type': 'annotation', 'instruction': instruction, '_debug': debug}
+	ann = {'type': 'annotation', 'instruction': instruction}
 	for k in kwargs:
 		ann[k] = kwargs[k]
+
+	add_debug_symbols(ann, lineno)
+
 	return ann
 
 
 def make_directive(instruction, lineno, **kwargs):
-	debug = make_debug_symbols(lineno)
-	direc = {'type': 'directive', 'instruction': instruction, '_debug': debug}
+	direc = {'type': 'directive', 'instruction': instruction}
 	for k in kwargs:
 		direc[k] = kwargs[k]
+
+	add_debug_symbols(direc, lineno)
+
 	return direc
 	
 
 def make_line(speaker, line, lineno, states=None):
 	if states is None:
 		states = []
-	debug = make_debug_symbols(lineno)
-	return {'type': 'line', 'speaker': speaker, 'text': line, 'states': states, '_debug': debug}
+	line = {'type': 'line', 'speaker': speaker, 'text': line, 'states': states}
+
+	add_debug_symbols(line, lineno)
+
+	return line
 
 
-def make_debug_symbols(lineno):
-	return {
-		'filename': parser.filename,
-		'lineno': lineno,
-	}
+def add_debug_symbols(tree_node, lineno):
+	if not parser.no_debug:
+		debug = {
+			'filename': parser.filename,
+			'lineno': lineno,
+		}
+		tree_node['_debug'] = debug
 
 
 def make_choice(text, jump_target, varsets=None, condition=None):
@@ -852,4 +862,4 @@ def make_choice(text, jump_target, varsets=None, condition=None):
 parser = yacc.yacc()
 parser.error_messages = []
 parser.filename = None
-
+parser.no_debug = False

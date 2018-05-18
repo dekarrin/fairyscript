@@ -67,6 +67,8 @@ def _create_parser():
 	parser = parse.fey_yacc.parser
 	parser.successful = True
 	parser.error_messages = []
+	parser.filename = None
+	parser.no_debug = False
 	return parser
 
 
@@ -111,9 +113,11 @@ def _load_lex_tokens(contents):
 	return symbols
 
 
-def _parse_manuscript(script_text, file_info, strip_linenums):
+def _parse_manuscript(script_text, file_info, strip_debug):
 	parser = _create_parser()
 	parser.filename = file_info.name if not file_info.is_stdin else None
+	parser.no_debug = strip_debug
+
 	script_ast = parser.parse(script_text)
 	if not parser.successful:
 		if file_info.is_stdin:
@@ -122,16 +126,15 @@ def _parse_manuscript(script_text, file_info, strip_linenums):
 			error_file = "file '" + file_info.name + "'"
 		errors = [error_file + line for line in parser.error_messages]
 		raise ParserError(errors, "encountered problems during parse")
-	if strip_linenums:
-		_strip_ast_line_numbers(script_ast)
 	return script_ast
 
 
-def _parse_symbols(lex_symbols, file_info, strip_linenums):
+def _parse_symbols(lex_symbols, file_info, strip_debug):
 	parser = _create_parser()
 	# need to use this 'dictionary indirection' solution for py 2 compat with closure
 	v = {'cur_lex_series': 0}
 	parser.filename = lex_symbols[v['cur_lex_series']]['file']
+	parser.no_debug = strip_debug
 
 	def grab_token():
 		symbols = lex_symbols[v['cur_lex_series']]['symbols']
@@ -155,21 +158,19 @@ def _parse_symbols(lex_symbols, file_info, strip_linenums):
 			error_file = "file '" + file_info.name + "'"
 		errors = [error_file + line for line in parser.error_messages]
 		raise ParserError(errors, "encountered problems during parse")
-	if strip_linenums:
-		_strip_ast_line_numbers(script_ast)
 	return script_ast
 
 
-def _strip_ast_line_numbers(ast):
+def _strip_ast_debug_symbols(ast):
 	for s in ast:
-		if 'lineno' in s:
-			del s['lineno']
+		if '_debug' in s:
+			del s['_debug']
 		if 'instruction' in s:
 			if s['instruction'] == 'IF':
 				for br in s['branches']:
-					_strip_ast_line_numbers(br['statements'])
+					_strip_ast_debug_symbols(br['statements'])
 			elif s['instruction'] == 'WHILE':
-				_strip_ast_line_numbers(s['statements'])
+				_strip_ast_debug_symbols(s['statements'])
 
 
 def _show_warnings(compiler):
@@ -178,7 +179,7 @@ def _show_warnings(compiler):
 		_log.warning("Warning: " + w)
 
 
-def _preprocess(script_ast, target_lang, quiet=False, strip_ast_linenums=False):
+def _preprocess(script_ast, target_lang, quiet=False, strip_ast_debugs=False):
 	def preproc_includes(ast, lang):
 		new_ast = []
 		for s in ast:
@@ -205,7 +206,7 @@ def _preprocess(script_ast, target_lang, quiet=False, strip_ast_linenums=False):
 						with open(s['file'][1], 'r') as inc_file:
 							contents = inc_file.read()
 
-						inc_ast = _parse_manuscript(contents, info, strip_ast_linenums)
+						inc_ast = _parse_manuscript(contents, info, strip_ast_debugs)
 						new_ast += preproc_includes(inc_ast, lang)
 					else:
 						new_ast.append(s)
@@ -374,7 +375,7 @@ def _add_ast_subparser(subparsers, parent):
 	""":type : argparse.ArgumentParser"""
 
 	ast.add_argument('--pretty', action='store_true', help="Output pretty-print formatted AST.")
-	ast.add_argument('--no-line-numbers', action='store_true', help="Do not include line number information in AST.")
+	ast.add_argument('--no-debug-symbols', action='store_true', help="Do not include debug symbols in AST.")
 
 
 def _add_analyze_subparser(subparsers, parent):
@@ -428,7 +429,7 @@ def _parse_args():
 	_add_analyze_subparser(subparsers, parent)
 
 	try:
-		parser.set_defaults(no_line_numbers=False)
+		parser.set_defaults(no_debug_symbols=False)
 		args = parser.parse_args()
 	except argparse.ArgumentError as e:
 		raise ArgumentError(str(e))
@@ -456,19 +457,19 @@ def _run_compiler(args):
 				raise InvalidInputFormatError("to output lexer symbols, input format must be fey or lex")
 			input_data.append(lex_symbols)
 		else:
-			# note that args.no_line_numbers can only be true if we are in ast output format mode
+			# note that args.no_debug_symbols can only be true if we are in ast output format mode
 			# (guaranteed by argument parsing at time of this writing)
 
 			if args.format == 'fey':
 				file_info = fileinfo.from_file(input_file)
-				ast = _parse_manuscript(file_contents, file_info, args.no_line_numbers)
+				ast = _parse_manuscript(file_contents, file_info, args.no_debug_symbols)
 			elif args.format == 'lex':
 				file_info = fileinfo.from_file(input_file)
-				ast = _parse_symbols(_load_lex_tokens(file_contents), file_info, args.no_line_numbers)
+				ast = _parse_symbols(_load_lex_tokens(file_contents), file_info, args.no_debug_symbols)
 			elif args.format == 'ast':
 				ast = eval(file_contents)
-				if args.no_line_numbers:
-					_strip_ast_line_numbers(ast)
+				if args.no_debug_symbols:
+					_strip_ast_debug_symbols(ast)
 			else:
 				raise InvalidInputFormatError(
 					"to output AST or compiled formats, input format must be fey, lex, or ast")
