@@ -74,7 +74,7 @@ class RenpyCompiler(object):
 			if self._chars is not None:
 				self._write_chars()
 		
-			for statement in script:
+			for statement in script['nodes']:
 				self.compile_statement(statement)
 		return self._compiled
 		

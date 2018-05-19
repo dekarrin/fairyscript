@@ -54,7 +54,7 @@ class AnalysisCompiler(object):
 		self._compiled = ""
 
 		if script is not None:
-			for statement in script:
+			for statement in script['nodes']:
 				self.compile_statement(statement)
 
 		self.add_line("Script Analysis")

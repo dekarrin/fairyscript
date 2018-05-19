@@ -64,7 +64,7 @@ class DocxCompiler(object):
 		self._last_speaker = None
 		
 		if script is not None:
-			for statement in script:
+			for statement in script['nodes']:
 				self.compile_statement(statement)
 		return self._document
 	
