@@ -596,7 +596,8 @@ def run():
 	# This is the top-level exception handler for any we might have missed. It's okay to catch 'Exception' here.
 	# noinspection BroadException
 	except Exception as e:
-		_log.critical("Critical error: " + str(e))
+		err_type = type(e).__name__
+		_log.critical("Critical " + err_type + ": " + str(e))
 		_log.debug("Exception Details\n", exc_info=True)
 		sys.exit(_E_OTHER)
 
