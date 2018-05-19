@@ -62,14 +62,14 @@ class ParserError(Exception):
 		self.error_messages = errors
 
 
-def _create_parser(filename, debug_symbols):
+def _create_parser(filename, no_debug_symbols):
 	# TODO: abstract into parser module
 	parser = parse.fey_yacc.parser
 	parser.successful = True
 	parser.error_messages = []
 	parser.filename = filename
-	parser.no_debug = debug_symbols
-	parser.header_info = {'has_debug_symbols': debug_symbols}
+	parser.no_debug = no_debug_symbols
+	parser.header_info = {'has_debug_symbols': not no_debug_symbols}
 	return parser
 
 
@@ -162,6 +162,9 @@ def _parse_symbols(lex_symbols, file_info, strip_debug):
 
 
 def _strip_ast_debug_symbols(ast):
+	if not ast['_meta']['has_debug_symbols']:
+		return
+
 	for s in ast:
 		if '_debug' in s:
 			del s['_debug']
@@ -172,10 +175,19 @@ def _strip_ast_debug_symbols(ast):
 			elif s['instruction'] == 'WHILE':
 				_strip_ast_debug_symbols(s['statements'])
 
+	# TODO: strip other debug symbols as well
+	ast['_meta']['has_debug_symbols'] = False
+
 
 def _combine_asts(ast_1, ast_2):
 	meta_1 = ast_1['_meta']
 	meta_2 = ast_2['_meta']
+
+	if len(meta_1) == 0:
+		return ast_2
+	elif len(meta_2) == 0:
+		return ast_1
+
 	new_meta = {
 		'has_debug_symbols': meta_1['has_debug_symbols'] and meta_2['has_debug_symbols']
 	}
@@ -196,24 +208,30 @@ def _show_warnings(compiler):
 
 def _preprocess(script_ast, target_lang, quiet=False, strip_ast_debugs=False):
 	def preproc_includes(ast, lang):
-		new_ast = []
-		for s in ast:
+		new_ast = {'_meta': dict(ast['_meta']), 'nodes': []}
+		for s in ast['nodes']:
 			if s['type'] == 'line' or s['type'] == 'comment':
-				new_ast.append(s)
+				new_ast['nodes'].append(s)
 			elif s['instruction'] == 'IF':
 				if_struct = {'type': 'annotation', 'instruction': 'IF', 'branches': []}
 				for br in s['branches']:
-					if_branch = {'condition': br['condition'], 'statements': preproc_includes(br['statements'], lang)}
+					# pass in new_ast['_meta'] so it is automatically mutated.
+					br_ast = {'_meta': new_ast['_meta'], 'nodes': br['statements']}
+					br_ast = preproc_includes(br_ast, lang)
+					if_branch = {'condition': br['condition'], 'statements': br_ast['nodes']}
 					if_struct['branches'].append(if_branch)
-				new_ast.append(if_struct)
+				new_ast['nodes'].append(if_struct)
 			elif s['instruction'] == 'WHILE':
+				# pass in new_ast['_meta'] so it is automatically mutated.
+				wh_ast = {'_meta': new_ast['_meta'], 'nodes': s['statements']}
+				wh_ast = preproc_includes(wh_ast, lang)
 				wh_struct = {
 					'type': 'annotation',
 					'instruction': 'WHILE',
 					'condition': s['condition'],
-					'statements': preproc_includes(s['statements'], lang)
+					'statements': wh_ast['nodes']
 				}
-				new_ast.append(wh_struct)
+				new_ast['nodes'].append(wh_struct)
 			elif s['instruction'] == 'INCLUDE':
 				if s['langs'] is None or lang in [x[1] for x in s['langs']]:
 					if s['parsing'][1]:
@@ -222,16 +240,16 @@ def _preprocess(script_ast, target_lang, quiet=False, strip_ast_debugs=False):
 							contents = inc_file.read()
 
 						inc_ast = _parse_manuscript(contents, info, strip_ast_debugs)
-						new_ast += preproc_includes(inc_ast, lang)
+						new_ast = _combine_asts(new_ast, preproc_includes(inc_ast, lang))
 					else:
-						new_ast.append(s)
+						new_ast['nodes'].append(s)
 			else:
-				new_ast.append(s)
+				new_ast['nodes'].append(s)
 		return new_ast
 	
-	def preproc_chars(ast):
+	def preproc_chars(ast_nodes):
 		chars_dict = {}
-		for s in ast:
+		for s in ast_nodes:
 			if s['type'] != 'line' and s['type'] != 'comment':
 				if s['instruction'] == 'IF':
 					for br in s['branches']:
@@ -456,8 +474,8 @@ def _parse_args():
 
 
 def _run_compiler(args):
-	# first, load in all source files and convert to a single AST or symbol list (if only lexing):
-	input_data = []
+	# first, load in all source files and convert to a single AST, or symbol list (if only lexing):
+	input_data = [] if args.output_mode == 'lex' else {'_meta': {}, 'nodes': []}
 	for input_file in args.input:
 		file_contents = input_file.read()
 		input_file.close()
