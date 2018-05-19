@@ -14,6 +14,10 @@ from .compile.analyze import AnalysisCompiler
 __version__ = '2.0.3'
 
 
+def get_fairyc_version():
+	return __version__
+
+
 _E_ARGS = 1
 _E_WRITE = 2
 _E_LEXER = 3
@@ -432,6 +436,8 @@ def _add_analyze_subparser(subparsers, parent):
 
 	order_help = "Select the order of entries in the analysis output."
 	ana.add_argument('--order', default='name', choices=('usage', 'name'), help=order_help)
+
+	ana.add_argument('--no-source-info', action='store_true', help="Do not include source information for references.")
 
 
 def _parse_args():
