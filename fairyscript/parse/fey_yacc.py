@@ -846,8 +846,20 @@ def make_line(speaker, line, lineno, states=None):
 
 def add_debug_symbols(tree_node, lineno):
 	if not parser.no_debug:
+		fname = parser.filename
+
+		if not parser.inline_sources:
+			if 'sources' not in parser.header_info:
+				parser.header_info['sources'] = {}
+			if fname not in parser.reverse_sources:
+				new_key = len(parser.reverse_sources)
+				parser.reverse_sources[fname] = new_key
+			fkey = parser.reverse_sources[fname]
+			parser.header_info['sources'][fkey] = fname
+			fname = fkey
+
 		debug = {
-			'filename': parser.filename,
+			'source': fname,
 			'lineno': lineno,
 		}
 		tree_node['_debug'] = debug
@@ -864,4 +876,6 @@ parser.successful = True
 parser.error_messages = []
 parser.filename = None
 parser.no_debug = False
+parser.inline_sources = False
+parser.reverse_sources = {}
 parser.header_info = {}

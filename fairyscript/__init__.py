@@ -62,7 +62,7 @@ class ParserError(Exception):
 		self.error_messages = errors
 
 
-def _create_parser(filename, no_debug_symbols):
+def _create_parser(filename, no_debug_symbols, inline_sources):
 	# TODO: abstract into parser module
 	parser = parse.fey_yacc.parser
 	parser.successful = True
@@ -70,6 +70,10 @@ def _create_parser(filename, no_debug_symbols):
 	parser.filename = filename
 	parser.no_debug = no_debug_symbols
 	parser.header_info = {'has_debug_symbols': not no_debug_symbols}
+	parser.inline_sources = inline_sources
+	if not inline_sources:
+		parser.header_info['sources'] = {}
+	parser.reverse_sources = {}
 	return parser
 
 
@@ -114,8 +118,9 @@ def _load_lex_tokens(contents):
 	return symbols
 
 
-def _parse_manuscript(script_text, file_info, strip_debug):
-	parser = _create_parser(file_info.name if not file_info.is_stdin else None, strip_debug)
+def _parse_manuscript(script_text, file_info, strip_debug, inline_sources):
+	fname = file_info.name if not file_info.is_stdin else None
+	parser = _create_parser(fname, strip_debug, inline_sources)
 
 	script_ast = parser.parse(script_text)
 	if not parser.successful:
@@ -129,11 +134,11 @@ def _parse_manuscript(script_text, file_info, strip_debug):
 	return {'_meta': header_info, 'nodes': script_ast}
 
 
-def _parse_symbols(lex_symbols, file_info, strip_debug):
+def _parse_symbols(lex_symbols, file_info, strip_debug, inline_sources):
 	# need to use this 'dictionary indirection' solution for py 2 compat with closure
 	v = {'cur_lex_series': 0}
 
-	parser = _create_parser(lex_symbols[v['cur_lex_series']]['file'], strip_debug)
+	parser = _create_parser(lex_symbols[v['cur_lex_series']]['file'], strip_debug, inline_sources)
 
 	def grab_token():
 		symbols = lex_symbols[v['cur_lex_series']]['symbols']
@@ -206,7 +211,7 @@ def _show_warnings(compiler):
 		_log.warning("Warning: " + w)
 
 
-def _preprocess(script_ast, target_lang, quiet=False, strip_ast_debugs=False):
+def _preprocess(script_ast, target_lang, quiet=False, strip_ast_debugs=False, inline_sources=False):
 	def preproc_includes(ast, lang):
 		new_ast = {'_meta': dict(ast['_meta']), 'nodes': []}
 		for s in ast['nodes']:
@@ -239,7 +244,7 @@ def _preprocess(script_ast, target_lang, quiet=False, strip_ast_debugs=False):
 						with open(s['file'][1], 'r') as inc_file:
 							contents = inc_file.read()
 
-						inc_ast = _parse_manuscript(contents, info, strip_ast_debugs)
+						inc_ast = _parse_manuscript(contents, info, strip_ast_debugs, inline_sources)
 						new_ast = _combine_asts(new_ast, preproc_includes(inc_ast, lang))
 					else:
 						new_ast['nodes'].append(s)
@@ -327,7 +332,10 @@ def _read_chars_file(file_path):
 
 
 def _precompile(ast, args, compiler):
-	ast, chars = _preprocess(ast, args.output_mode, quiet=args.quiet)
+	ast, chars = _preprocess(
+		ast, args.output_mode, quiet=args.quiet, strip_ast_debugs=args.no_debug_symbols,
+		inline_sources=args.inline_sources
+	)
 	compiler.set_options(args)
 	compiler.set_characters(chars)
 	return ast
@@ -409,6 +417,9 @@ def _add_ast_subparser(subparsers, parent):
 
 	ast.add_argument('--pretty', action='store_true', help="Output pretty-print formatted AST.")
 	ast.add_argument('--no-debug-symbols', action='store_true', help="Do not include debug symbols in AST.")
+
+	inline_help = "Attach full source file name directly to each node's debug symbol list"
+	ast.add_argument('--inline-sources', action='store_true', help=inline_help)
 
 
 def _add_analyze_subparser(subparsers, parent):
@@ -495,10 +506,10 @@ def _run_compiler(args):
 
 			if args.format == 'fey':
 				info = fileinfo.from_file(input_file)
-				ast = _parse_manuscript(file_contents, info, args.no_debug_symbols)
+				ast = _parse_manuscript(file_contents, info, args.no_debug_symbols, args.inline_sources)
 			elif args.format == 'lex':
 				info = fileinfo.from_file(input_file)
-				ast = _parse_symbols(_load_lex_tokens(file_contents), info, args.no_debug_symbols)
+				ast = _parse_symbols(_load_lex_tokens(file_contents), info, args.no_debug_symbols, args.inline_sources)
 			elif args.format == 'ast':
 				ast = eval(file_contents)
 				if args.no_debug_symbols:
