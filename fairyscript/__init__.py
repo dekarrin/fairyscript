@@ -272,7 +272,7 @@ def _preprocess(script_ast, target_lang, quiet=False, strip_ast_debugs=False, in
 		return chars_dict
 
 	new_script_ast = preproc_includes(script_ast, target_lang)
-	chars = preproc_chars(new_script_ast)
+	chars = preproc_chars(new_script_ast['nodes'])
 	return new_script_ast, chars
 
 

@@ -357,14 +357,14 @@ class AnalysisCompiler(object):
 		try:
 			lineno = node['_debug']['lineno']
 		except (KeyError, TypeError):
-			_log.warning("Problem while reading a lineno from debug symbols;\nexcluding from output")
+			_log.warning("Problem while reading a lineno from debug symbols; excluding from output")
 			_log.debug("Exception Details\n", exc_info=True)
 			lineno = None
 
 		try:
 			source = node['_debug']['source']
 		except (KeyError, TypeError):
-			_log.warning("Problem while reading a source from debug symbols;\nexcluding from output")
+			_log.warning("Problem while reading a source from debug symbols; excluding from output")
 			_log.debug("Exception Details\n", exc_info=True)
 			source = None
 
@@ -376,7 +376,7 @@ class AnalysisCompiler(object):
 			try:
 				info['source'] = self._script_header['sources'][source]
 			except (KeyError, TypeError):
-				msg = "Problem while looking up source " + str(source) + " in header table;\nexcluding from output"
+				msg = "Problem while looking up source " + str(source) + " in header table; excluding from output"
 				_log.warning(msg)
 				_log.debug("Exception Details\n", exc_info=True)
 				info['source'] = None
