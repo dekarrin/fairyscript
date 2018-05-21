@@ -112,18 +112,21 @@ class AnalysisCompiler(object):
 		self._compiled += indent + self._to_add + '\n'
 		self._to_add = ""
 
-	def _build_ref_list(self, ref_list):
+	def _build_ref_list(self, ref_list, extra=None):
 		if self._show_source_info:
+			if extra is None:
+				def extra(myref):
+					return ''
 			self._inc_indent()
 			for ref in ref_list:
 				if ref['source'] is None and ref['lineno'] < 1:
 					continue
 				if ref['source'] is None:
-					self.add_line("* <invalid source>:{:d}".format(ref['lineno']))
+					self.add_line("* <invalid source>:{:d}{:s}".format(ref['lineno'], extra(ref)))
 				elif ref['lineno'] < 1:
-					self.add_line("* {:s}:<invalid line>".format(ref['source']))
+					self.add_line("* {:s}:<invalid line>{:s}".format(ref['source'], extra(ref)))
 				else:
-					self.add_line("* {:s}:{:d}".format(fey.quote(ref['source']), ref['lineno']))
+					self.add_line("* {:s}:{:d}{:s}".format(fey.quote(ref['source']), ref['lineno'], extra(ref)))
 			self._dec_indent()
 
 	def _build_characters_output(self):
@@ -265,8 +268,10 @@ class AnalysisCompiler(object):
 			for n, t in full_list:
 				ref_count = len(res_map[(n, t)])
 				if t == 'name':
-					n = fey.quote(n)
-				self.add_line(n + ": " + fey.pluralize(ref_count, "reference"))
+					display_name = fey.quote(n)
+				else:
+					display_name = n
+				self.add_line(display_name + ": " + fey.pluralize(ref_count, "reference"))
 				self._build_ref_list(res_map[(n, t)])
 		else:
 			self.add_line("(none)")
@@ -295,14 +300,20 @@ class AnalysisCompiler(object):
 
 		total = snap_total + pan_total + zoom_total
 
+		def show_count(ref):
+			if ref['count'] > 1:
+				return ' (x' + str(ref['count']) + ')'
+			else:
+				return ''
+
 		self.add_line(fey.pluralize(total, "Camera Directive"))
 		self._inc_indent()
 		self.add_line("snap: " + fey.pluralize(snap_total, "reference"))
-		self._build_ref_list(snap)
+		self._build_ref_list(snap, show_count)
 		self.add_line("pan: " + fey.pluralize(pan_total, "reference"))
-		self._build_ref_list(pan)
+		self._build_ref_list(pan, show_count)
 		self.add_line("zoom: " + fey.pluralize(zoom_total, "reference"))
-		self._build_ref_list(zoom)
+		self._build_ref_list(zoom, show_count)
 		self._dec_indent()
 		self.add_line()
 

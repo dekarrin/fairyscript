@@ -77,7 +77,7 @@
 [camera: ZOOM OUT]
 [camera: ZOOM OUT FOR 3 SECONDS]
 [camera: PAN TO middle FOR 3 SECONDS AND ZOOM OUT QUICKLY]
-[camera: PAN TO middle FOR 3 SECONDS AND ZOOM OUT QUICKLY AND SNAP TO bookshelf]
+[camera: PAN TO middle FOR 3 SECONDS AND ZOOM OUT QUICKLY AND SNAP TO bookshelf AND PAN TO middle]
 
 [choice]
 * "Show her the 'private collection'": GO TO private

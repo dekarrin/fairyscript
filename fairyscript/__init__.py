@@ -69,7 +69,7 @@ def _create_parser(filename, no_debug_symbols, inline_sources):
 	parser.no_debug = no_debug_symbols
 	parser.header_info = {'has_debug_symbols': not no_debug_symbols}
 	parser.inline_sources = inline_sources
-	if not inline_sources:
+	if not inline_sources and not no_debug_symbols:
 		parser.header_info['sources'] = {}
 	parser.reverse_sources = {}
 	return parser
@@ -195,7 +195,7 @@ def _convert_ast_sources_to_inline(ast):
 	table = ast['_meta']['sources']
 
 	def _convert(nodes):
-		for s in ast:
+		for s in nodes:
 			if '_debug' in s:
 				s['_debug']['source'] = table[s['_debug']['source']]
 			if 'instruction' in s:
@@ -220,7 +220,7 @@ def _convert_ast_sources_to_table(ast):
 	reverse_sources = {}
 
 	def _convert(nodes):
-		for s in ast:
+		for s in nodes:
 			if '_debug' in s:
 				source_file = s['_debug']['source']
 				if source_file not in reverse_sources:
@@ -241,26 +241,21 @@ def _convert_ast_sources_to_table(ast):
 
 
 def _combine_asts(ast_1, ast_2):
-	meta_1 = ast_1['_meta']
-	meta_2 = ast_2['_meta']
-
-	if len(meta_1) == 0:
+	if len(ast_1['_meta']) == 0:
 		return ast_2
-	elif len(meta_2) == 0:
+	elif len(ast_2['_meta']) == 0:
 		return ast_1
 
 	new_meta = {
-		'has_debug_symbols': meta_1['has_debug_symbols'] and meta_2['has_debug_symbols'],
+		'has_debug_symbols': ast_1['_meta']['has_debug_symbols'] and ast_2['_meta']['has_debug_symbols'],
 	}
 
 	renumber_sources = False
 	if new_meta['has_debug_symbols']:
-		if 'sources' in meta_1 or 'sources' in meta_2:
+		if 'sources' in ast_1['_meta'] or 'sources' in ast_2['_meta']:
 			# if we have any source table, switch them both to inline sources and re-number after combining
 			_convert_ast_sources_to_inline(ast_1)
-			meta_1 = ast_1['_meta']
 			_convert_ast_sources_to_inline(ast_2)
-			meta_2 = ast_2['_meta']
 			renumber_sources = True
 			# don't add 'sources' table yet; it will be done during renumbering and adding it here will cause the
 			# convert function to fail
