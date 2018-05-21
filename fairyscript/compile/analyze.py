@@ -362,14 +362,14 @@ class AnalysisCompiler(object):
 		try:
 			lineno = node['_debug']['lineno']
 		except (KeyError, TypeError):
-			_log.warning("Problem while reading a lineno from a " + node_type + "; excluding from output")
+			_log.warning("Problem while reading lineno from a " + node_type + "; excluding from output")
 			_log.debug("Exception Details\n", stack_info=True, exc_info=True)
 			lineno = None
 
 		try:
 			source = node['_debug']['source']
 		except (KeyError, TypeError):
-			_log.warning("Problem while reading a source from a " + node_type + "; excluding from output")
+			_log.warning("Problem while reading source from a " + node_type + "; excluding from output")
 			_log.debug("Exception Details\n", stack_info=True, exc_info=True)
 			source = None
 
@@ -394,7 +394,7 @@ class AnalysisCompiler(object):
 	# noinspection PyPep8Naming
 	def _compile_SCENE(self, scene):
 		name = scene['name'][1]
-		ref_info = self._make_ref_info(name)
+		ref_info = self._make_ref_info(scene)
 		if name not in self._scenes:
 			self._scenes[name] = []
 		self._scenes[name].append(ref_info)
