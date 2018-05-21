@@ -11,7 +11,7 @@ def read(*parts):
 
 
 def find_version():
-	version_file = read("fairyscript", "__init__.py")
+	version_file = read("fairyscript", "version.py")
 	version_match = re.search(r"^\s*__version__\s*=\s*['\"]([^'\"]*)['\"]\s*$", version_file, re.MULTILINE)
 
 	if version_match:

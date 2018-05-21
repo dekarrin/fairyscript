@@ -4,18 +4,12 @@ import sys
 import logging.handlers
 
 from . import pretty, fileinfo
+from .version import get_fairyc_version
 from .parse import fey_lex
 from .parse import fey_yacc
 from .compile.renpy import RenpyCompiler
 from .compile.word import DocxCompiler
 from .compile.analyze import AnalysisCompiler
-
-
-__version__ = '2.0.3'
-
-
-def get_fairyc_version():
-	return __version__
 
 
 _E_ARGS = 1
@@ -446,7 +440,7 @@ def _parse_args():
 
 	parser = argparse.ArgumentParser(description="Compiles manuscripts to other formats")
 
-	parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
+	parser.add_argument('--version', action='version', version="%(prog)s " + get_fairyc_version())
 
 	# these args will not be properly parsed if we just add them to the root parser
 	parent = argparse.ArgumentParser(add_help=False)

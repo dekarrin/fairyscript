@@ -1,6 +1,11 @@
 # analyze fairyscript code
 from . import fey
-from fairyscript import get_fairyc_version
+from ..version import get_fairyc_version
+import logging.handlers
+
+
+_log = logging.getLogger(__name__)
+_log.setLevel(logging.DEBUG)
 
 
 class AnalysisCompiler(object):
@@ -9,7 +14,7 @@ class AnalysisCompiler(object):
 		self._warnings = {}
 		self._chars = {}
 		self._sections = {}
-		self._cam_directives = {'snap': 0, 'pan': 0, 'zoom': 0}
+		self._cam_directives = {'snap': [], 'pan': [], 'zoom': []}
 		self._scenes = {}
 		self._transitions = {}
 		self._resources = {
@@ -33,6 +38,7 @@ class AnalysisCompiler(object):
 		self._compiled = ""
 		self._to_add = ""
 		self._indent_lev = 0
+		self._script_header = None
 
 		self._order = 'name'
 		self._show_source_info = True
@@ -54,6 +60,11 @@ class AnalysisCompiler(object):
 		self._compiled = ""
 
 		if script is not None:
+			self._script_header = script['_meta']
+			if not script['_meta']['has_debug_symbols'] and self._show_source_info:
+				_log.warning("no debug symbols in input AST; source information will not be included in output")
+				self._show_source_info = False
+
 			for statement in script['nodes']:
 				self.compile_statement(statement)
 
@@ -101,6 +112,20 @@ class AnalysisCompiler(object):
 		self._compiled += indent + self._to_add + '\n'
 		self._to_add = ""
 
+	def _build_ref_list(self, ref_list):
+		if self._show_source_info:
+			self._inc_indent()
+			for ref in ref_list:
+				if ref['source'] is None and ref['lineno'] < 1:
+					continue
+				if ref['source'] is None:
+					self.add_line("* <invalid source>:{:d}".format(ref['lineno']))
+				elif ref['lineno'] < 1:
+					self.add_line("* {:s}:<invalid line>".format(ref['source']))
+				else:
+					self.add_line("* {:s}:{:d}".format(fey.quote(ref['source']), ref['lineno']))
+			self._dec_indent()
+
 	def _build_characters_output(self):
 		num_chars = len(self._chars)
 		self.add_line(fey.pluralize(num_chars, "Character"))
@@ -125,8 +150,9 @@ class AnalysisCompiler(object):
 				self.add_line(name + " (" + fey.pluralize(lines, "line") + "):")
 				self._inc_indent()
 				for state in state_keys:
-					ref_count = char_data['states'][state]
+					ref_count = len(char_data['states'][state])
 					self.add_line(name + " " + state + ": " + fey.pluralize(ref_count, "reference"))
+					self._build_ref_list(char_data['states'][state])
 				self._dec_indent()
 				self.add_line()
 		else:
@@ -141,12 +167,14 @@ class AnalysisCompiler(object):
 		if num > 0:
 			section_keys = self._sort_map_keys(self._sections)
 			for sec in section_keys:
-				ref_count = self._sections[sec]['refs']
-				def_count = self._sections[sec]['defines']
+				ref_count = len(self._sections[sec]['refs'])
+				def_count = len(self._sections[sec]['defines'])
 				self.add_line(sec + ":")
 				self._inc_indent()
 				self.add_line(fey.pluralize(def_count, "definition"))
+				self._build_ref_list(self._sections[sec]['defines'])
 				self.add_line(fey.pluralize(ref_count, "reference"))
+				self._build_ref_list(self._sections[sec]['refs'])
 				self._dec_indent()
 				self.add_line()
 		else:
@@ -161,8 +189,9 @@ class AnalysisCompiler(object):
 		if num > 0:
 			scene_keys = self._sort_ref_map_keys(self._scenes)
 			for s in scene_keys:
-				ref_count = self._scenes[s]
+				ref_count = len(self._scenes[s])
 				self.add_line(s + ": " + fey.pluralize(ref_count, "reference"))
+				self._build_ref_list(self._scenes[s])
 		else:
 			self.add_line("(none)")
 		self._dec_indent()
@@ -175,8 +204,9 @@ class AnalysisCompiler(object):
 		if num > 0:
 			transition_keys = self._sort_ref_map_keys(self._transitions)
 			for t in transition_keys:
-				ref_count = self._transitions[t]
+				ref_count = len(self._transitions[t])
 				self.add_line(t + ": " + fey.pluralize(ref_count, "reference"))
+				self._build_ref_list(self._transitions[t])
 		else:
 			self.add_line("(none)")
 		self._dec_indent()
@@ -195,8 +225,9 @@ class AnalysisCompiler(object):
 		self._inc_indent()
 		if num > 0:
 			for n, t in full_list:
-				ref_count = self._ids[t][n]
+				ref_count = len(self._ids[t][n])
 				self.add_line(n + " (" + t.upper() + "): " + fey.pluralize(ref_count, "reference"))
+				self._build_ref_list(self._ids[t][n])
 		else:
 			self.add_line("(none)")
 		self._dec_indent()
@@ -215,8 +246,9 @@ class AnalysisCompiler(object):
 		self._inc_indent()
 		if num > 0:
 			for n, t in full_list:
-				ref_count = self._names[t][n]
+				ref_count = len(self._names[t][n])
 				self.add_line(fey.quote(n) + " (" + t.upper() + "): " + fey.pluralize(ref_count, "reference"))
+				self._build_ref_list(self._names[t][n])
 		else:
 			self.add_line("(none)")
 		self._dec_indent()
@@ -231,10 +263,11 @@ class AnalysisCompiler(object):
 		self._inc_indent()
 		if num > 0:
 			for n, t in full_list:
-				ref_count = res_map[(n, t)]
+				ref_count = len(res_map[(n, t)])
 				if t == 'name':
 					n = fey.quote(n)
 				self.add_line(n + ": " + fey.pluralize(ref_count, "reference"))
+				self._build_ref_list(res_map[(n, t)])
 		else:
 			self.add_line("(none)")
 		self._dec_indent()
@@ -256,13 +289,20 @@ class AnalysisCompiler(object):
 		snap = self._cam_directives['snap']
 		pan = self._cam_directives['pan']
 		zoom = self._cam_directives['zoom']
-		total = snap + pan + zoom
+		snap_total = sum(c['count'] for c in snap)
+		pan_total = sum(c['count'] for c in pan)
+		zoom_total = sum(c['count'] for c in zoom)
+
+		total = snap_total + pan_total + zoom_total
 
 		self.add_line(fey.pluralize(total, "Camera Directive"))
 		self._inc_indent()
-		self.add_line("snap: " + fey.pluralize(snap, "reference"))
-		self.add_line("pan: " + fey.pluralize(pan, "reference"))
-		self.add_line("zoom: " + fey.pluralize(zoom, "reference"))
+		self.add_line("snap: " + fey.pluralize(snap_total, "reference"))
+		self._build_ref_list(snap)
+		self.add_line("pan: " + fey.pluralize(pan_total, "reference"))
+		self._build_ref_list(pan)
+		self.add_line("zoom: " + fey.pluralize(zoom_total, "reference"))
+		self._build_ref_list(zoom)
 		self._dec_indent()
 		self.add_line()
 
@@ -291,11 +331,12 @@ class AnalysisCompiler(object):
 		self._create_char_record(char_name)
 		self._chars[char_name]['lines'] += 1
 
-	def _inc_char_state_count(self, char_name, state):
+	def _inc_char_state_count(self, char_name, state, ref_info):
 		self._create_char_record(char_name)
 		if state not in self._chars[char_name]['states']:
-			self._chars[char_name]['states'][state] = 0
-		self._chars[char_name]['states'][state] += 1
+			self._chars[char_name]['states'][state] = []
+
+		self._chars[char_name]['states'][state].append(ref_info)
 
 	def _create_char_record(self, char_name):
 		if char_name not in self._chars:
@@ -309,33 +350,71 @@ class AnalysisCompiler(object):
 			char_name = line['speaker'][1]
 		self._inc_char_line_count(char_name)
 
+	def _make_ref_info(self, node):
+		if not self._show_source_info:
+			return {'lineno': None, 'source': None}
+
+		try:
+			lineno = node['_debug']['lineno']
+		except (KeyError, TypeError):
+			_log.warning("Problem while reading a lineno from debug symbols;\nexcluding from output")
+			_log.debug("Exception Details\n", exc_info=True)
+			lineno = None
+
+		try:
+			source = node['_debug']['source']
+		except (KeyError, TypeError):
+			_log.warning("Problem while reading a source from debug symbols;\nexcluding from output")
+			_log.debug("Exception Details\n", exc_info=True)
+			source = None
+
+		info = {
+			'lineno': lineno
+		}
+
+		if 'sources' in self._script_header and source is not None:
+			try:
+				info['source'] = self._script_header['sources'][source]
+			except (KeyError, TypeError):
+				msg = "Problem while looking up source " + str(source) + " in header table;\nexcluding from output"
+				_log.warning(msg)
+				_log.debug("Exception Details\n", exc_info=True)
+				info['source'] = None
+		else:
+			info['source'] = source
+
+		return info
+
 	# noinspection PyPep8Naming
 	def _compile_SCENE(self, scene):
 		name = scene['name'][1]
+		ref_info = self._make_ref_info(name)
 		if name not in self._scenes:
-			self._scenes[name] = 0
-		self._scenes[name] += 1
+			self._scenes[name] = []
+		self._scenes[name].append(ref_info)
 		if scene['transition'] is not None:
 			trans = scene['transition'][1]
 			if trans not in self._transitions:
-				self._transitions[trans] = 0
-			self._transitions[trans] += 1
+				self._transitions[trans] = []
+			self._transitions[trans].append(ref_info)
 
 	# noinspection PyPep8Naming
 	def _compile_ENTER(self, enter):
 		char_name = enter['target'][1]
+		ref_info = self._make_ref_info(enter)
 		states = [s[1] for s in enter['states']]
 		# TODO: work with EXIT and create an 'onstage' count for a character
 		# TODO: work with SCENE and create a 'scene' count for a character
 		for s in states:
-			self._inc_char_state_count(char_name, s)
+			self._inc_char_state_count(char_name, s, ref_info)
 
 	# noinspection PyPep8Naming
 	def _compile_ACTION(self, action):
 		char_name = action['target'][1]
+		ref_info = self._make_ref_info(action)
 		states = [s[1] for s in action['states']]
 		for s in states:
-			self._inc_char_state_count(char_name, s)
+			self._inc_char_state_count(char_name, s, ref_info)
 
 	# noinspection PyPep8Naming
 	def _compile_EXIT(self, xit):
@@ -343,21 +422,25 @@ class AnalysisCompiler(object):
 
 	# noinspection PyPep8Naming
 	def _compile_MUSIC(self, music):
-		self._inc_resource_count('bgm', music['target'])
+		ref_info = self._make_ref_info(music)
+		self._inc_resource_count('bgm', music['target'], ref_info)
 
 	# noinspection PyPep8Naming
 	def _compile_GFX(self, gfx):
-		self._inc_resource_count('gfx', gfx['target'])
+		ref_info = self._make_ref_info(gfx)
+		self._inc_resource_count('gfx', gfx['target'], ref_info)
 
 	# noinspection PyPep8Naming
 	def _compile_SFX(self, sfx):
-		self._inc_resource_count('sfx', sfx['target'])
+		ref_info = self._make_ref_info(sfx)
+		self._inc_resource_count('sfx', sfx['target'], ref_info)
 
 	# noinspection PyPep8Naming
 	def _compile_FMV(self, fmv):
-		self._inc_resource_count('fmv', fmv['target'])
+		ref_info = self._make_ref_info(fmv)
+		self._inc_resource_count('fmv', fmv['target'], ref_info)
 
-	def _inc_resource_count(self, resource_kind, resource):
+	def _inc_resource_count(self, resource_kind, resource, ref_info):
 		resource_name = resource[1]
 
 		if fey.typed_check(resource, 'string'):
@@ -370,32 +453,42 @@ class AnalysisCompiler(object):
 			return
 
 		if resource_name not in ref_dict[resource_kind]:
-			ref_dict[resource_kind][resource_name] = 0
+			ref_dict[resource_kind][resource_name] = []
 		if (resource_name, ref_type) not in self._resources[resource_kind]:
-			self._resources[resource_kind][(resource_name, ref_type)] = 0
+			self._resources[resource_kind][(resource_name, ref_type)] = []
 
-		ref_dict[resource_kind][resource_name] += 1
-		self._resources[resource_kind][(resource_name, ref_type)] += 1
+		ref_dict[resource_kind][resource_name].append(ref_info)
+		self._resources[resource_kind][(resource_name, ref_type)].append(ref_info)
 
 	# noinspection PyPep8Naming
 	def _compile_CAMERA(self, camera):
 		# TODO: include targets
+		ref_info = self._make_ref_info(camera)
+		ref_info['count'] = 0
+
+		statement_cam_dirs = {}
 		for a in camera['actions']:
-			self._cam_directives[a['type'].lower()] += 1
+			if a['type'] not in statement_cam_dirs:
+				statement_cam_dirs[a['type']] = dict(ref_info)
+			statement_cam_dirs[a['type']]['count'] += 1
+
+		for a in statement_cam_dirs:
+			self._cam_directives[a.lower()].append(statement_cam_dirs[a])
 
 	# noinspection PyPep8Naming
 	def _compile_CHOICE(self, choice):
+		ref_info = self._make_ref_info(choice)
 		if fey.typed_check(choice['label'], 'id'):
 			label = choice['label'][1]
 			if label not in self._sections:
-				self._sections[label] = {'defines': 0, 'refs': 0}
-			self._sections[label]['defines'] += 1
+				self._sections[label] = {'defines': [], 'refs': []}
+			self._sections[label]['defines'].append(ref_info)
 
 		for c in choice['choices']:
 			dest = c['target'][1]
 			if dest not in self._sections:
-				self._sections[dest] = {'defines': 0, 'refs': 0}
-			self._sections[dest]['refs'] += 1
+				self._sections[dest] = {'defines': [], 'refs': []}
+			self._sections[dest]['refs'].append(ref_info)
 
 	# noinspection PyPep8Naming
 	def _compile_DESCRIPTION(self, desc):
@@ -403,10 +496,11 @@ class AnalysisCompiler(object):
 
 	# noinspection PyPep8Naming
 	def _compile_SECTION(self, section):
+		ref_info = self._make_ref_info(section)
 		dest = section['section'][1]
 		if dest not in self._sections:
-			self._sections[dest] = {'defines': 0, 'refs': 0}
-		self._sections[dest]['defines'] += 1
+			self._sections[dest] = {'defines': [], 'refs': []}
+		self._sections[dest]['defines'].append(ref_info)
 
 	# noinspection PyPep8Naming
 	def _compile_FLAGSET(self, flagset):
@@ -422,10 +516,11 @@ class AnalysisCompiler(object):
 
 	# noinspection PyPep8Naming
 	def _compile_GOTO(self, goto):
+		ref_info = self._make_ref_info(goto)
 		dest = goto['destination'][1]
 		if dest not in self._sections:
-			self._sections[dest] = {'defines': 0, 'refs': 0}
-		self._sections[dest]['refs'] += 1
+			self._sections[dest] = {'defines': [], 'refs': []}
+		self._sections[dest]['refs'].append(ref_info)
 
 	# noinspection PyPep8Naming
 	def _compile_EXECUTE(self, execute):
@@ -462,8 +557,8 @@ class AnalysisCompiler(object):
 		:param items: The list of items to sort.
 		:type name_key: (Any) -> str
 		:param name_key: The function to use to get the name of a data object.
-		:type usage_key: (Any) -> int
-		:param name_key: The function to use to get the number of usages of a data object.
+		:type usage_key: (Any) -> list[Any]
+		:param name_key: The function to use to get the usages list of a data object.
 		:rtype: list[str]
 		:return: The list items, sorted using the preferred algorithm (set by the _order var).
 		"""
@@ -471,7 +566,7 @@ class AnalysisCompiler(object):
 			sorted_items = sorted(items, key=name_key)
 		elif self._order == "usage":
 			sorted_items = sorted(items, key=name_key)
-			sorted_items = sorted(sorted_items, key=usage_key, reverse=True)
+			sorted_items = sorted(sorted_items, key=lambda k: len(usage_key(k)), reverse=True)
 		else:
 			raise ValueError("Bad sorting algorithm type '" + str(self._order) + "'")
 		return sorted_items
@@ -479,12 +574,12 @@ class AnalysisCompiler(object):
 	def _sort_ref_map_keys(self, ref_map):
 		"""
 		Use the preferred sorting algorithm to sort the keys of a dict that directly maps names to references.
-		:type ref_map: dict[str, int]
+		:type ref_map: dict[str, list[Any]]
 		:param ref_map: The map whose keys to sort.
 		:rtype: list[str]
 		:return: The list of the dict's keys, sorted using the preferred algorithm (set by the _order var).
 		"""
-		return self._sort_map_keys(ref_map, usage_key=lambda x: x)
+		return self._sort_map_keys(ref_map, usage_key=lambda x: len(x))
 
 	def _sort_map_keys(self, obj_map, usage_key=None):
 		"""
@@ -494,7 +589,7 @@ class AnalysisCompiler(object):
 		:param obj_map: The map whose keys to sort.
 		:type usage_key: (Any) -> int
 		:param usage_key: Function to go from a mapped object to a reference count. By default, this will be to access
-		the 'refs' index of the mapped object.
+		the length of the 'refs' index of the mapped object.
 		:rtype: list[str]
 		:return: The list of the dict's keys, sorted using the preferred algorithm (set by the _order var).
 		"""
@@ -504,7 +599,7 @@ class AnalysisCompiler(object):
 		elif self._order == "usage":
 			if usage_key is None:
 				def usage_key(x):
-					return x['refs']
+					return len(x['refs'])
 			dict_keys = sorted(dict_keys)
 			dict_keys = sorted(dict_keys, key=lambda k: usage_key(obj_map[k]), reverse=True)
 		else:
