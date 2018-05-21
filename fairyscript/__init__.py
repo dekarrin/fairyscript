@@ -473,7 +473,7 @@ def _parse_args():
 	_add_analyze_subparser(subparsers, parent)
 
 	try:
-		parser.set_defaults(no_debug_symbols=False)
+		parser.set_defaults(no_debug_symbols=False, inline_sources=False)
 		args = parser.parse_args()
 	except argparse.ArgumentError as e:
 		raise ArgumentError(str(e))
