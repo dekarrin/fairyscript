@@ -1,7 +1,13 @@
 #!/bin/bash
 
 # test both the installed and non-installed versions
-ALL_COMMANDS="./fairyc.py fairyc"
+
+if [ "$1" = "--local" ]
+then
+	ALL_COMMANDS="./fairyc.py"
+else
+	ALL_COMMANDS="./fairyc.py fairyc"
+fi
 
 ALL_TESTS="test_analyze test_analyze_order_usage test_analyze_order_name test_renpy test_lex test_ast test_docx"
 
