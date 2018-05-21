@@ -1,1151 +1,1704 @@
-[
-	{
-		'text': '# Test combinations of the grammar',
-		'type': 'comment'
+{
+	'_meta': {
+		'has_debug_symbols': True,
+		'sources': {
+			0: 'test/sources/full_test.fey'
+		}
 	},
-	{
-		'file': ('string', 'test/sources/quickstart.rpy'),
-		'instruction': 'INCLUDE',
-		'langs': None,
-		'parsing': ('boolean', False),
-		'type': 'annotation'
-	},
-	{
-		'file': ('string', 'test/sources/quickstart.rpy'),
-		'instruction': 'INCLUDE',
-		'langs': [
-			('id', 'renpy')
-		],
-		'parsing': ('boolean', False),
-		'type': 'annotation'
-	},
-	{
-		'file': ('string', 'test/sources/bindings.rpy'),
-		'instruction': 'INCLUDE',
-		'langs': [
-			('id', 'renpy')
-		],
-		'parsing': ('boolean', False),
-		'type': 'annotation'
-	},
-	{
-		'destination': ('id', 'choice-section'),
-		'instruction': 'GOTO',
-		'type': 'annotation'
-	},
-	{
-		'instruction': 'SCENE',
-		'name': ('id', 'Bobs-garage-2'),
-		'transition': None,
-		'type': 'directive'
-	},
-	{
-		'instruction': 'SCENE',
-		'name': ('id', 'my-house'),
-		'transition': ('id', 'FADE'),
-		'type': 'directive'
-	},
-	{
-		'instruction': 'ENTER',
-		'motion': None,
-		'states': [],
-		'target': ('id', 'Aerith'),
-		'transition': None,
-		'type': 'directive'
-	},
-	{
-		'instruction': 'ENTER',
-		'motion': None,
-		'states': [
-			('id', 'pissed-off')
-		],
-		'target': ('id', 'Aerith'),
-		'transition': None,
-		'type': 'directive'
-	},
-	{
-		'instruction': 'ENTER',
-		'motion': None,
-		'states': [
-			('id', 'pissed-off'),
-			('id', 'annoyed')
-		],
-		'target': ('id', 'Aerith'),
-		'transition': None,
-		'type': 'directive'
-	},
-	{
-		'instruction': 'ENTER',
-		'motion': None,
-		'states': [
-			('id', 'pissed'),
-			('id', 'annoyed'),
-			('id', 'with-back-turned')
-		],
-		'target': ('id', 'Aerith'),
-		'transition': None,
-		'type': 'directive'
-	},
-	{
-		'instruction': 'ENTER',
-		'motion': None,
-		'states': [],
-		'target': ('id', 'Aerith'),
-		'transition': ('id', 'DISSOLVE'),
-		'type': 'directive'
-	},
-	{
-		'instruction': 'ENTER',
-		'motion': None,
-		'states': [
-			('id', 'pissed-off')
-		],
-		'target': ('id', 'Aerith'),
-		'transition': ('id', 'DISSOLVE'),
-		'type': 'directive'
-	},
-	{
-		'instruction': 'ENTER',
-		'motion': None,
-		'states': [
-			('id', 'pissed-off'),
-			('id', 'annoyed')
-		],
-		'target': ('id', 'Aerith'),
-		'transition': ('id', 'DISSOLVE'),
-		'type': 'directive'
-	},
-	{
-		'instruction': 'ENTER',
-		'motion': None,
-		'states': [
-			('id', 'pissed'),
-			('id', 'annoyed'),
-			('id', 'with-back-turned')
-		],
-		'target': ('id', 'Aerith'),
-		'transition': ('id', 'FADE'),
-		'type': 'directive'
-	},
-	{
-		'instruction': 'ENTER',
-		'motion': {
+	'nodes': [
+		{
+			'_debug': {
+				'lineno': 1,
+				'source': 0
+			},
+			'text': '# Test combinations of the grammar',
+			'type': 'comment'
+		},
+		{
+			'_debug': {
+				'lineno': 3,
+				'source': 0
+			},
+			'file': ('string', 'test/sources/quickstart.rpy'),
+			'instruction': 'INCLUDE',
+			'langs': None,
+			'parsing': ('boolean', False),
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 4,
+				'source': 0
+			},
+			'file': ('string', 'test/sources/quickstart.rpy'),
+			'instruction': 'INCLUDE',
+			'langs': [
+				('id', 'renpy')
+			],
+			'parsing': ('boolean', False),
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 5,
+				'source': 0
+			},
+			'file': ('string', 'test/sources/bindings.rpy'),
+			'instruction': 'INCLUDE',
+			'langs': [
+				('id', 'renpy')
+			],
+			'parsing': ('boolean', False),
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 7,
+				'source': 0
+			},
+			'destination': ('id', 'choice-section'),
+			'instruction': 'GOTO',
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 9,
+				'source': 0
+			},
+			'instruction': 'SCENE',
+			'name': ('id', 'Bobs-garage-2'),
+			'transition': None,
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 10,
+				'source': 0
+			},
+			'instruction': 'SCENE',
+			'name': ('id', 'my-house'),
+			'transition': ('id', 'FADE'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 12,
+				'source': 0
+			},
+			'instruction': 'ENTER',
+			'motion': None,
+			'states': [],
+			'target': ('id', 'Aerith'),
+			'transition': None,
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 13,
+				'source': 0
+			},
+			'instruction': 'ENTER',
+			'motion': None,
+			'states': [
+				('id', 'pissed-off')
+			],
+			'target': ('id', 'Aerith'),
+			'transition': None,
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 14,
+				'source': 0
+			},
+			'instruction': 'ENTER',
+			'motion': None,
+			'states': [
+				('id', 'pissed-off'),
+				('id', 'annoyed')
+			],
+			'target': ('id', 'Aerith'),
+			'transition': None,
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 15,
+				'source': 0
+			},
+			'instruction': 'ENTER',
+			'motion': None,
+			'states': [
+				('id', 'pissed'),
+				('id', 'annoyed'),
+				('id', 'with-back-turned')
+			],
+			'target': ('id', 'Aerith'),
+			'transition': None,
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 16,
+				'source': 0
+			},
+			'instruction': 'ENTER',
+			'motion': None,
+			'states': [],
+			'target': ('id', 'Aerith'),
+			'transition': ('id', 'DISSOLVE'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 17,
+				'source': 0
+			},
+			'instruction': 'ENTER',
+			'motion': None,
+			'states': [
+				('id', 'pissed-off')
+			],
+			'target': ('id', 'Aerith'),
+			'transition': ('id', 'DISSOLVE'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 18,
+				'source': 0
+			},
+			'instruction': 'ENTER',
+			'motion': None,
+			'states': [
+				('id', 'pissed-off'),
+				('id', 'annoyed')
+			],
+			'target': ('id', 'Aerith'),
+			'transition': ('id', 'DISSOLVE'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 19,
+				'source': 0
+			},
+			'instruction': 'ENTER',
+			'motion': None,
+			'states': [
+				('id', 'pissed'),
+				('id', 'annoyed'),
+				('id', 'with-back-turned')
+			],
+			'target': ('id', 'Aerith'),
+			'transition': ('id', 'FADE'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 20,
+				'source': 0
+			},
+			'instruction': 'ENTER',
+			'motion': {
+				'destination': None,
+				'duration': None,
+				'origin': ('id', 'LEFT')
+			},
+			'states': [],
+			'target': ('id', 'Aerith'),
+			'transition': None,
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 21,
+				'source': 0
+			},
+			'instruction': 'ENTER',
+			'motion': {
+				'destination': ('id', 'DOOR'),
+				'duration': None,
+				'origin': None
+			},
+			'states': [],
+			'target': ('id', 'Aerith'),
+			'transition': None,
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 22,
+				'source': 0
+			},
+			'instruction': 'ENTER',
+			'motion': {
+				'destination': None,
+				'duration': ('rel', 'QUICKLY'),
+				'origin': None
+			},
+			'states': [],
+			'target': ('id', 'Aerith'),
+			'transition': None,
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 23,
+				'source': 0
+			},
+			'instruction': 'ENTER',
+			'motion': {
+				'destination': None,
+				'duration': ('rel', 'SLOWLY'),
+				'origin': None
+			},
+			'states': [],
+			'target': ('id', 'Aerith'),
+			'transition': ('id', 'FADE'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 24,
+				'source': 0
+			},
+			'instruction': 'ENTER',
+			'motion': {
+				'destination': ('id', 'DOOR'),
+				'duration': None,
+				'origin': ('id', 'LEFT')
+			},
+			'states': [],
+			'target': ('id', 'Aerith'),
+			'transition': ('id', 'FADE'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 25,
+				'source': 0
+			},
+			'instruction': 'ENTER',
+			'motion': {
+				'destination': ('id', 'DOOR'),
+				'duration': ('number', 4.5),
+				'origin': ('id', 'LEFT')
+			},
+			'states': [],
+			'target': ('id', 'Aerith'),
+			'transition': ('id', 'FADE'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 26,
+				'source': 0
+			},
+			'instruction': 'ENTER',
+			'motion': {
+				'destination': ('id', 'DOOR'),
+				'duration': ('number', 4.5),
+				'origin': ('id', 'LEFT')
+			},
+			'states': [
+				('id', 'pissed'),
+				('id', 'mean')
+			],
+			'target': ('id', 'Aerith'),
+			'transition': ('id', 'FADE'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 28,
+				'source': 0
+			},
 			'destination': None,
 			'duration': None,
-			'origin': ('id', 'LEFT')
+			'instruction': 'ACTION',
+			'states': [
+				('id', 'pissed')
+			],
+			'target': ('id', 'Bob'),
+			'type': 'directive'
 		},
-		'states': [],
-		'target': ('id', 'Aerith'),
-		'transition': None,
-		'type': 'directive'
-	},
-	{
-		'instruction': 'ENTER',
-		'motion': {
-			'destination': ('id', 'DOOR'),
+		{
+			'_debug': {
+				'lineno': 29,
+				'source': 0
+			},
+			'destination': ('id', 'stage-front'),
 			'duration': None,
-			'origin': None
+			'instruction': 'ACTION',
+			'states': [],
+			'target': ('id', 'Bob'),
+			'type': 'directive'
 		},
-		'states': [],
-		'target': ('id', 'Aerith'),
-		'transition': None,
-		'type': 'directive'
-	},
-	{
-		'instruction': 'ENTER',
-		'motion': {
-			'destination': None,
+		{
+			'_debug': {
+				'lineno': 30,
+				'source': 0
+			},
+			'destination': ('id', 'stage-left'),
 			'duration': ('rel', 'QUICKLY'),
-			'origin': None
+			'instruction': 'ACTION',
+			'states': [],
+			'target': ('id', 'Bob'),
+			'type': 'directive'
 		},
-		'states': [],
-		'target': ('id', 'Aerith'),
-		'transition': None,
-		'type': 'directive'
-	},
-	{
-		'instruction': 'ENTER',
-		'motion': {
-			'destination': None,
+		{
+			'_debug': {
+				'lineno': 31,
+				'source': 0
+			},
+			'destination': ('id', 'bookshelf'),
 			'duration': ('rel', 'SLOWLY'),
-			'origin': None
+			'instruction': 'ACTION',
+			'states': [
+				('id', 'pissed'),
+				('id', 'happy')
+			],
+			'target': ('id', 'Bob'),
+			'type': 'directive'
 		},
-		'states': [],
-		'target': ('id', 'Aerith'),
-		'transition': ('id', 'FADE'),
-		'type': 'directive'
-	},
-	{
-		'instruction': 'ENTER',
-		'motion': {
-			'destination': ('id', 'DOOR'),
-			'duration': None,
-			'origin': ('id', 'LEFT')
+		{
+			'_debug': {
+				'lineno': 33,
+				'source': 0
+			},
+			'instruction': 'EXIT',
+			'motion': None,
+			'target': ('id', 'Aerith'),
+			'transition': None,
+			'type': 'directive'
 		},
-		'states': [],
-		'target': ('id', 'Aerith'),
-		'transition': ('id', 'FADE'),
-		'type': 'directive'
-	},
-	{
-		'instruction': 'ENTER',
-		'motion': {
-			'destination': ('id', 'DOOR'),
-			'duration': ('number', 4.5),
-			'origin': ('id', 'LEFT')
+		{
+			'_debug': {
+				'lineno': 34,
+				'source': 0
+			},
+			'instruction': 'EXIT',
+			'motion': None,
+			'target': ('id', 'Aerith'),
+			'transition': ('id', 'FADE'),
+			'type': 'directive'
 		},
-		'states': [],
-		'target': ('id', 'Aerith'),
-		'transition': ('id', 'FADE'),
-		'type': 'directive'
-	},
-	{
-		'instruction': 'ENTER',
-		'motion': {
-			'destination': ('id', 'DOOR'),
-			'duration': ('number', 4.5),
-			'origin': ('id', 'LEFT')
-		},
-		'states': [
-			('id', 'pissed'),
-			('id', 'mean')
-		],
-		'target': ('id', 'Aerith'),
-		'transition': ('id', 'FADE'),
-		'type': 'directive'
-	},
-	{
-		'destination': None,
-		'duration': None,
-		'instruction': 'ACTION',
-		'states': [
-			('id', 'pissed')
-		],
-		'target': ('id', 'Bob'),
-		'type': 'directive'
-	},
-	{
-		'destination': ('id', 'stage-front'),
-		'duration': None,
-		'instruction': 'ACTION',
-		'states': [],
-		'target': ('id', 'Bob'),
-		'type': 'directive'
-	},
-	{
-		'destination': ('id', 'stage-left'),
-		'duration': ('rel', 'QUICKLY'),
-		'instruction': 'ACTION',
-		'states': [],
-		'target': ('id', 'Bob'),
-		'type': 'directive'
-	},
-	{
-		'destination': ('id', 'bookshelf'),
-		'duration': ('rel', 'SLOWLY'),
-		'instruction': 'ACTION',
-		'states': [
-			('id', 'pissed'),
-			('id', 'happy')
-		],
-		'target': ('id', 'Bob'),
-		'type': 'directive'
-	},
-	{
-		'instruction': 'EXIT',
-		'motion': None,
-		'target': ('id', 'Aerith'),
-		'transition': None,
-		'type': 'directive'
-	},
-	{
-		'instruction': 'EXIT',
-		'motion': None,
-		'target': ('id', 'Aerith'),
-		'transition': ('id', 'FADE'),
-		'type': 'directive'
-	},
-	{
-		'instruction': 'EXIT',
-		'motion': {
-			'destination': None,
-			'duration': None,
-			'origin': ('id', 'door')
-		},
-		'target': ('id', 'Aerith'),
-		'transition': None,
-		'type': 'directive'
-	},
-	{
-		'instruction': 'EXIT',
-		'motion': {
-			'destination': ('id', 'east-stairwell'),
-			'duration': None,
-			'origin': None
-		},
-		'target': ('id', 'Aerith'),
-		'transition': None,
-		'type': 'directive'
-	},
-	{
-		'instruction': 'EXIT',
-		'motion': {
-			'destination': None,
-			'duration': ('rel', 'SLOWLY'),
-			'origin': None
-		},
-		'target': ('id', 'Aerith'),
-		'transition': None,
-		'type': 'directive'
-	},
-	{
-		'instruction': 'EXIT',
-		'motion': {
-			'destination': None,
-			'duration': ('rel', 'SLOWLY'),
-			'origin': None
-		},
-		'target': ('id', 'Aerith'),
-		'transition': ('id', 'FADE'),
-		'type': 'directive'
-	},
-	{
-		'instruction': 'EXIT',
-		'motion': {
-			'destination': ('id', 'east-stairwell'),
-			'duration': ('number', 9),
-			'origin': ('id', 'door')
-		},
-		'target': ('id', 'Aerith'),
-		'transition': ('id', 'FADE'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': None,
-		'instruction': 'MUSIC',
-		'target': ('rel', 'ALL'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': ('rel', 'QUICKLY'),
-		'instruction': 'MUSIC',
-		'target': ('rel', 'ALL'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': ('number', 3),
-		'instruction': 'MUSIC',
-		'target': ('rel', 'ALL'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': None,
-		'instruction': 'MUSIC',
-		'target': ('rel', 'ALL'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': ('rel', 'SLOWLY'),
-		'instruction': 'MUSIC',
-		'target': ('rel', 'ALL'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': None,
-		'instruction': 'MUSIC',
-		'target': ('string', 'bad.ogg'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': ('rel', 'SLOWLY'),
-		'instruction': 'MUSIC',
-		'target': ('id', 'main_theme'),
-		'type': 'directive'
-	},
-	{
-		'action': 'start',
-		'fadeout': None,
-		'instruction': 'MUSIC',
-		'target': ('id', 'main-theme'),
-		'type': 'directive'
-	},
-	{
-		'action': 'start',
-		'fadeout': ('number', 5),
-		'instruction': 'MUSIC',
-		'target': ('string', 'main.ogg'),
-		'type': 'directive'
-	},
-	{
-		'action': 'start',
-		'fadeout': ('number', 5),
-		'instruction': 'MUSIC',
-		'target': ('string', 'main.ogg'),
-		'type': 'directive'
-	},
-	{
-		'action': 'start',
-		'instruction': 'GFX',
-		'loop': ('boolean', False),
-		'target': ('id', 'flash'),
-		'type': 'directive'
-	},
-	{
-		'action': 'start',
-		'instruction': 'GFX',
-		'loop': ('boolean', True),
-		'target': ('id', 'flash'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': None,
-		'instruction': 'GFX',
-		'target': ('id', 'flash'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': None,
-		'instruction': 'GFX',
-		'target': ('rel', 'ALL'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': ('number', 5),
-		'instruction': 'GFX',
-		'target': ('id', 'flash'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': ('rel', 'QUICKLY'),
-		'instruction': 'GFX',
-		'target': ('rel', 'ALL'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': None,
-		'instruction': 'GFX',
-		'target': ('rel', 'ALL'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': ('rel', 'SLOWLY'),
-		'instruction': 'GFX',
-		'target': ('rel', 'ALL'),
-		'type': 'directive'
-	},
-	{
-		'action': 'start',
-		'instruction': 'SFX',
-		'loop': ('boolean', False),
-		'target': ('id', 'bang'),
-		'type': 'directive'
-	},
-	{
-		'action': 'start',
-		'instruction': 'SFX',
-		'loop': ('boolean', False),
-		'target': ('string', 'concrete-sprint.ogg'),
-		'type': 'directive'
-	},
-	{
-		'action': 'start',
-		'instruction': 'SFX',
-		'loop': ('boolean', True),
-		'target': ('string', 'swish.ogg'),
-		'type': 'directive'
-	},
-	{
-		'action': 'start',
-		'instruction': 'SFX',
-		'loop': ('boolean', True),
-		'target': ('id', 'swish'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': None,
-		'instruction': 'SFX',
-		'target': ('string', 'swish.ogg'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': ('rel', 'SLOWLY'),
-		'instruction': 'SFX',
-		'target': ('id', 'swish'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': ('rel', 'QUICKLY'),
-		'instruction': 'SFX',
-		'target': ('rel', 'ALL'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': None,
-		'instruction': 'SFX',
-		'target': ('rel', 'ALL'),
-		'type': 'directive'
-	},
-	{
-		'action': 'stop',
-		'duration': ('number', 4),
-		'instruction': 'SFX',
-		'target': ('rel', 'ALL'),
-		'type': 'directive'
-	},
-	{
-		'instruction': 'FMV',
-		'target': ('id', 'opening'),
-		'type': 'directive'
-	},
-	{
-		'instruction': 'FMV',
-		'target': ('string', 'opening_video.mp4'),
-		'type': 'directive'
-	},
-	{
-		'actions': [
-			{
-				'target': ('id', 'middle'),
-				'type': 'SNAP'
-			}
-		],
-		'instruction': 'CAMERA',
-		'type': 'directive'
-	},
-	{
-		'actions': [
-			{
-				'duration': ('rel', 'QUICKLY'),
-				'target': ('id', 'center'),
-				'type': 'PAN'
-			}
-		],
-		'instruction': 'CAMERA',
-		'type': 'directive'
-	},
-	{
-		'actions': [
-			{
+		{
+			'_debug': {
+				'lineno': 35,
+				'source': 0
+			},
+			'instruction': 'EXIT',
+			'motion': {
+				'destination': None,
 				'duration': None,
-				'target': ('rel', 'IN'),
-				'type': 'ZOOM'
-			}
-		],
-		'instruction': 'CAMERA',
-		'type': 'directive'
-	},
-	{
-		'actions': [
-			{
+				'origin': ('id', 'door')
+			},
+			'target': ('id', 'Aerith'),
+			'transition': None,
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 36,
+				'source': 0
+			},
+			'instruction': 'EXIT',
+			'motion': {
+				'destination': ('id', 'east-stairwell'),
 				'duration': None,
-				'target': ('rel', 'OUT'),
-				'type': 'ZOOM'
-			}
-		],
-		'instruction': 'CAMERA',
-		'type': 'directive'
-	},
-	{
-		'actions': [
-			{
-				'duration': ('number', 3),
-				'target': ('rel', 'OUT'),
-				'type': 'ZOOM'
-			}
-		],
-		'instruction': 'CAMERA',
-		'type': 'directive'
-	},
-	{
-		'actions': [
-			{
-				'duration': ('number', 3),
-				'target': ('id', 'middle'),
-				'type': 'PAN'
+				'origin': None
 			},
-			{
-				'duration': ('rel', 'QUICKLY'),
-				'target': ('rel', 'OUT'),
-				'type': 'ZOOM'
-			}
-		],
-		'instruction': 'CAMERA',
-		'type': 'directive'
-	},
-	{
-		'actions': [
-			{
-				'duration': ('number', 3),
-				'target': ('id', 'middle'),
-				'type': 'PAN'
+			'target': ('id', 'Aerith'),
+			'transition': None,
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 37,
+				'source': 0
 			},
-			{
-				'duration': ('rel', 'QUICKLY'),
-				'target': ('rel', 'OUT'),
-				'type': 'ZOOM'
+			'instruction': 'EXIT',
+			'motion': {
+				'destination': None,
+				'duration': ('rel', 'SLOWLY'),
+				'origin': None
 			},
-			{
-				'target': ('id', 'bookshelf'),
-				'type': 'SNAP'
-			}
-		],
-		'instruction': 'CAMERA',
-		'type': 'directive'
-	},
-	{
-		'choices': [
-			{
-				'condition': None,
-				'sets': [],
-				'target': ('id', 'private'),
-				'text': ('string', "Show her the 'private collection'")
+			'target': ('id', 'Aerith'),
+			'transition': None,
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 38,
+				'source': 0
 			},
-			{
-				'condition': ('boolean', True),
-				'sets': [],
-				'target': ('id', 'call_logs'),
-				'text': ('string', 'Show them the call logs')
+			'instruction': 'EXIT',
+			'motion': {
+				'destination': None,
+				'duration': ('rel', 'SLOWLY'),
+				'origin': None
 			},
-			{
-				'condition': ('id', 'have_hacked_computer'),
-				'sets': [],
-				'target': ('id', 'files'),
-				'text': ('string', 'Show her the missing files')
+			'target': ('id', 'Aerith'),
+			'transition': ('id', 'FADE'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 39,
+				'source': 0
 			},
-			{
-				'condition': ('id', 'hacked_computer'),
-				'sets': [],
-				'target': ('id', 'files'),
-				'text': ('string', 'Show him the broken chair')
+			'instruction': 'EXIT',
+			'motion': {
+				'destination': ('id', 'east-stairwell'),
+				'duration': ('number', 9),
+				'origin': ('id', 'door')
 			},
-			{
-				'condition': ('boolean', False),
-				'sets': [
-					{
-						'name': ('id', 'have_punched_aerith'),
-						'value': ('boolean', True)
-					}
-				],
-				'target': ('id', 'punch'),
-				'text': ('string', 'Punch her')
-			}
-		],
-		'instruction': 'CHOICE',
-		'label': None,
-		'title': None,
-		'type': 'directive'
-	},
-	{
-		'choices': [
-			{
-				'condition': None,
-				'sets': [
-					{
-						'name': ('id', 'goodness'),
-						'value': ('incdec', {
-								'amount': ('number', 5),
-								'type': ('rel', 'DEC')
-							})
+			'target': ('id', 'Aerith'),
+			'transition': ('id', 'FADE'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 41,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': None,
+			'instruction': 'MUSIC',
+			'target': ('rel', 'ALL'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 42,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': ('rel', 'QUICKLY'),
+			'instruction': 'MUSIC',
+			'target': ('rel', 'ALL'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 43,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': ('number', 3),
+			'instruction': 'MUSIC',
+			'target': ('rel', 'ALL'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 44,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': None,
+			'instruction': 'MUSIC',
+			'target': ('rel', 'ALL'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 45,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': ('rel', 'SLOWLY'),
+			'instruction': 'MUSIC',
+			'target': ('rel', 'ALL'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 46,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': None,
+			'instruction': 'MUSIC',
+			'target': ('string', 'bad.ogg'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 47,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': ('rel', 'SLOWLY'),
+			'instruction': 'MUSIC',
+			'target': ('id', 'main_theme'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 48,
+				'source': 0
+			},
+			'action': 'start',
+			'fadeout': None,
+			'instruction': 'MUSIC',
+			'target': ('id', 'main-theme'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 49,
+				'source': 0
+			},
+			'action': 'start',
+			'fadeout': ('number', 5),
+			'instruction': 'MUSIC',
+			'target': ('string', 'main.ogg'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 50,
+				'source': 0
+			},
+			'action': 'start',
+			'fadeout': ('number', 5),
+			'instruction': 'MUSIC',
+			'target': ('string', 'main.ogg'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 52,
+				'source': 0
+			},
+			'action': 'start',
+			'instruction': 'GFX',
+			'loop': ('boolean', False),
+			'target': ('id', 'flash'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 53,
+				'source': 0
+			},
+			'action': 'start',
+			'instruction': 'GFX',
+			'loop': ('boolean', True),
+			'target': ('id', 'flash'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 54,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': None,
+			'instruction': 'GFX',
+			'target': ('id', 'flash'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 55,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': None,
+			'instruction': 'GFX',
+			'target': ('rel', 'ALL'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 56,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': ('number', 5),
+			'instruction': 'GFX',
+			'target': ('id', 'flash'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 57,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': ('rel', 'QUICKLY'),
+			'instruction': 'GFX',
+			'target': ('rel', 'ALL'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 58,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': None,
+			'instruction': 'GFX',
+			'target': ('rel', 'ALL'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 59,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': ('rel', 'SLOWLY'),
+			'instruction': 'GFX',
+			'target': ('rel', 'ALL'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 61,
+				'source': 0
+			},
+			'action': 'start',
+			'instruction': 'SFX',
+			'loop': ('boolean', False),
+			'target': ('id', 'bang'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 62,
+				'source': 0
+			},
+			'action': 'start',
+			'instruction': 'SFX',
+			'loop': ('boolean', False),
+			'target': ('string', 'concrete-sprint.ogg'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 63,
+				'source': 0
+			},
+			'action': 'start',
+			'instruction': 'SFX',
+			'loop': ('boolean', True),
+			'target': ('string', 'swish.ogg'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 64,
+				'source': 0
+			},
+			'action': 'start',
+			'instruction': 'SFX',
+			'loop': ('boolean', True),
+			'target': ('id', 'swish'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 65,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': None,
+			'instruction': 'SFX',
+			'target': ('string', 'swish.ogg'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 66,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': ('rel', 'SLOWLY'),
+			'instruction': 'SFX',
+			'target': ('id', 'swish'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 67,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': ('rel', 'QUICKLY'),
+			'instruction': 'SFX',
+			'target': ('rel', 'ALL'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 68,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': None,
+			'instruction': 'SFX',
+			'target': ('rel', 'ALL'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 69,
+				'source': 0
+			},
+			'action': 'stop',
+			'duration': ('number', 4),
+			'instruction': 'SFX',
+			'target': ('rel', 'ALL'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 71,
+				'source': 0
+			},
+			'instruction': 'FMV',
+			'target': ('id', 'opening'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 72,
+				'source': 0
+			},
+			'instruction': 'FMV',
+			'target': ('string', 'opening_video.mp4'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 74,
+				'source': 0
+			},
+			'actions': [
+				{
+					'target': ('id', 'middle'),
+					'type': 'SNAP'
+				}
+			],
+			'instruction': 'CAMERA',
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 75,
+				'source': 0
+			},
+			'actions': [
+				{
+					'duration': ('rel', 'QUICKLY'),
+					'target': ('id', 'center'),
+					'type': 'PAN'
+				}
+			],
+			'instruction': 'CAMERA',
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 76,
+				'source': 0
+			},
+			'actions': [
+				{
+					'duration': None,
+					'target': ('rel', 'IN'),
+					'type': 'ZOOM'
+				}
+			],
+			'instruction': 'CAMERA',
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 77,
+				'source': 0
+			},
+			'actions': [
+				{
+					'duration': None,
+					'target': ('rel', 'OUT'),
+					'type': 'ZOOM'
+				}
+			],
+			'instruction': 'CAMERA',
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 78,
+				'source': 0
+			},
+			'actions': [
+				{
+					'duration': ('number', 3),
+					'target': ('rel', 'OUT'),
+					'type': 'ZOOM'
+				}
+			],
+			'instruction': 'CAMERA',
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 79,
+				'source': 0
+			},
+			'actions': [
+				{
+					'duration': ('number', 3),
+					'target': ('id', 'middle'),
+					'type': 'PAN'
+				},
+				{
+					'duration': ('rel', 'QUICKLY'),
+					'target': ('rel', 'OUT'),
+					'type': 'ZOOM'
+				}
+			],
+			'instruction': 'CAMERA',
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 80,
+				'source': 0
+			},
+			'actions': [
+				{
+					'duration': ('number', 3),
+					'target': ('id', 'middle'),
+					'type': 'PAN'
+				},
+				{
+					'duration': ('rel', 'QUICKLY'),
+					'target': ('rel', 'OUT'),
+					'type': 'ZOOM'
+				},
+				{
+					'target': ('id', 'bookshelf'),
+					'type': 'SNAP'
+				},
+				{
+					'duration': None,
+					'target': ('id', 'middle'),
+					'type': 'PAN'
+				}
+			],
+			'instruction': 'CAMERA',
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 82,
+				'source': 0
+			},
+			'choices': [
+				{
+					'condition': None,
+					'sets': [],
+					'target': ('id', 'private'),
+					'text': ('string', "Show her the 'private collection'")
+				},
+				{
+					'condition': ('boolean', True),
+					'sets': [],
+					'target': ('id', 'call_logs'),
+					'text': ('string', 'Show them the call logs')
+				},
+				{
+					'condition': ('id', 'have_hacked_computer'),
+					'sets': [],
+					'target': ('id', 'files'),
+					'text': ('string', 'Show her the missing files')
+				},
+				{
+					'condition': ('id', 'hacked_computer'),
+					'sets': [],
+					'target': ('id', 'files'),
+					'text': ('string', 'Show him the broken chair')
+				},
+				{
+					'condition': ('boolean', False),
+					'sets': [
+						{
+							'name': ('id', 'have_punched_aerith'),
+							'value': ('boolean', True)
+						}
+					],
+					'target': ('id', 'punch'),
+					'text': ('string', 'Punch her')
+				}
+			],
+			'instruction': 'CHOICE',
+			'label': None,
+			'title': None,
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 89,
+				'source': 0
+			},
+			'choices': [
+				{
+					'condition': None,
+					'sets': [
+						{
+							'name': ('id', 'goodness'),
+							'value': ('incdec', {
+									'amount': ('number', 5),
+									'type': ('rel', 'DEC')
+								})
+						},
+						{
+							'name': ('id', 'ignore'),
+							'value': ('incdec', {
+									'amount': ('number', 1),
+									'type': ('rel', 'INC')
+								})
+						}
+					],
+					'target': ('id', 'ignorance'),
+					'text': ('string', 'Try to feign ignorance')
+				},
+				{
+					'condition': None,
+					'sets': [
+						{
+							'name': ('id', 'badness'),
+							'value': ('id', 'goodness')
+						},
+						{
+							'name': ('id', 'truth'),
+							'value': ('boolean', True)
+						}
+					],
+					'target': ('id', 'tell_truth'),
+					'text': ('string', 'Tell the truth')
+				},
+				{
+					'condition': ('expr', 'x + 4 >= 39'),
+					'sets': [],
+					'target': ('id', 'run'),
+					'text': ('string', 'Run away.')
+				}
+			],
+			'instruction': 'CHOICE',
+			'label': ('id', 'choice-section'),
+			'title': ('string', 'What should I tell him?'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 95,
+				'source': 0
+			},
+			'instruction': 'SCENE',
+			'name': ('id', 'ayase-bedroom'),
+			'transition': None,
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 96,
+				'source': 0
+			},
+			'instruction': 'DESCRIPTION',
+			'target': None,
+			'text': ('string', 'We see a series of shelves and boxes. There is a huge mess everywhere. It pretty much looks like the room of any 12th-grader.'),
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 97,
+				'source': 0
+			},
+			'instruction': 'DESCRIPTION',
+			'target': ('id', 'millenium-falcon'),
+			'text': ('string', 'What a hunk of junk! Those wanna-be commandos mounted a rescue operation and came to rescue you in THAT?'),
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 98,
+				'source': 0
+			},
+			'instruction': 'DESCRIPTION',
+			'target': None,
+			'text': ('string', "this description is explicitly escaped with a pre-colon, though it probably doesn't need it."),
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 99,
+				'source': 0
+			},
+			'instruction': 'DESCRIPTION',
+			'target': None,
+			'text': ('string', ':This description begins with a colon, and so it must be escaped, I guess.'),
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 100,
+				'source': 0
+			},
+			'instruction': 'DESCRIPTION',
+			'target': None,
+			'text': ('string', 'starting_like_this: means that it must be escaped.'),
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 102,
+				'source': 0
+			},
+			'instruction': 'SECTION',
+			'params': [],
+			'section': ('id', 'punch'),
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 104,
+				'source': 0
+			},
+			'instruction': 'FLAGSET',
+			'name': ('id', 'have_drank_tea'),
+			'type': 'annotation',
+			'value': ('boolean', True)
+		},
+		{
+			'_debug': {
+				'lineno': 105,
+				'source': 0
+			},
+			'instruction': 'FLAGSET',
+			'name': ('id', 'drank_tea'),
+			'type': 'annotation',
+			'value': ('boolean', True)
+		},
+		{
+			'_debug': {
+				'lineno': 106,
+				'source': 0
+			},
+			'instruction': 'FLAGSET',
+			'name': ('id', 'drank_tea'),
+			'type': 'annotation',
+			'value': ('boolean', False)
+		},
+		{
+			'_debug': {
+				'lineno': 107,
+				'source': 0
+			},
+			'instruction': 'FLAGSET',
+			'name': ('id', 'have_drank_tea'),
+			'type': 'annotation',
+			'value': ('boolean', True)
+		},
+		{
+			'_debug': {
+				'lineno': 108,
+				'source': 0
+			},
+			'instruction': 'FLAGSET',
+			'name': ('id', 'have_drank_tea'),
+			'type': 'annotation',
+			'value': ('boolean', False)
+		},
+		{
+			'_debug': {
+				'lineno': 109,
+				'source': 0
+			},
+			'instruction': 'FLAGSET',
+			'name': ('id', 'impressed_aerith'),
+			'type': 'annotation',
+			'value': ('id', 'have_hacked_computer')
+		},
+		{
+			'_debug': {
+				'lineno': 110,
+				'source': 0
+			},
+			'instruction': 'FLAGSET',
+			'name': ('id', 'have_impressed_aerith'),
+			'type': 'annotation',
+			'value': ('id', 'have_hacked_computer')
+		},
+		{
+			'_debug': {
+				'lineno': 111,
+				'source': 0
+			},
+			'instruction': 'FLAGSET',
+			'name': ('id', 'impressed_aerith'),
+			'type': 'annotation',
+			'value': ('id', 'hacked_computer')
+		},
+		{
+			'_debug': {
+				'lineno': 112,
+				'source': 0
+			},
+			'instruction': 'FLAGSET',
+			'name': ('id', 'have_impressed_aerith'),
+			'type': 'annotation',
+			'value': ('id', 'hacked_computer')
+		},
+		{
+			'_debug': {
+				'lineno': 114,
+				'source': 0
+			},
+			'instruction': 'VARSET',
+			'name': ('id', 'runs'),
+			'type': 'annotation',
+			'value': ('number', 1)
+		},
+		{
+			'_debug': {
+				'lineno': 115,
+				'source': 0
+			},
+			'instruction': 'VARSET',
+			'name': ('id', 'runs'),
+			'type': 'annotation',
+			'value': ('string', '82')
+		},
+		{
+			'_debug': {
+				'lineno': 116,
+				'source': 0
+			},
+			'instruction': 'VARSET',
+			'name': ('id', 'runs'),
+			'type': 'annotation',
+			'value': ('incdec', {
+					'amount': ('number', 1),
+					'type': ('rel', 'INC')
+				})
+		},
+		{
+			'_debug': {
+				'lineno': 117,
+				'source': 0
+			},
+			'instruction': 'VARSET',
+			'name': ('id', 'have_run'),
+			'type': 'annotation',
+			'value': ('boolean', False)
+		},
+		{
+			'_debug': {
+				'lineno': 118,
+				'source': 0
+			},
+			'instruction': 'VARSET',
+			'name': ('id', 'reps'),
+			'type': 'annotation',
+			'value': ('number', 28)
+		},
+		{
+			'_debug': {
+				'lineno': 119,
+				'source': 0
+			},
+			'instruction': 'VARSET',
+			'name': ('id', 'reps'),
+			'type': 'annotation',
+			'value': ('incdec', {
+					'amount': ('number', 5),
+					'type': ('rel', 'DEC')
+				})
+		},
+		{
+			'_debug': {
+				'lineno': 121,
+				'source': 0
+			},
+			'instruction': 'DIALOG',
+			'mode': 'HIDE',
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 122,
+				'source': 0
+			},
+			'instruction': 'DIALOG',
+			'mode': 'SHOW',
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 123,
+				'source': 0
+			},
+			'instruction': 'DIALOG',
+			'mode': 'AUTO',
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 125,
+				'source': 0
+			},
+			'destination': ('id', 'aerith-punch'),
+			'instruction': 'GOTO',
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 126,
+				'source': 0
+			},
+			'destination': ('id', 'bob-punch'),
+			'instruction': 'GOTO',
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 128,
+				'source': 0
+			},
+			'instruction': 'EXECUTE',
+			'params': [
+				{
+					'name': ('id', 'target'),
+					'value': ('string', 'bob')
+				}
+			],
+			'section': ('id', 'punch'),
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 129,
+				'source': 0
+			},
+			'instruction': 'EXECUTE',
+			'params': [],
+			'section': ('id', 'aerith-punch'),
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 131,
+				'source': 0
+			},
+			'instruction': 'END',
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 133,
+				'source': 0
+			},
+			'instruction': 'END',
+			'retval': ('number', 5),
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 135,
+				'source': 0
+			},
+			'file': ('string', 'test/sources/quickstart.rpy'),
+			'instruction': 'INCLUDE',
+			'langs': None,
+			'parsing': ('boolean', False),
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 137,
+				'source': 0
+			},
+			'condition': ('id', 'staff'),
+			'instruction': 'WHILE',
+			'statements': [
+				{
+					'_debug': {
+						'lineno': 138,
+						'source': 0
 					},
-					{
-						'name': ('id', 'ignore'),
-						'value': ('incdec', {
-								'amount': ('number', 1),
-								'type': ('rel', 'INC')
-							})
-					}
-				],
-				'target': ('id', 'ignorance'),
-				'text': ('string', 'Try to feign ignorance')
+					'instruction': 'VARSET',
+					'name': ('id', 'runs'),
+					'type': 'annotation',
+					'value': ('incdec', {
+							'amount': ('number', 1),
+							'type': ('rel', 'INC')
+						})
+				}
+			],
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 141,
+				'source': 0
 			},
-			{
-				'condition': None,
-				'sets': [
-					{
-						'name': ('id', 'badness'),
-						'value': ('id', 'goodness')
+			'condition': ('boolean', True),
+			'instruction': 'WHILE',
+			'statements': [
+				{
+					'_debug': {
+						'lineno': 142,
+						'source': 0
 					},
-					{
-						'name': ('id', 'truth'),
-						'value': ('boolean', True)
-					}
-				],
-				'target': ('id', 'tell_truth'),
-				'text': ('string', 'Tell the truth')
+					'instruction': 'VARSET',
+					'name': ('id', 'runs'),
+					'type': 'annotation',
+					'value': ('incdec', {
+							'amount': ('number', 1),
+							'type': ('rel', 'DEC')
+						})
+				}
+			],
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 145,
+				'source': 0
 			},
-			{
-				'condition': ('expr', 'x + 4 >= 39'),
-				'sets': [],
-				'target': ('id', 'run'),
-				'text': ('string', 'Run away.')
-			}
-		],
-		'instruction': 'CHOICE',
-		'label': ('id', 'choice-section'),
-		'title': ('string', 'What should I tell him?'),
-		'type': 'directive'
-	},
-	{
-		'instruction': 'SCENE',
-		'name': ('id', 'ayase-bedroom'),
-		'transition': None,
-		'type': 'directive'
-	},
-	{
-		'instruction': 'DESCRIPTION',
-		'target': None,
-		'text': ('string', 'We see a series of shelves and boxes. There is a huge mess everywhere. It pretty much looks like the room of any 12th-grader.'),
-		'type': 'annotation'
-	},
-	{
-		'instruction': 'DESCRIPTION',
-		'target': ('id', 'millenium-falcon'),
-		'text': ('string', 'What a hunk of junk! Those wanna-be commandos mounted a rescue operation and came to rescue you in THAT?'),
-		'type': 'annotation'
-	},
-	{
-		'instruction': 'DESCRIPTION',
-		'target': None,
-		'text': ('string', "this description is explicitly escaped with a pre-colon, though it probably doesn't need it."),
-		'type': 'annotation'
-	},
-	{
-		'instruction': 'DESCRIPTION',
-		'target': None,
-		'text': ('string', ':This description begins with a colon, and so it must be escaped, I guess.'),
-		'type': 'annotation'
-	},
-	{
-		'instruction': 'DESCRIPTION',
-		'target': None,
-		'text': ('string', 'starting_like_this: means that it must be escaped.'),
-		'type': 'annotation'
-	},
-	{
-		'instruction': 'SECTION',
-		'params': [],
-		'section': ('id', 'punch'),
-		'type': 'annotation'
-	},
-	{
-		'instruction': 'FLAGSET',
-		'name': ('id', 'have_drank_tea'),
-		'type': 'annotation',
-		'value': ('boolean', True)
-	},
-	{
-		'instruction': 'FLAGSET',
-		'name': ('id', 'drank_tea'),
-		'type': 'annotation',
-		'value': ('boolean', True)
-	},
-	{
-		'instruction': 'FLAGSET',
-		'name': ('id', 'drank_tea'),
-		'type': 'annotation',
-		'value': ('boolean', False)
-	},
-	{
-		'instruction': 'FLAGSET',
-		'name': ('id', 'have_drank_tea'),
-		'type': 'annotation',
-		'value': ('boolean', True)
-	},
-	{
-		'instruction': 'FLAGSET',
-		'name': ('id', 'have_drank_tea'),
-		'type': 'annotation',
-		'value': ('boolean', False)
-	},
-	{
-		'instruction': 'FLAGSET',
-		'name': ('id', 'impressed_aerith'),
-		'type': 'annotation',
-		'value': ('id', 'have_hacked_computer')
-	},
-	{
-		'instruction': 'FLAGSET',
-		'name': ('id', 'have_impressed_aerith'),
-		'type': 'annotation',
-		'value': ('id', 'have_hacked_computer')
-	},
-	{
-		'instruction': 'FLAGSET',
-		'name': ('id', 'impressed_aerith'),
-		'type': 'annotation',
-		'value': ('id', 'hacked_computer')
-	},
-	{
-		'instruction': 'FLAGSET',
-		'name': ('id', 'have_impressed_aerith'),
-		'type': 'annotation',
-		'value': ('id', 'hacked_computer')
-	},
-	{
-		'instruction': 'VARSET',
-		'name': ('id', 'runs'),
-		'type': 'annotation',
-		'value': ('number', 1)
-	},
-	{
-		'instruction': 'VARSET',
-		'name': ('id', 'runs'),
-		'type': 'annotation',
-		'value': ('string', '82')
-	},
-	{
-		'instruction': 'VARSET',
-		'name': ('id', 'runs'),
-		'type': 'annotation',
-		'value': ('incdec', {
-				'amount': ('number', 1),
-				'type': ('rel', 'INC')
-			})
-	},
-	{
-		'instruction': 'VARSET',
-		'name': ('id', 'have_run'),
-		'type': 'annotation',
-		'value': ('boolean', False)
-	},
-	{
-		'instruction': 'VARSET',
-		'name': ('id', 'reps'),
-		'type': 'annotation',
-		'value': ('number', 28)
-	},
-	{
-		'instruction': 'VARSET',
-		'name': ('id', 'reps'),
-		'type': 'annotation',
-		'value': ('incdec', {
-				'amount': ('number', 5),
-				'type': ('rel', 'DEC')
-			})
-	},
-	{
-		'instruction': 'DIALOG',
-		'mode': 'HIDE',
-		'type': 'annotation'
-	},
-	{
-		'instruction': 'DIALOG',
-		'mode': 'SHOW',
-		'type': 'annotation'
-	},
-	{
-		'instruction': 'DIALOG',
-		'mode': 'AUTO',
-		'type': 'annotation'
-	},
-	{
-		'destination': ('id', 'aerith-punch'),
-		'instruction': 'GOTO',
-		'type': 'annotation'
-	},
-	{
-		'destination': ('id', 'bob-punch'),
-		'instruction': 'GOTO',
-		'type': 'annotation'
-	},
-	{
-		'instruction': 'EXECUTE',
-		'params': [
-			{
-				'name': ('id', 'target'),
-				'value': ('string', 'bob')
-			}
-		],
-		'section': ('id', 'punch'),
-		'type': 'annotation'
-	},
-	{
-		'instruction': 'EXECUTE',
-		'params': [],
-		'section': ('id', 'aerith-punch'),
-		'type': 'annotation'
-	},
-	{
-		'instruction': 'END',
-		'type': 'annotation'
-	},
-	{
-		'instruction': 'END',
-		'retval': ('number', 5),
-		'type': 'annotation'
-	},
-	{
-		'file': ('string', 'test/sources/quickstart.rpy'),
-		'instruction': 'INCLUDE',
-		'langs': None,
-		'parsing': ('boolean', False),
-		'type': 'annotation'
-	},
-	{
-		'condition': ('id', 'staff'),
-		'instruction': 'WHILE',
-		'statements': [
-			{
-				'instruction': 'VARSET',
-				'name': ('id', 'runs'),
-				'type': 'annotation',
-				'value': ('incdec', {
-						'amount': ('number', 1),
-						'type': ('rel', 'INC')
-					})
-			}
-		],
-		'type': 'annotation'
-	},
-	{
-		'condition': ('boolean', True),
-		'instruction': 'WHILE',
-		'statements': [
-			{
-				'instruction': 'VARSET',
-				'name': ('id', 'runs'),
-				'type': 'annotation',
-				'value': ('incdec', {
-						'amount': ('number', 1),
-						'type': ('rel', 'DEC')
-					})
-			}
-		],
-		'type': 'annotation'
-	},
-	{
-		'condition': ('boolean', False),
-		'instruction': 'WHILE',
-		'statements': [
-			{
-				'instruction': 'VARSET',
-				'name': ('id', 'runs'),
-				'type': 'annotation',
-				'value': ('incdec', {
-						'amount': ('number', 2),
-						'type': ('rel', 'INC')
-					})
-			}
-		],
-		'type': 'annotation'
-	},
-	{
-		'condition': ('expr', 'x > 8 and q is not 6'),
-		'instruction': 'WHILE',
-		'statements': [
-			{
-				'instruction': 'FLAGSET',
-				'name': ('id', 'have_seen_god'),
-				'type': 'annotation',
-				'value': ('boolean', True)
-			}
-		],
-		'type': 'annotation'
-	},
-	{
-		'branches': [
-			{
-				'condition': ('id', 'staff'),
-				'statements': [
-					{
-						'instruction': 'VARSET',
-						'name': ('id', 'runs'),
-						'type': 'annotation',
-						'value': ('incdec', {
-								'amount': ('number', 1),
-								'type': ('rel', 'INC')
-							})
-					}
-				]
-			}
-		],
-		'instruction': 'IF',
-		'type': 'annotation'
-	},
-	{
-		'branches': [
-			{
-				'condition': ('boolean', True),
-				'statements': [
-					{
-						'instruction': 'VARSET',
-						'name': ('id', 'runs'),
-						'type': 'annotation',
-						'value': ('incdec', {
-								'amount': ('number', 1),
-								'type': ('rel', 'DEC')
-							})
-					}
-				]
-			},
-			{
-				'condition': ('boolean', False),
-				'statements': [
-					{
-						'instruction': 'VARSET',
-						'name': ('id', 'runs'),
-						'type': 'annotation',
-						'value': ('incdec', {
-								'amount': ('number', 2),
-								'type': ('rel', 'INC')
-							})
+			'condition': ('boolean', False),
+			'instruction': 'WHILE',
+			'statements': [
+				{
+					'_debug': {
+						'lineno': 146,
+						'source': 0
 					},
-					{
-						'instruction': 'VARSET',
-						'name': ('id', 'runs'),
-						'type': 'annotation',
-						'value': ('incdec', {
-								'amount': ('number', 1),
-								'type': ('rel', 'INC')
-							})
-					}
-				]
-			}
-		],
-		'instruction': 'IF',
-		'type': 'annotation'
-	},
-	{
-		'branches': [
-			{
-				'condition': ('expr', 'x > 8 and q is not 6'),
-				'statements': [
-					{
-						'instruction': 'FLAGSET',
-						'name': ('id', 'have_seen_god'),
-						'type': 'annotation',
-						'value': ('boolean', True)
-					},
-					{
-						'destination': ('id', 'bob-world'),
-						'instruction': 'GOTO',
-						'type': 'annotation'
-					},
-					{
-						'branches': [
-							{
-								'condition': ('id', 'have_seen_god'),
-								'statements': [
-									{
-										'destination': ('id', 'aerith-world'),
-										'instruction': 'GOTO',
-										'type': 'annotation'
-									}
-								]
-							}
-						],
-						'instruction': 'IF',
-						'type': 'annotation'
-					}
-				]
+					'instruction': 'VARSET',
+					'name': ('id', 'runs'),
+					'type': 'annotation',
+					'value': ('incdec', {
+							'amount': ('number', 2),
+							'type': ('rel', 'INC')
+						})
+				}
+			],
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 149,
+				'source': 0
 			},
-			{
-				'condition': ('expr', '35 + 14 > 4'),
-				'statements': [
-					{
-						'instruction': 'EXECUTE',
-						'params': [],
-						'section': ('id', 'aerith-punch'),
-						'type': 'annotation'
-					}
-				]
+			'condition': ('expr', 'x > 8 and q is not 6'),
+			'instruction': 'WHILE',
+			'statements': [
+				{
+					'_debug': {
+						'lineno': 150,
+						'source': 0
+					},
+					'instruction': 'FLAGSET',
+					'name': ('id', 'have_seen_god'),
+					'type': 'annotation',
+					'value': ('boolean', True)
+				}
+			],
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 153,
+				'source': 0
 			},
-			{
-				'condition': None,
-				'statements': [
-					{
-						'instruction': 'FLAGSET',
-						'name': ('id', 'have_seen_god'),
-						'type': 'annotation',
-						'value': ('boolean', False)
-					}
-				]
-			}
-		],
-		'instruction': 'IF',
-		'type': 'annotation'
-	},
-	{
-		'body': '\t42+1\n\tfor i in ziebel:\n\t\tprint i',
-		'instruction': 'PYTHON',
-		'type': 'annotation'
-	},
-	{
-		'speaker': None,
-		'states': [],
-		'text': ('string', 'It feels like everything has gone wrong.'),
-		'type': 'line'
-	},
-	{
-		'speaker': None,
-		'states': [],
-		'text': ('string', "Never before have I felt so awful! I guess that's just how it goes..."),
-		'type': 'line'
-	},
-	{
-		'speaker': None,
-		'states': [],
-		'text': ('string', 'One day it will be better.'),
-		'type': 'line'
-	},
-	{
-		'speaker': ('id', 'Aerith'),
-		'states': [],
-		'text': ('string', "Hey man, what's up?"),
-		'type': 'line'
-	},
-	{
-		'speaker': None,
-		'states': [],
-		'text': ('string', "Aerith? What's she doing here?"),
-		'type': 'line'
-	},
-	{
-		'speaker': ('id', 'Aerith'),
-		'states': [],
-		'text': ('string', 'I heard you were feeling down.'),
-		'type': 'line'
-	},
-	{
-		'speaker': ('id', 'Aerith'),
-		'states': [],
-		'text': ('string', 'So I decided to stop by.'),
-		'type': 'line'
-	},
-	{
-		'file': ('string', 'test/sources/full_test_inc.fey'),
-		'instruction': 'INCLUDE',
-		'langs': None,
-		'parsing': ('boolean', True),
-		'type': 'annotation'
-	},
-	{
-		'speaker': ('string', 'The Wall'),
-		'states': [],
-		'text': ('string', "Don't forget about me!"),
-		'type': 'line'
-	},
-	{
-		'speaker': ('string', 'The Wall'),
-		'states': [],
-		'text': ('string', "I'm here too, you know!"),
-		'type': 'line'
-	}
-]
+			'branches': [
+				{
+					'condition': ('id', 'staff'),
+					'statements': [
+						{
+							'_debug': {
+								'lineno': 154,
+								'source': 0
+							},
+							'instruction': 'VARSET',
+							'name': ('id', 'runs'),
+							'type': 'annotation',
+							'value': ('incdec', {
+									'amount': ('number', 1),
+									'type': ('rel', 'INC')
+								})
+						}
+					]
+				}
+			],
+			'instruction': 'IF',
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 157,
+				'source': 0
+			},
+			'branches': [
+				{
+					'condition': ('boolean', True),
+					'statements': [
+						{
+							'_debug': {
+								'lineno': 158,
+								'source': 0
+							},
+							'instruction': 'VARSET',
+							'name': ('id', 'runs'),
+							'type': 'annotation',
+							'value': ('incdec', {
+									'amount': ('number', 1),
+									'type': ('rel', 'DEC')
+								})
+						}
+					]
+				},
+				{
+					'condition': ('boolean', False),
+					'statements': [
+						{
+							'_debug': {
+								'lineno': 161,
+								'source': 0
+							},
+							'instruction': 'VARSET',
+							'name': ('id', 'runs'),
+							'type': 'annotation',
+							'value': ('incdec', {
+									'amount': ('number', 2),
+									'type': ('rel', 'INC')
+								})
+						},
+						{
+							'_debug': {
+								'lineno': 162,
+								'source': 0
+							},
+							'instruction': 'VARSET',
+							'name': ('id', 'runs'),
+							'type': 'annotation',
+							'value': ('incdec', {
+									'amount': ('number', 1),
+									'type': ('rel', 'INC')
+								})
+						}
+					]
+				}
+			],
+			'instruction': 'IF',
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 165,
+				'source': 0
+			},
+			'branches': [
+				{
+					'condition': ('expr', 'x > 8 and q is not 6'),
+					'statements': [
+						{
+							'_debug': {
+								'lineno': 166,
+								'source': 0
+							},
+							'instruction': 'FLAGSET',
+							'name': ('id', 'have_seen_god'),
+							'type': 'annotation',
+							'value': ('boolean', True)
+						},
+						{
+							'_debug': {
+								'lineno': 167,
+								'source': 0
+							},
+							'destination': ('id', 'bob-world'),
+							'instruction': 'GOTO',
+							'type': 'annotation'
+						},
+						{
+							'_debug': {
+								'lineno': 168,
+								'source': 0
+							},
+							'branches': [
+								{
+									'condition': ('id', 'have_seen_god'),
+									'statements': [
+										{
+											'_debug': {
+												'lineno': 169,
+												'source': 0
+											},
+											'destination': ('id', 'aerith-world'),
+											'instruction': 'GOTO',
+											'type': 'annotation'
+										}
+									]
+								}
+							],
+							'instruction': 'IF',
+							'type': 'annotation'
+						}
+					]
+				},
+				{
+					'condition': ('expr', '35 + 14 > 4'),
+					'statements': [
+						{
+							'_debug': {
+								'lineno': 174,
+								'source': 0
+							},
+							'instruction': 'EXECUTE',
+							'params': [],
+							'section': ('id', 'aerith-punch'),
+							'type': 'annotation'
+						}
+					]
+				},
+				{
+					'condition': None,
+					'statements': [
+						{
+							'_debug': {
+								'lineno': 178,
+								'source': 0
+							},
+							'instruction': 'FLAGSET',
+							'name': ('id', 'have_seen_god'),
+							'type': 'annotation',
+							'value': ('boolean', False)
+						}
+					]
+				}
+			],
+			'instruction': 'IF',
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 181,
+				'source': 0
+			},
+			'body': '\t42+1\n\tfor i in ziebel:\n\t\tprint i',
+			'instruction': 'PYTHON',
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 188,
+				'source': 0
+			},
+			'speaker': None,
+			'states': [],
+			'text': ('string', 'It feels like everything has gone wrong.'),
+			'type': 'line'
+		},
+		{
+			'_debug': {
+				'lineno': 190,
+				'source': 0
+			},
+			'speaker': None,
+			'states': [],
+			'text': ('string', "Never before have I felt so awful! I guess that's just how it goes..."),
+			'type': 'line'
+		},
+		{
+			'_debug': {
+				'lineno': 192,
+				'source': 0
+			},
+			'speaker': None,
+			'states': [],
+			'text': ('string', 'One day it will be better.'),
+			'type': 'line'
+		},
+		{
+			'_debug': {
+				'lineno': 194,
+				'source': 0
+			},
+			'speaker': ('id', 'Aerith'),
+			'states': [],
+			'text': ('string', "Hey man, what's up?"),
+			'type': 'line'
+		},
+		{
+			'_debug': {
+				'lineno': 196,
+				'source': 0
+			},
+			'speaker': None,
+			'states': [],
+			'text': ('string', "Aerith? What's she doing here?"),
+			'type': 'line'
+		},
+		{
+			'_debug': {
+				'lineno': 198,
+				'source': 0
+			},
+			'speaker': ('id', 'Aerith'),
+			'states': [],
+			'text': ('string', 'I heard you were feeling down.'),
+			'type': 'line'
+		},
+		{
+			'_debug': {
+				'lineno': 200,
+				'source': 0
+			},
+			'speaker': ('id', 'Aerith'),
+			'states': [],
+			'text': ('string', 'So I decided to stop by.'),
+			'type': 'line'
+		},
+		{
+			'_debug': {
+				'lineno': 202,
+				'source': 0
+			},
+			'file': ('string', 'test/sources/full_test_inc.fey'),
+			'instruction': 'INCLUDE',
+			'langs': None,
+			'parsing': ('boolean', True),
+			'type': 'annotation'
+		},
+		{
+			'_debug': {
+				'lineno': 204,
+				'source': 0
+			},
+			'speaker': ('string', 'The Wall'),
+			'states': [],
+			'text': ('string', "Don't forget about me!"),
+			'type': 'line'
+		},
+		{
+			'_debug': {
+				'lineno': 206,
+				'source': 0
+			},
+			'speaker': ('string', 'The Wall'),
+			'states': [],
+			'text': ('string', "I'm here too, you know!"),
+			'type': 'line'
+		}
+	]
+}

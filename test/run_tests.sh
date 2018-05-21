@@ -138,6 +138,32 @@ test_ast() {
 	fi
 }
 
+test_ast_inline_sources() {
+	local cmd="$1"
+	"$cmd" ast --pretty --inline-sources -o test_output/test_inline.ast test/sources/full_test.fey
+	actual=$(checksum test_output/test_inline.ast)
+	expected=$(checksum test/expected/expected_inline.ast)
+	if [ "$actual" != "$expected" ]
+	then
+		echo "Parsed AST output differs from expected" >&2
+		diff -u test/expected/expected_inline.ast test_output/test_inline.ast >&2
+		return 1
+	fi
+}
+
+test_ast_no_debug_symbols() {
+	local cmd="$1"
+	"$cmd" ast --pretty --no-debug-symbols -o test_output/test_no_debug_symbols.ast test/sources/full_test.fey
+	actual=$(checksum test_output/test_no_debug_symbols.ast)
+	expected=$(checksum test/expected/expected_no_debug_symbols.ast)
+	if [ "$actual" != "$expected" ]
+	then
+		echo "Parsed AST output differs from expected" >&2
+		diff -u test/expected/expected_no_debug_symbols.ast test_output/test_no_debug_symbols.ast >&2
+		return 1
+	fi
+}
+
 test_lex() {
 	local cmd="$1"
 	"$cmd" lex --pretty -o test_output/test.lex test/sources/full_test.fey
