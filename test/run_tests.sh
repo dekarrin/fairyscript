@@ -18,6 +18,15 @@ else
 fi
 
 
+compiler_version=$(grep -E '^\s*__version__\s*=\s*' fairyscript/version.py | cut -d '=' -f 2 | awk '{printf $1}' | sed 's/'\''//g' | sed 's/"//g')
+compiler_version_ticks=""
+for x in $(seq ${#compiler_version})
+do
+	compiler_version_ticks="$compiler_version_ticks="
+done
+echo $compiler_version_ticks
+
+
 if command -v md5
 then
 	export has_md5=1
@@ -36,6 +45,13 @@ checksum() {
 	else
 		echo "$(md5sum "$1" | cut -d ' ' -f 1)"
 	fi
+}
+
+
+create_template() {
+	local input="$1"
+	local output="$2"
+	sed -e 's/__version__/'$compiler_version'/g' "$input" | sed -e 's/__version_ticks__/'$compiler_version_ticks'/g' > "$output"
 }
 
 log_and_show() {
@@ -63,12 +79,13 @@ test_renpy() {
 test_analyze() {
 	local cmd="$1"
 	"$cmd" analyze -o test_output/test.ana test/sources/full_test.fey
+	create_template test/expected/expected.ana test_output/expected.ana
 	actual=$(checksum test_output/test.ana)
-	expected=$(checksum test/expected/expected.ana)
+	expected=$(checksum test_output/expected.ana)
 	if [ "$actual" != "$expected" ]
 	then
 		echo "Static analysis output differs from expected" >&2
-		diff -u test/expected/expected.ana test_output/test.ana >&2
+		diff -u test_output/expected.ana test_output/test.ana >&2
 		return 1
 	fi
 }
@@ -76,12 +93,13 @@ test_analyze() {
 test_analyze_order_usage() {
 	local cmd="$1"
 	"$cmd" analyze --order usage -o test_output/test_usage_order.ana test/sources/full_test.fey
+	create_template test/expected/expected_usage_order.ana test_output/expected_usage_order.ana
 	actual=$(checksum test_output/test_usage_order.ana)
-	expected=$(checksum test/expected/expected_usage_order.ana)
+	expected=$(checksum test_output/expected_usage_order.ana)
 	if [ "$actual" != "$expected" ]
 	then
 		echo "Static analysis output differs from expected" >&2
-		diff -u test/expected/expected_usage_order.ana test_output/test_usage_order.ana >&2
+		diff -u test_output/expected_usage_order.ana test_output/test_usage_order.ana >&2
 		return 1
 	fi
 }
@@ -89,12 +107,13 @@ test_analyze_order_usage() {
 test_analyze_order_name() {
 	local cmd="$1"
 	"$cmd" analyze --order name -o test_output/test_name_order.ana test/sources/full_test.fey
+	create_template test/expected/expected_name_order.ana test_output/expected_name_order.ana
 	actual=$(checksum test_output/test_name_order.ana)
-	expected=$(checksum test/expected/expected.ana)
+	expected=$(checksum test_output/expected_name_order.ana)
 	if [ "$actual" != "$expected" ]
 	then
 		echo "Static analysis output differs from expected" >&2
-		diff -u test/expected/expected.ana test_output/test_name_order.ana >&2
+		diff -u test/output_expected_name_order.ana test_output/test_name_order.ana >&2
 		return 1
 	fi
 }
@@ -102,12 +121,13 @@ test_analyze_order_name() {
 test_analyze_order_name_no_sources() {
 	local cmd="$1"
 	"$cmd" analyze --order name --no-source-info -o test_output/test_name_order_no_sources.ana test/sources/full_test.fey
+	create_template test/expected/expected_name_order_no_sources.ana test_output/expected_name_order_no_sources.ana
 	actual=$(checksum test_output/test_name_order_no_sources.ana)
-	expected=$(checksum test/expected/expected_name_order_no_sources.ana)
+	expected=$(checksum test_output/expected_name_order_no_sources.ana)
 	if [ "$actual" != "$expected" ]
 	then
 		echo "Static analysis output differs from expected" >&2
-		diff -u test/expected/expected_name_order_no_sources.ana test_output/test_name_order_no_sources.ana >&2
+		diff -u test_output/expected_name_order_no_sources.ana test_output/test_name_order_no_sources.ana >&2
 		return 1
 	fi
 }
@@ -115,12 +135,13 @@ test_analyze_order_name_no_sources() {
 test_analyze_order_usage_no_sources() {
 	local cmd="$1"
 	"$cmd" analyze --order usage --no-source-info -o test_output/test_usage_order_no_sources.ana test/sources/full_test.fey
+	create_template test/expected/expected_usage_order_no_sources.ana test_output/expected_usage_order_no_sources.ana
 	actual=$(checksum test_output/test_usage_order_no_sources.ana)
-	expected=$(checksum test/expected/expected_usage_order_no_sources.ana)
+	expected=$(checksum test_output/expected_usage_order_no_sources.ana)
 	if [ "$actual" != "$expected" ]
 	then
 		echo "Static analysis output differs from expected" >&2
-		diff -u test/expected/expected_usage_order_no_sources.ana test_output/test_usage_order_no_sources.ana >&2
+		diff -u test_output/expected_usage_order_no_sources.ana test_output/test_usage_order_no_sources.ana >&2
 		return 1
 	fi
 }
