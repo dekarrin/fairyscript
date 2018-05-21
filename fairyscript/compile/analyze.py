@@ -354,7 +354,7 @@ class AnalysisCompiler(object):
 		if not self._show_source_info:
 			return {'lineno': None, 'source': None}
 
-		if 'type' in node:
+		if 'instruction' in node:
 			node_type = node['type'] + ' node'
 		else:
 			node_type = 'node'
@@ -362,14 +362,14 @@ class AnalysisCompiler(object):
 		try:
 			lineno = node['_debug']['lineno']
 		except (KeyError, TypeError):
-			_log.warning("Problem while reading lineno from a " + node_type + "; excluding from output")
+			_log.warning("Problem while reading lineno from " + node_type + "; excluding from output")
 			_log.debug("Exception Details\n", stack_info=True, exc_info=True)
 			lineno = None
 
 		try:
 			source = node['_debug']['source']
 		except (KeyError, TypeError):
-			_log.warning("Problem while reading source from a " + node_type + "; excluding from output")
+			_log.warning("Problem while reading source from " + node_type + "; excluding from output")
 			_log.debug("Exception Details\n", stack_info=True, exc_info=True)
 			source = None
 
@@ -381,7 +381,7 @@ class AnalysisCompiler(object):
 			try:
 				info['source'] = self._script_header['sources'][source]
 			except (KeyError, TypeError):
-				msg = "Problem while looking up source " + str(source) + " from a " + node_type + " in header table;"
+				msg = "Problem while looking up source " + str(source) + " from " + node_type + " in header table;"
 				msg += " excluding from output"
 				_log.warning(msg)
 				_log.debug("Exception Details\n", stack_info=True, exc_info=True)
