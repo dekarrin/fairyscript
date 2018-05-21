@@ -5,12 +5,17 @@
 if [ "$1" = "--local" ]
 then
 	ALL_COMMANDS="./fairyc.py"
+	shift
 else
 	ALL_COMMANDS="./fairyc.py fairyc"
 fi
 
-ALL_TESTS="test_analyze test_analyze_order_usage test_analyze_order_name test_renpy test_lex test_ast test_docx"
-
+if [ "$1" = "--test" ]
+then
+	ALL_TESTS="$2"
+else
+	ALL_TESTS="test_analyze test_analyze_order_usage test_analyze_order_name test_renpy test_lex test_ast test_docx"
+fi
 
 
 if command -v md5
@@ -83,13 +88,39 @@ test_analyze_order_usage() {
 
 test_analyze_order_name() {
 	local cmd="$1"
-	"$cmd" analyze --order name -o test_output/test.ana test/sources/full_test.fey
-	actual=$(checksum test_output/test.ana)
+	"$cmd" analyze --order name -o test_output/test_name_order.ana test/sources/full_test.fey
+	actual=$(checksum test_output/test_name_order.ana)
 	expected=$(checksum test/expected/expected.ana)
 	if [ "$actual" != "$expected" ]
 	then
 		echo "Static analysis output differs from expected" >&2
-		diff -u test/expected/expected.ana test_output/test.ana >&2
+		diff -u test/expected/expected.ana test_output/test_name_order.ana >&2
+		return 1
+	fi
+}
+
+test_analyze_order_name_no_sources() {
+	local cmd="$1"
+	"$cmd" analyze --order name --no-source-info -o test_output/test_name_order_no_sources.ana test/sources/full_test.fey
+	actual=$(checksum test_output/test_name_order_no_sources.ana)
+	expected=$(checksum test/expected/expected_name_order_no_sources.ana)
+	if [ "$actual" != "$expected" ]
+	then
+		echo "Static analysis output differs from expected" >&2
+		diff -u test/expected/expected_name_order_no_sources.ana test_output/test_name_order_no_sources.ana >&2
+		return 1
+	fi
+}
+
+test_analyze_order_usage_no_sources() {
+	local cmd="$1"
+	"$cmd" analyze --order usage --no-source-info -o test_output/test_usage_order_no_sources.ana test/sources/full_test.fey
+	actual=$(checksum test_output/test_usage_order_no_sources.ana)
+	expected=$(checksum test/expected/expected_usage_order_no_sources.ana)
+	if [ "$actual" != "$expected" ]
+	then
+		echo "Static analysis output differs from expected" >&2
+		diff -u test/expected/expected_usage_order_no_sources.ana test_output/test_usage_order_no_sources.ana >&2
 		return 1
 	fi
 }
