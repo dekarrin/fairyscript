@@ -185,6 +185,19 @@ test_ast_no_debug_symbols() {
 	fi
 }
 
+test_ast_strip_debug() {
+	local cmd="$1"
+	"$cmd" ast --pretty --no-debug-symbols -f ast -o test_output/test_strip_debug.ast test/sources/debug_symbols.ast
+	actual=$(checksum test_output/test_strip_debug.ast)
+	expected=$(checksum test/expected/expected_strip_debug.ast)
+	if [ "$actual" != "$expected" ]
+	then
+		echo "Parsed AST output differs from expected" >&2
+		diff -u test/expected/expected_strip_debug.ast test_output/test_strip_debug.ast >&2
+		return 1
+	fi
+}
+
 test_lex() {
 	local cmd="$1"
 	"$cmd" lex --pretty -o test_output/test.lex test/sources/full_test.fey
