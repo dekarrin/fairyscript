@@ -168,18 +168,76 @@ def _strip_ast_debug_symbols(ast):
 	if not ast['_meta']['has_debug_symbols']:
 		return
 
-	for s in ast:
-		if '_debug' in s:
-			del s['_debug']
-		if 'instruction' in s:
-			if s['instruction'] == 'IF':
-				for br in s['branches']:
-					_strip_ast_debug_symbols(br['statements'])
-			elif s['instruction'] == 'WHILE':
-				_strip_ast_debug_symbols(s['statements'])
+	def _strip_debug(nodes):
+		for s in nodes:
+			if '_debug' in s:
+				del s['_debug']
+			if 'instruction' in s:
+				if s['instruction'] == 'IF':
+					for br in s['branches']:
+						_strip_debug(br['statements'])
+				elif s['instruction'] == 'WHILE':
+					_strip_debug(s['statements'])
+	_strip_debug(ast['nodes'])
 
-	# TODO: strip other debug symbols as well
+	if 'sources' in ast['_meta']:
+		del ast['_meta']['sources']
 	ast['_meta']['has_debug_symbols'] = False
+
+
+def _convert_ast_sources_to_inline(ast):
+	if not ast['_meta']['has_debug_symbols']:
+		return
+
+	if 'sources' not in ast['_meta']:
+		return
+
+	table = ast['_meta']['sources']
+
+	def _convert(nodes):
+		for s in ast:
+			if '_debug' in s:
+				s['_debug']['source'] = table[s['_debug']['source']]
+			if 'instruction' in s:
+				if s['instruction'] == 'IF':
+					for br in s['branches']:
+						_convert(br['statements'])
+				elif s['instruction'] == 'WHILE':
+					_convert(s['statements'])
+	_convert(ast['nodes'])
+
+	del ast['_meta']['sources']
+
+
+def _convert_ast_sources_to_table(ast):
+	if not ast['_meta']['has_debug_symbols']:
+		return
+
+	if 'sources' in ast['_meta']:
+		return
+
+	sources = {}
+	reverse_sources = {}
+
+	def _convert(nodes):
+		for s in ast:
+			if '_debug' in s:
+				source_file = s['_debug']['source']
+				if source_file not in reverse_sources:
+					new_key = len(reverse_sources)
+					reverse_sources[source_file] = new_key
+					sources[new_key] = source_file
+				new_key = reverse_sources[source_file]
+				s['_debug']['source'] = new_key
+			if 'instruction' in s:
+				if s['instruction'] == 'IF':
+					for br in s['branches']:
+						_convert(br['statements'])
+				elif s['instruction'] == 'WHILE':
+					_convert(s['statements'])
+	_convert(ast['nodes'])
+
+	ast['_meta']['sources'] = sources
 
 
 def _combine_asts(ast_1, ast_2):
@@ -192,15 +250,33 @@ def _combine_asts(ast_1, ast_2):
 		return ast_1
 
 	new_meta = {
-		'has_debug_symbols': meta_1['has_debug_symbols'] and meta_2['has_debug_symbols']
+		'has_debug_symbols': meta_1['has_debug_symbols'] and meta_2['has_debug_symbols'],
 	}
+
+	renumber_sources = False
+	if new_meta['has_debug_symbols']:
+		if 'sources' in meta_1 or 'sources' in meta_2:
+			# if we have any source table, switch them both to inline sources and re-number after combining
+			_convert_ast_sources_to_inline(ast_1)
+			meta_1 = ast_1['_meta']
+			_convert_ast_sources_to_inline(ast_2)
+			meta_2 = ast_2['_meta']
+			renumber_sources = True
+			# don't add 'sources' table yet; it will be done during renumbering and adding it here will cause the
+			# convert function to fail
+		# TODO: add other combinations as given
 
 	new_nodes = ast_1['nodes'] + ast_2['nodes']
 
-	return {
+	new_ast = {
 		'_meta': new_meta,
 		'nodes': new_nodes
 	}
+
+	if renumber_sources:
+		_convert_ast_sources_to_table(new_ast)
+
+	return new_ast
 
 
 def _show_warnings(compiler):
@@ -514,6 +590,12 @@ def _run_compiler(args):
 				ast = eval(file_contents)
 				if args.no_debug_symbols:
 					_strip_ast_debug_symbols(ast)
+				else:
+					if args.inline_sources:
+						_convert_ast_sources_to_inline(ast)
+					else:
+						_convert_ast_sources_to_table(ast)
+
 			else:
 				raise InvalidInputFormatError(
 					"to output AST or compiled formats, input format must be fey, lex, or ast")
