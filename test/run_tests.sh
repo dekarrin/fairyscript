@@ -174,8 +174,17 @@ for cmd in $ALL_COMMANDS
 do
 	for test in $ALL_TESTS
 	do
-		echo "\"$cmd / $test\"..."
-		"$test" "$cmd" || failures="$(expr $failures + 1)"
+		printf 'Running test "%s - %s"...' "$cmd" "$test"
+		failed=
+		"$test" "$cmd" > test_output/.temp_output 2>&1 || failed=1
+		if [ -n "$failed" ]
+		then
+			failures="$(expr $failures + 1)"
+			printf 'FAIL\n'
+		else
+			printf 'PASS\n'
+		fi
+		cat test_output/.temp_output >&2
 	done
 done
 
