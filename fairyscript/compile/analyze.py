@@ -355,7 +355,7 @@ class AnalysisCompiler(object):
 			return {'lineno': None, 'source': None}
 
 		if 'instruction' in node:
-			node_type = node['type'] + ' node'
+			node_type = node['instruction'] + ' node'
 		else:
 			node_type = 'node'
 
