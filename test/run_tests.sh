@@ -76,7 +76,7 @@ test_analyze_order_usage() {
 	if [ "$actual" != "$expected" ]
 	then
 		echo "Static analysis output differs from expected" >&2
-		diff -u test/expected/expected.ana test_output/test.ana >&2
+		diff -u test/expected/expected_usage_order.ana test_output/test_usage_order.ana >&2
 		return 1
 	fi
 }
