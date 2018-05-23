@@ -211,6 +211,32 @@ test_lex() {
 	fi
 }
 
+test_lex_to_ast() {
+	local cmd="$1"
+	"$cmd" ast -f lex --pretty -o test_output/test_lex_to_ast.ast test/sources/lexed_input.lex
+	actual=$(checksum test_output/test_lex_to_ast.ast)
+	expected=$(checksum test/expected/expected_from_lex.ast)
+	if [ "$actual" != "$expected" ]
+	then
+		echo "Lexer symbol output differs from expected" >&2
+		diff -u test/expected/expected_from_lex.ast test_output/test_lex_to_ast.ast >&2
+		return 1
+	fi
+}
+
+test_lex_to_renpy() {
+	local cmd="$1"
+	"$cmd" renpy -f lex -o test_output/test_lex_to_renpy.rpy test/sources/lexed_input.lex
+	actual=$(checksum test_output/test_lex_to_renpy.rpy)
+	expected=$(checksum test/expected/expected_from_lex.rpy)
+	if [ "$actual" != "$expected" ]
+	then
+		echo "Lexer symbol output differs from expected" >&2
+		diff -u test/expected/expected_from_lex.rpy test_output/test_lex_to_renpy.rpy >&2
+		return 1
+	fi
+}
+
 test_docx() {
 	local cmd="$1"
 
