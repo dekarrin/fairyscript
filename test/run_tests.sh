@@ -10,9 +10,9 @@ else
 	ALL_COMMANDS="./fairyc.py fairyc"
 fi
 
-if [ "$1" = "--test" ]
+if [ -n "$1" ]
 then
-	ALL_TESTS="$2"
+	ALL_TESTS="$1"
 else
 	ALL_TESTS="test_analyze test_analyze_order_usage test_analyze_order_name test_renpy test_lex test_ast test_docx"
 fi
