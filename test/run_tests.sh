@@ -159,6 +159,19 @@ test_ast() {
 	fi
 }
 
+test_ast_multiple_sources() {
+	local cmd="$1"
+	"$cmd" ast --pretty -o test_output/test_ast_multiple_sources.ast test/sources/ast_multiple_sources_1.fey test/sources/ast_multiple_sources_2.fey
+	actual=$(checksum test_output/test_ast_multiple_sources.ast)
+	expected=$(checksum test/expected/expected_ast_multiple_sources.ast)
+	if [ "$actual" != "$expected" ]
+	then
+		echo "Parsed AST output differs from expected" >&2
+		diff -u test/expected/expected_ast_multiple_sources.ast test_output/test_ast_multiple_sources.ast >&2
+		return 1
+	fi
+}
+
 test_ast_stdin() {
 	local cmd="$1"
 	cat test/sources/simple.fey | "$cmd" ast --pretty -o test_output/test_ast_stdin.ast
