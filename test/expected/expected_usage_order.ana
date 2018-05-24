@@ -95,7 +95,7 @@ Script Analysis
 	ayase-bedroom: 1 reference
 		* "test/sources/full_test.fey":95
 	bobs-house: 1 reference
-		* "test/sources/full_test_inc.fey":208
+		* "test/sources/full_test_inc.fey":3
 	my-house: 1 reference
 		* "test/sources/full_test.fey":10
 

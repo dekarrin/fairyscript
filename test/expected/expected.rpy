@@ -275,6 +275,8 @@ renpy.movie_cutscene("opening_video.mp4")
 
 "[snap camera to bookshelf]"
 
+"[pan camera to middle]"
+
 menu:
     "Show her the 'private collection'":
         jump private
