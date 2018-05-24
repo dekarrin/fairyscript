@@ -107,13 +107,13 @@ test_analyze_order_usage() {
 test_analyze_order_name() {
 	local cmd="$1"
 	"$cmd" analyze --order name -o test_output/test_name_order.ana test/sources/full_test.fey
-	create_template test/expected/expected_name_order.ana test_output/expected_name_order.ana
+	create_template test/expected/expected.ana test_output/expected_name_order.ana
 	actual=$(checksum test_output/test_name_order.ana)
 	expected=$(checksum test_output/expected_name_order.ana)
 	if [ "$actual" != "$expected" ]
 	then
 		echo "Static analysis output differs from expected" >&2
-		diff -u test/output_expected_name_order.ana test_output/test_name_order.ana >&2
+		diff -u test_output/expected_name_order.ana test_output/test_name_order.ana >&2
 		return 1
 	fi
 }

@@ -234,6 +234,12 @@ def t_ANY_error(t):
 	t.lexer.skip(1)
 
 
-lexer = lex.lex()
-lexer.error_messages = []
-lexer.successful = True
+def reset_lexer():
+	global lexer
+	lexer = lex.lex()
+	lexer.error_messages = []
+	lexer.successful = True
+
+
+lexer = None
+reset_lexer()

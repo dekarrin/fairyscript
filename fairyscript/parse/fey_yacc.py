@@ -871,11 +871,17 @@ def make_choice(text, jump_target, varsets=None, condition=None):
 	return {'text': text, 'target': jump_target, 'sets': varsets, 'condition': condition}
 
 
-parser = yacc.yacc()
-parser.successful = True
-parser.error_messages = []
-parser.filename = None
-parser.no_debug = False
-parser.inline_sources = False
-parser.reverse_sources = {}
-parser.header_info = {}
+def reset_parser():
+	global parser
+	parser = yacc.yacc()
+	parser.successful = True
+	parser.error_messages = []
+	parser.filename = None
+	parser.no_debug = False
+	parser.inline_sources = False
+	parser.reverse_sources = {}
+	parser.header_info = {}
+
+
+parser = None
+reset_parser()

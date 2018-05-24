@@ -62,6 +62,8 @@ class ParserError(Exception):
 
 def _create_parser(filename, no_debug_symbols, inline_sources):
 	# TODO: abstract into parser module
+	parse.fey_yacc.reset_parser()
+	parse.fey_lex.reset_lexer()
 	parser = parse.fey_yacc.parser
 	parser.successful = True
 	parser.error_messages = []
@@ -77,6 +79,7 @@ def _create_parser(filename, no_debug_symbols, inline_sources):
 
 def _create_lexer():
 	# TODO: abstract into lexer module
+	parse.fey_lex.reset_lexer()
 	lexer = parse.fey_lex.lexer
 	lexer.successful = True
 	lexer.error_messages = []
