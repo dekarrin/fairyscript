@@ -15,8 +15,10 @@ then
 	ALL_TESTS="$1"
 else
 	ALL_TESTS="test_analyze test_analyze_order_usage test_analyze_order_name test_renpy test_lex test_ast test_docx"
+	ALL_TESTS="$ALL_TESTS test_analyze_order_name_no_sources test_analyze_order_usage_no_sources"
+	ALL_TESTS="$ALL_TESTS test_ast_multiple_sources test_ast_stdin test_ast_inline_sources test_ast_no_debug_symbols"
+	ALL_TESTS="$ALL_TESTS test_ast_strip_debug test_lex_stdin test_lex_to_ast test_lex_to_ast_stdin test_lex_to_renpy"
 fi
-
 
 compiler_version=$(grep -E '^\s*__version__\s*=\s*' fairyscript/version.py | cut -d '=' -f 2 | awk '{printf $1}' | sed 's/'\''//g' | sed 's/"//g')
 compiler_version_ticks=""
