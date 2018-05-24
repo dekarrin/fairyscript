@@ -159,6 +159,19 @@ test_ast() {
 	fi
 }
 
+test_ast_stdin() {
+	local cmd="$1"
+	cat test/sources/simple.fey | "$cmd" ast --pretty -o test_output/test_ast_stdin.ast
+	actual=$(checksum test_output/test_ast_stdin.ast)
+	expected=$(checksum test/expected/expected_ast_stdin.ast)
+	if [ "$actual" != "$expected" ]
+	then
+		echo "Parsed AST output differs from expected" >&2
+		diff -u test/expected/expected_ast_stdin.ast test_output/test_ast_stdin.ast >&2
+		return 1
+	fi
+}
+
 test_ast_inline_sources() {
 	local cmd="$1"
 	"$cmd" ast --pretty --inline-sources -o test_output/test_inline.ast test/sources/full_test.fey
@@ -233,6 +246,19 @@ test_lex_to_ast() {
 	then
 		echo "Lexer symbol output differs from expected" >&2
 		diff -u test/expected/expected_from_lex.ast test_output/test_lex_to_ast.ast >&2
+		return 1
+	fi
+}
+
+test_lex_to_ast_stdin() {
+	local cmd="$1"
+	cat test/sources/lexed_input_stdin.lex | "$cmd" ast -f lex --pretty -o test_output/test_lex_to_ast_stdin.ast
+	actual=$(checksum test_output/test_lex_to_ast_stdin.ast)
+	expected=$(checksum test/expected/expected_lex_to_ast_stdin.ast)
+	if [ "$actual" != "$expected" ]
+	then
+		echo "Lexer symbol output differs from expected" >&2
+		diff -u test/expected/expected_lex_to_ast_stdin.ast test_output/test_lex_to_ast_stdin.ast >&2
 		return 1
 	fi
 }

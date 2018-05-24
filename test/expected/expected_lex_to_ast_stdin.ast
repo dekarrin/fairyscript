@@ -1,0 +1,63 @@
+{
+	'_meta': {
+		'has_debug_symbols': True,
+		'sources': {
+			0: None
+		}
+	},
+	'nodes': [
+		{
+			'_debug': {
+				'lineno': 1,
+				'source': 0
+			},
+			'destination': None,
+			'duration': None,
+			'instruction': 'ACTION',
+			'states': [
+				('id', 'pissed')
+			],
+			'target': ('id', 'Bob'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 2,
+				'source': 0
+			},
+			'destination': ('id', 'stage-front'),
+			'duration': None,
+			'instruction': 'ACTION',
+			'states': [],
+			'target': ('id', 'Bob'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 3,
+				'source': 0
+			},
+			'destination': ('id', 'stage-left'),
+			'duration': ('rel', 'QUICKLY'),
+			'instruction': 'ACTION',
+			'states': [],
+			'target': ('id', 'Bob'),
+			'type': 'directive'
+		},
+		{
+			'_debug': {
+				'lineno': 4,
+				'source': 0
+			},
+			'destination': ('id', 'bookshelf'),
+			'duration': ('rel', 'SLOWLY'),
+			'instruction': 'ACTION',
+			'states': [
+				('id', 'pissed'),
+				('id', 'happy')
+			],
+			'target': ('id', 'Bob'),
+			'type': 'directive'
+		}
+	]
+}
