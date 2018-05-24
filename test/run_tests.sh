@@ -211,6 +211,19 @@ test_lex() {
 	fi
 }
 
+test_lex_stdin() {
+	local cmd="$1"
+	cat test/sources/simple.fey | "$cmd" lex --pretty -o test_output/test_lex_stdin.lex
+	actual=$(checksum test_output/test_lex_stdin.lex)
+	expected=$(checksum test/expected/expected_lex_stdin.lex)
+	if [ "$actual" != "$expected" ]
+	then
+		echo "Lexer symbol output differs from expected" >&2
+		diff -u test/expected/expected_lex_stdin.lex test_output/test_lex_stdin.lex >&2
+		return 1
+	fi
+}
+
 test_lex_to_ast() {
 	local cmd="$1"
 	"$cmd" ast -f lex --pretty -o test_output/test_lex_to_ast.ast test/sources/lexed_input.lex
