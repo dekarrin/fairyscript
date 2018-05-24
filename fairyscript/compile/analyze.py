@@ -121,12 +121,22 @@ class AnalysisCompiler(object):
 			for ref in ref_list:
 				if ref['source'] is None and ref['lineno'] < 1:
 					continue
-				if ref['source'] is None:
-					self.add_line("* <invalid source>:{:d}{:s}".format(ref['lineno'], extra(ref)))
-				elif ref['lineno'] < 1:
-					self.add_line("* {:s}:<invalid line>{:s}".format(ref['source'], extra(ref)))
+
+				source, lineno = ref['source'], ref['lineno']
+				if source is None:
+					if ref['stdin']:
+						source = "<stdin>"
+					else:
+						source = "<invalid source>"
 				else:
-					self.add_line("* {:s}:{:d}{:s}".format(fey.quote(ref['source']), ref['lineno'], extra(ref)))
+					source = fey.quote(source)
+
+				if lineno < 1:
+					lineno_str = "<invalid line>"
+				else:
+					lineno_str = str(lineno)
+
+				self.add_line("* {:s}:{:s}{:s}".format(source, lineno_str, extra(ref)))
 			self._dec_indent()
 
 	def _build_characters_output(self):
@@ -377,20 +387,25 @@ class AnalysisCompiler(object):
 			_log.debug("Exception Details\n", stack_info=True, exc_info=True)
 			lineno = None
 
+		info = {
+			'lineno': lineno,
+			'stdin': False
+		}
+
 		try:
 			source = node['_debug']['source']
+			if 'sources' not in self._script_header and source is None:
+				info['stdin'] = True
 		except (KeyError, TypeError):
 			_log.warning("Problem while reading source from " + node_type + "; excluding from output")
 			_log.debug("Exception Details\n", stack_info=True, exc_info=True)
 			source = None
 
-		info = {
-			'lineno': lineno
-		}
-
 		if 'sources' in self._script_header and source is not None:
 			try:
 				info['source'] = self._script_header['sources'][source]
+				if info['source'] is None:
+					info['stdin'] = True
 			except (KeyError, TypeError):
 				msg = "Problem while looking up source " + str(source) + " from " + node_type + " in header table;"
 				msg += " excluding from output"
