@@ -18,6 +18,7 @@ else
 	ALL_TESTS="$ALL_TESTS test_analyze_order_name_no_sources test_analyze_order_usage_no_sources"
 	ALL_TESTS="$ALL_TESTS test_ast_multiple_sources test_ast_stdin test_ast_inline_sources test_ast_no_debug_symbols"
 	ALL_TESTS="$ALL_TESTS test_ast_strip_debug test_lex_stdin test_lex_to_ast test_lex_to_ast_stdin test_lex_to_renpy"
+	ALL_TESTS="$ALL_TESTS test_ast_to_renpy"
 fi
 
 compiler_version=$(grep -E '^\s*__version__\s*=\s*' fairyscript/version.py | cut -d '=' -f 2 | awk '{printf $1}' | sed 's/'\''//g' | sed 's/"//g')
@@ -63,6 +64,19 @@ log_and_show() {
 
 log() {
 	echo '['$(date)']'" $1" >> test.log
+}
+
+test_ast_to_renpy() {
+	local cmd="$1"
+	"$cmd" renpy -f ast -o test_output/test_ast_to_renpy.rpy test/sources/ast_to_renpy.ast
+	actual=$(checksum test_output/test_ast_to_renpy.rpy)
+	expected=$(checksum test/expected/expected_ast_to_renpy.rpy)
+	if [ "$actual" != "$expected" ]
+	then
+		echo "Ren'py output differs from expected" >&2
+		diff -u test/expected/expected_ast_to_renpy.rpy test_output/test_ast_to_renpy.rpy >&2
+		return 1
+	fi
 }
 
 test_renpy() {
