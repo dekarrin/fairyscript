@@ -18,7 +18,7 @@ else
 	ALL_TESTS="$ALL_TESTS test_analyze_order_name_no_sources test_analyze_order_usage_no_sources"
 	ALL_TESTS="$ALL_TESTS test_ast_multiple_sources test_ast_stdin test_ast_inline_sources test_ast_no_debug_symbols"
 	ALL_TESTS="$ALL_TESTS test_ast_strip_debug test_lex_stdin test_lex_to_ast test_lex_to_ast_stdin test_lex_to_renpy"
-	ALL_TESTS="$ALL_TESTS test_ast_to_renpy"
+	ALL_TESTS="$ALL_TESTS test_ast_to_renpy test_chars_in_branches"
 fi
 
 compiler_version=$(grep -E '^\s*__version__\s*=\s*' fairyscript/version.py | cut -d '=' -f 2 | awk '{printf $1}' | sed 's/'\''//g' | sed 's/"//g')
@@ -75,6 +75,19 @@ test_ast_to_renpy() {
 	then
 		echo "Ren'py output differs from expected" >&2
 		diff -u test/expected/expected_ast_to_renpy.rpy test_output/test_ast_to_renpy.rpy >&2
+		return 1
+	fi
+}
+
+test_chars_in_branches() {
+	local cmd="$1"
+	"$cmd" renpy -o test_output/test_chars_in_branches.rpy test/sources/chars_in_branches.fey
+	actual=$(checksum test_output/test_chars_in_branches.rpy)
+	expected=$(checksum test/expected/expected_chars_in_branches.rpy)
+	if [ "$actual" != "$expected" ]
+	then
+		echo "Ren'py output differs from expected" >&2
+		diff -u test/expected/expected_chars_in_branches.rpy test_output/test_chars_in_branches.rpy >&2
 		return 1
 	fi
 }

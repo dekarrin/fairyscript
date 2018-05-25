@@ -1,0 +1,12 @@
+
+(if: ON) {
+	(characters: "test/sources/chars_branch_if.csv")
+}
+(else) {
+	(characters: "test/sources/chars_branch_else.csv")
+}
+
+(while: 'True')
+{
+	(characters: "test/sources/chars_branch_while.csv")
+}
