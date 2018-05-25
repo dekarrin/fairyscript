@@ -330,9 +330,9 @@ def _preprocess(script_ast, target_lang, quiet=False, strip_ast_debugs=False, in
 			if s['type'] != 'line' and s['type'] != 'comment':
 				if s['instruction'] == 'IF':
 					for br in s['branches']:
-						preproc_chars(br['statements'])
+						chars_dict.update(preproc_chars(br['statements']))
 				elif s['instruction'] == 'WHILE':
-					preproc_chars(s['statements'])
+					chars_dict.update(preproc_chars(s['statements']))
 				elif s['instruction'] == 'CHARACTERS':
 					filename = s['file'][1]
 					new_chars = {}
